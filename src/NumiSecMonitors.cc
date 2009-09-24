@@ -7,7 +7,7 @@
 // pixels in the muon monitors is modelled and acts as the active
 // elements of the monitors.
 //
-// $Id: NumiSecMonitors.cc,v 1.7.2.3 2009/09/24 16:37:35 martens Exp $
+// $Id: NumiSecMonitors.cc,v 1.7.2.1 2009/09/24 16:39:13 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"

@@ -1,4 +1,4 @@
-// $Id: NumiImpWeight.cc,v 1.3.2.3 2009/09/24 16:37:35 martens Exp $
+// $Id: NumiImpWeight.cc,v 1.3.2.1 2009/09/24 16:39:13 martens Exp $
 //g4numi
 #include "NumiRunManager.hh"
 #include "NumiPrimaryGeneratorAction.hh"
