@@ -1,5 +1,5 @@
 
-// $Id: NumiMagneticField.hh,v 1.2.2.2 2009/09/24 16:24:11 martens Exp $
+// $Id: NumiMagneticField.hh,v 1.2.2.3 2009/09/24 16:37:34 martens Exp $
 // --------------------------------------------------------------
 // NumiMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04

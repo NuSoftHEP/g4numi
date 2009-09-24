@@ -45,9 +45,12 @@ endif
 CPPFLAGS += $(shell $(ROOTSYS)/bin/root-config --cflags)
 
 ROOTLIBS      = $(shell $(ROOTSYS)/bin/root-config --glibs) -lMinuit -lHtml
-ROOTLIBS      := $(filter-out -lNew,$(ROOTLIBS))
-ROOTLIBS      := $(filter-out -lThread,$(ROOTLIBS))
-ROOTLIBS      := $(filter-out -lpthread,$(ROOTLIBS))
+
+# Mike Martens: 9/9/15
+# Commented out the following three line
+#ROOTLIBS      := $(filter-out -lNew,$(ROOTLIBS))
+#ROOTLIBS      := $(filter-out -lThread,$(ROOTLIBS))
+#ROOTLIBS      := $(filter-out -lpthread,$(ROOTLIBS))
 INTYLIBS      += $(ROOTLIBS)
 
 #for debuging
