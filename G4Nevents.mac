@@ -1,6 +1,6 @@
 # An example script for running G4NuMI. -DJK
 #
-# $Id: G4Nevents.mac,v 1.2.2.1 2009/09/24 16:39:12 martens Exp $
+# $Id: G4Nevents.mac,v 1.2.2.4 2009/09/24 16:43:38 martens Exp $
 
 # Sets the sigma shift of the rock density
 # and muon alcove walls

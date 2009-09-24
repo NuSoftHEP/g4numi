@@ -7,7 +7,7 @@
 // volumes are rotated. In the G4NuMI world, the beam is horizontal,
 // while all the MC elements are rotated. 
 //
-// $Id: NumiHadronAbsorber.cc,v 1.8.2.1 2009/09/24 16:39:13 martens Exp $
+// $Id: NumiHadronAbsorber.cc,v 1.8.2.4 2009/09/24 16:43:38 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"

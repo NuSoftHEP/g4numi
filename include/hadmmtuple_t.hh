@@ -5,7 +5,7 @@
 // This is a class that defines the hadmmtuple_t object that is used to store 
 // the g4numi output in a root tree.
 //
-// $Id: hadmmtuple_t.hh,v 1.8.2.1 2009/09/24 16:39:13 martens Exp $
+// $Id: hadmmtuple_t.hh,v 1.8.2.4 2009/09/24 16:43:38 martens Exp $
 //----------------------------------------------------------------------
 
 #ifndef HADMMTUPLE_T_HH
