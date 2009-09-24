@@ -2,7 +2,7 @@
 // Sets the relevant memebers of the data class for storing the
 // MC data for the Hadron and Muon Monitors.
 //
-// $Id: hadmmtuple_t.cc,v 1.8.2.2 2009/09/24 16:24:11 martens Exp $
+// $Id: hadmmtuple_t.cc,v 1.8.2.3 2009/09/24 16:37:35 martens Exp $
 //----------------------------------------------------------------------
 
 #include "hadmmtuple_t.hh"

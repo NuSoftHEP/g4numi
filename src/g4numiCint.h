@@ -14,7 +14,7 @@
 #include <string.h>
 #define G__ANSIHEADER
 #define G__DICTIONARY
-#include "G__ci.h"
+#include "cint/G__ci.h"
 extern "C" {
 extern void G__cpp_setup_tagtableg4numiCint();
 extern void G__cpp_setup_inheritanceg4numiCint();
@@ -31,6 +31,7 @@ extern void G__set_cpp_environmentg4numiCint();
 #include "TMemberInspector.h"
 #include "../include/data_t.hh"
 #include "../include/hadmmtuple_t.hh"
+#include "../include/zptuple_t.hh"
 
 #ifndef G__MEMFUNCBODY
 #endif
@@ -41,5 +42,6 @@ extern G__linked_taginfo G__g4numiCintLN_TMemberInspector;
 extern G__linked_taginfo G__g4numiCintLN_iteratorlEbidirectional_iterator_tagcOTObjectmUcOlongcOconstsPTObjectmUmUcOconstsPTObjectmUaNgR;
 extern G__linked_taginfo G__g4numiCintLN_data_t;
 extern G__linked_taginfo G__g4numiCintLN_hadmmtuple_t;
+extern G__linked_taginfo G__g4numiCintLN_zptuple_t;
 
 /* STUB derived class for protected member access */

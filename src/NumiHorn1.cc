@@ -306,10 +306,22 @@ void NumiDetectorConstruction::ConstructSpiderSupport(NumiHornSpiderSupport *HSS
 G4double NumiDetectorConstruction::PHorn1OCRout(G4double z)
 {
   G4double r=0;
+
+  //Difference in diameter from 1 current numi thickness to 5./8. nova thickness for the horn. The numbers are left in the formula below
+  //you have the diference in diameter between the nova and the numi hornOCRoutDelta = (5./8. - 1.) * 2.
+
+  /**
+   * Added By Vamis Xhagjika
+   *
+   * This way we have a thinner Outer conductor for horn 2
+   * 
+   **/
+  
+  G4double novaDoutDelta = -3./4.;
+   
   if (z<0.*in){
     r=3.763*in+2.436*in; // for mother vol.
   }
-  
   //OC dimensions from drawings
   else if ((z>=0.*in)&&(z<0.756*in)){
     r=3.763*in+2.436*in;
@@ -321,13 +333,13 @@ G4double NumiDetectorConstruction::PHorn1OCRout(G4double z)
     r=15.99/2.*in;
   }
   else if ((z>=2.756*in)&&(z<115.971*in)){
-    r=13.750/2.*in;
+    r=(13.750 + novaDoutDelta)/2.*in;
   }
   else if (z>=115.971*in&&z<117.341*in){
-    r=(6.875+(z/in-115.971)/(117.341-115.971)*(8.25-6.875))*in;
+    r=(6.875 + (novaDoutDelta/2.) + (z/in-115.971)/(117.341-115.971)*(8.25-(6.875 + novaDoutDelta/2.)))*in;
   }
   else if ((z>=117.341*in)&&(z<123.311*in)){
-    r=16.5/2.*in;
+    r=(16.5 + novaDoutDelta)/2.*in;
   }
   else if ((z>=123.311*in)&&(z<124.811*in)){
     r=23.5/2.*in;
