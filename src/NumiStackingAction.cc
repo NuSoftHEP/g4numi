@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // NumiStackingAction.cc
-// $Id: NumiStackingAction.cc,v 1.8 2008/02/14 19:30:20 koskinen Exp $
+// $Id: NumiStackingAction.cc,v 1.8.2.2 2009/09/24 16:24:11 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiStackingAction.hh"

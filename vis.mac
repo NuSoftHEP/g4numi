@@ -2,7 +2,7 @@
 # Visualization macro used to produced a heprep file for viewing with
 # the HepRApp java application.
 #
-#$Id: vis.mac,v 1.5 2008/05/08 15:45:04 koskinen Exp $
+#$Id: vis.mac,v 1.5.2.2 2009/09/24 16:24:11 martens Exp $
 #----------------------------------------------------------------------
 #
 # create empty scene
