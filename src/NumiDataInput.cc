@@ -1,8 +1,13 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.31.2.4 2009/09/24 16:43:38 martens Exp $
+// $Id: NumiDataInput.cc,v 1.31.2.5 2009/10/20 16:13:55 martens Exp $
 //----------------------------------------------------------------------
+
+
+/**
+ * Modification and additions made by Vamis Xhagjika are enclosed into VXADD or VXMOD comments, and old values for the modified ones are kept with a comment and begin with OLD
+ **/
 
 #include "NumiDataInput.hh"
 #include "G4ThreeVector.hh"
@@ -175,7 +180,7 @@ if(!vacuumworld && !airhrn){
   //actual dm is 5/13e-4 radians 
   G4float beam_x_pos = 0;
   G4float beam_y_pos = 0;
-  G4float beam_z_pos = -4.0*m;
+  G4float beam_z_pos = -3.9*m;
   // the reason for the beam_z_pos change was to move the beam to start
   // immediately before the target so that the beam spot interaction point
   // would remain constant, but the angle would change.
@@ -208,47 +213,71 @@ if(!vacuumworld && !airhrn){
   TargetAreaHeight   = 8.5*m;
   TargetAreaWidth    = 8.5*m;
   TargetAreaGEANTmat = 15;
-
+  
   // Target   1
   //=======================================================================
+
+  //VXADD Added By Vamis Xhagjika
+  TargetContHalfLength  = 75.*cm;
+  TargetContRin	        = 123.*mm;
+  TargetContRout        = 150.*mm;
+  TargetContYOffset     =-50.*mm;
+  TargetContMaterial    = 9;
+  TargetSYOffset        = 3.2*mm;
+  TargetSXOffset        = 3.2*mm;
+  TargetSZOffset        = 100.*mm;
+  //~VXADD
+
+  //Modified by Vamis Xhagjika. OLD value written in comment on the right beggining with OLD
   TargetX0           = 0.0;
-  TargetY0           = -1.1*mm;
-  TargetZ0           = -0.45*m; //-0.35*m-10.*cm;
+  TargetY0           = 0.; //OLD -1.1*mm;
+  TargetZ0           = -2*TargetContHalfLength - 89.458*mm;//OLD -0.45*m; //-0.35*m-10.*cm;
   TargetDxdz         = 0.0; // doesn't
   TargetDydz         = 0.0; // work properly yet
-  TargetSLength      = 20.*mm;
+  TargetSLength      = 24.*mm;//OLD 20.*mm;
   TargetSWidth       = 6.40E-03*m;
-  TargetSHeight      = 18.0E-03*m;
+  TargetSHeight      = 63.0E-03*m;//OLD 18.0E-03*m;
   TargetCPGRadius    = 3.2*mm; // Cooling pipe groove
   TargetCPGPosition  = 10.7*mm;
   TargetEndRounded   = true;
-  TargetSegmentNo    = 47;
-  TargetSegmentPitch = 0.3*mm;
+  TargetSegmentNo    = 49;//47;
+  TargetSegmentPitch = 0.5*mm;//OLD 0.3*mm;
   TargetA            = 12.01*g/mole;
   TargetZ            = 6.;
   TargetDensity      = 1.78*g/cm3; //1.815*g/cm3;//1.754*g/cm3;
   TargetRL           = 25.692;
   TargetGEANTmat     = 18;
 
+  //VXADD
+  //Fin Cooling system variables, This variables control the form and shape of the cooling system for the fins
+  FinCoolerXlength       = 7.0 *mm;
+  FinCoolerYLength       =22.0 *mm;
+  FinCoolerBoxInXLength  = 2.0 *mm;
+  FinCoolerBoxInYLength  =14.0 *mm;
+  WaterPipeRout          = 2.5 *mm;
+  FinCoolingYOffset      =31.0 *mm;
+  //~VXADD
+  
   //Budal Monitor
-  BudalX0 = 0.0;
-  BudalY0 = 2.26*mm;
-  BudalZ0 = -16.72*cm;
-  BudalDxdz = 0.0;
-  BudalDydz = 0.0;
+  BudalX0   = 0.;
+  BudalY0   = 3.2*mm;
+  BudalZ0   = TargetSZOffset - TargetSLength - TargetSegmentPitch;//Distance from first fin (Vertical Budal Monitor)
+  BudalDxdz = 0.;
+  BudalDydz = 0.;
   
   //HPBaffle           1 // Only the length and position can be changed currently
   //=======================================================================
   HPBaffleGEANTMat   =  18;
-  HPBaffleX0         =  0.00;
-  HPBaffleY0         =  0.00;
-  HPBaffleZ0         = -3.14*m;
-  HPBaffleDXDZ       =  0.0;
-  HPBaffleDYDZ       =  0.0;
   HPBaffleLength     =  1.20*m;
   HPBaffleRin        =  5.5*mm;
   HPBaffleRout       =  3.*cm;
+  HPBaffleX0         =  0.00;
+  HPBaffleY0         =  0.00;
+  HPBaffleZ0         =  TargetZ0 - 27.466*in - HPBaffleLength; //OLD -3.14*m;
+  HPBaffleDXDZ       =  0.0;
+  HPBaffleDYDZ       =  0.0;
  
+  //VXRM This part of the code is removed from the executable since it is not used anymore in the nova configuration
   //Cooling pipes
   NCPipeN = 19;
   //=======================================================================
@@ -259,7 +288,7 @@ if(!vacuumworld && !airhrn){
   G4double CPipeX0_[]        = {0.     ,0.      ,0.     , 0.     ,   0.  ,0.     , 0.    , 0.    ,  0.    , 0.           ,0.            , 0      , 0       ,0         ,0         , 0       , 0       , 0       , 0};
   G4double CPipeY0_[]        = {1.05e-2,-1.05e-2,1.05e-2,-1.05e-2,3.5e-2 ,-3.5e-2, 0.    , 0.    ,  0.    , 1.05e-2      ,-1.05e-2      , 5.95e-2, -5.95e-2,5.95e-2   ,-5.95e-2  , 5.95e-2 , -5.95e-2,5.95e-2  ,-5.95e-2};
   G4double CPipeZ0_[]        = {-0.275 , -0.275 ,-0.30  ,-0.30   , -.3001,-.3001 ,.969   , .9695 , .9735  , 0.955        ,0.955         , -0.215 , -0.215  ,-.071     ,-.071     ,-0.287   ,-0.287   , -.30    , -.30};
-  G4double CPipeDXDZ_[]      = {    0  ,  0     , 0     ,  0     ,-99999 ,-99999 , 0     ,  0    , 0      , 0            ,0             , 0.     , 0.      ,0.        ,0         , 0.      , 0.      , 0.      , 0.}; 
+  G4double CPipeDXDZ_[]      = {    0  ,  0     , 0     ,  0     ,-99999 ,-99999 , 0     ,  0    , 0      , 0            ,0             , 0.     , 0.      ,0.        ,0         , 0.      , 0.      , 0.      , 0.};
   G4double CPipeDYDZ_[]      = {    0  ,  0     , 0     ,  0     , 0     ,0      , 0     ,  0    , 0      , 0            ,0             , 0.     , 0.      ,0.        ,0         , 0.      , 0.      , 0.      , 0.};
   G4double CPipeLength_[]    = {1.230  , 1.230  , .025  , .025   , 0     ,0      , 5e-4  ,  4e-3 , 3e-3   , 14.e-3      ,14.e-3         , 14.4e-2, 14.4e-2 ,2e-2      ,2e-2      , 7.2e-2      ,7.2e-2  , 13e-3   ,13e-3};
   G4double CPipeRadiusOut_[] = {3e-3   , 3e-3   ,3e-3   ,3e-3    , 3e-3  ,3e-3   ,13.52e-3,14.1e-3,14.1e-3, 3.4e-3       , 3.4e-3       , 5e-3   , 5e-3    ,4e-3      ,4e-3      , 7.5e-3      , 7.5e-3 , 3e-3    ,3e-3};
@@ -293,24 +322,45 @@ if(!vacuumworld && !airhrn){
     CPipeCloseAng.push_back(CPipeCloseAng_[ii]*deg);
     CPipeVolName.push_back(CPipeVolName_[ii]);
   }
+  //~VXRM
   
   //Container
   //=======================================================================
-  // Z0 with respect to the first target fin
-  NContainerN=21;
+  // Z0 with respect to the first target finPVPla
+  //Modified by Vamis Xhagjika Dimensions should be in mm.
+
+  NContainerN=2;
+
+  //VXADD variables for the upstream window
+  UpstrFlangeRout      = TargetContRout;
+  UpstrFlangeL         = 6.35*mm;
+  UpstrFlangeMat       = 9;
+
+  UpstrBerSupportRout  = 69.342*mm / 2;
+  UpstrBerSupportL     = 6.35*mm;
+
+  UpstrBerLayerRout    = 44.45*mm / 2;
+  UpstrBerLayerL       = 0.25*mm;
+  UpstrBerLayerMat     = 5;
+
+  DwstrBerWindowRout   = 120.*mm / 2;
+      
+  UpstreamHoleRout     = 12.7*mm;
+  //~VXADD
   
-  G4double CTubeZ0_[]     ={-.42181, -.421556, -.41555, -.35855 , -0.3522 ,-.3332 ,-0.0802, -0.123  ,-0.109  ,-0.0572 ,-0.0492 , -0.04  ,-0.042 ,-.022 , -0.013   , -0.0035  ,0.011     , 0.011       ,  0.011      , 0.9785 , 0.9896  };
-  G4double CTubeLength_[] ={.254e-3, 6.006e-3, 5.7e-2 , 6.35e-3 , 19e-3   , 253e-3, 23e-3 , 11e-2   , 66e-3  ,8e-3   , 17e-3  , 6e-3   ,0.02   ,15e-3  , 24e-3    , 14.5e-3  , 0.9785   ,1e-6         , 0.9786      ,5e-4    , 1e-6};
-  G4double CTubeRin_[]    ={  0.   , 1.27e-2 , 1.7e-2 , 22.22e-3, 17.5e-3 , 77e-3 , 77e-3 , 14.6e-3 , 16.e-3 , 74e-3 , 24e-3  , 18.5e-3,16e-3  ,16e-3  , 14.6e-3  , 16e-3    , 14.6e-3  ,15.101e-3    , 15.1e-3     , 0.0    , 0.};
-  G4double CTubeRout_[]   ={22e-3  , 34.67e-3, 1.9e-2 , 34.67e-3, 107e-3  , 83e-3 , 120e-3, 16.0e-3 , 21.4e-3,106e-3 , 106e-3 , 24e-3  ,18.5e-3,18.5e-3, 16e-3    , 16.4e-3  , 15e-3    , .35         , 15.101e-3   ,14.15e-3, 15.1e-3  };
-  G4int CTubeGeantMat_[]  ={   5   ,  10     ,   10   , 10      , 10      , 10    , 10    ,  31     , 10     , 10    , 10     ,  10    , 10    ,10     , 10       , 9        , 9        ,15           ,  15         ,  5     ,  15};
-  G4String CTubeVolName_[]={"BeUp1", "BeUp2" , "Added", "BeUp3" , "BFront", "Body", "BEnd","CerTube", "Conn1","CLid1", "CLid2", "Conn2","Conn3","Tube1a" ,"Tube1b", "AlTube1", "AlTube2","TGTExitCyl1","TGTExitCyl2", "BeDW" ,"TGTExitTop"};
+  G4double CTubeZ0_[]     ={0.                      , 0.                                    };
+  G4double CTubeY0_[]     ={0.                      , 0.                                    };
+  G4double CTubeLength_[] ={TargetContHalfLength    , TargetContHalfLength                  };
+  G4double CTubeRin_[]    ={TargetContRout - 3.*mm  , TargetContRin                         };
+  G4double CTubeRout_[]   ={TargetContRout          , TargetContRin+((3.*mm*16.5*mm)/14.*mm)};
+  G4int CTubeGeantMat_[]  ={   9                    , 9                                     };
+  G4String CTubeVolName_[]={"ContOuterLayer"        , "ContInnerLayer"                      };
 
  for (G4int ii=0;ii<NContainerN;ii++){
-    CTubeZ0.push_back(CTubeZ0_[ii]*m);
-    CTubeLength.push_back(CTubeLength_[ii]*m);
-    CTubeRin.push_back(CTubeRin_[ii]*m);
-    CTubeRout.push_back(CTubeRout_[ii]*m);
+    CTubeZ0.push_back(CTubeZ0_[ii]*mm);
+    CTubeLength.push_back(CTubeLength_[ii]*mm);
+    CTubeRin.push_back(CTubeRin_[ii]*mm);
+    CTubeRout.push_back(CTubeRout_[ii]*mm);
     CTubeGeantMat.push_back(CTubeGeantMat_[ii]);
     CTubeVolName.push_back(CTubeVolName_[ii]);
  }
@@ -616,9 +666,9 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   HadrBox_height = 6.6294*m;
   HadrBox_length = 55.75*12*in-(4*12*in+2.24*in+9*12*in+9*in);
 
-  
-  HornCurrent=182100.*ampere; 
-  
+  //VXMOD
+  HornCurrent=200000.*ampere;//OLD 182100.*ampere;
+  //~VXMOD
   NPHorn2EndN=3;
   
   G4double PHorn2EndZ0_[]     ={135.861        ,137.611     ,139.486};

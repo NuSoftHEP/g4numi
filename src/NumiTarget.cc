@@ -1,7 +1,8 @@
-//----------------------------------------------------------------------
-// $Id: NumiTarget.cc,v 1.10.2.4 2009/09/24 16:43:38 martens Exp $
-//----------------------------------------------------------------------
-
+/**
+ * Author Vamis Xhagjika
+ * Module that constructs the target for the simulation.
+ **/
+ 
 #include "NumiDetectorConstruction.hh"
 
 #include "G4Material.hh"
@@ -24,14 +25,15 @@
 void NumiDetectorConstruction::ConstructTarget()
 {
   G4RotationMatrix rotation;
-  G4ThreeVector translation; 
+  G4ThreeVector translation;
   G4String Sname,PVname,LVname,vol_name;
   G4double tgtGap=0.025*mm;
   char no[3];
 
   // Mother volume (TGAR) position
-  G4ThreeVector target_hall_position=G4ThreeVector(0,0,NumiData->TargetAreaLength/2.+NumiData->TargetAreaZ0); 
+  G4ThreeVector target_hall_position=G4ThreeVector(0,0,NumiData->TargetAreaLength/2.+NumiData->TargetAreaZ0);
   G4ThreeVector targetPosition=G4ThreeVector(NumiData->TargetX0,NumiData->TargetY0,NumiData->TargetZ0);
+  G4ThreeVector containerDisplacement=G4ThreeVector(0.,NumiData->TargetContYOffset,0.);
     
   //Create Target Region
   //G4Region* TargetRegion = new G4Region("Numi Target");
@@ -40,60 +42,63 @@ void NumiDetectorConstruction::ConstructTarget()
   G4VSolid* sTargetMotherVol;
   G4VSolid* dummySolid;
   G4double mvGap=0.05*mm;
-  sTargetMotherVol=new G4Tubs("sTargetMotherVol",0.,NumiData->CTubeRout[0]+mvGap,NumiData->CTubeLength[0]/2.+mvGap,0.,360.*deg);
-  G4ThreeVector TargetMVOrigin=G4ThreeVector(0.,0.,NumiData->CTubeZ0[0]+NumiData->CTubeLength[0]/2.);
-  for (G4int ii=1;ii<NumiData->NContainerN;ii++){
-    dummySolid=new G4Tubs("dummySolid",0.,NumiData->CTubeRout[ii]+mvGap,NumiData->CTubeLength[ii]/2.+mvGap,0.,360.*deg);
-    translation=G4ThreeVector(0.,0.,NumiData->CTubeZ0[ii]+NumiData->CTubeLength[ii]/2.)-TargetMVOrigin;
-    rotation=G4RotationMatrix(0.,0.,0.);
-    sTargetMotherVol=new G4UnionSolid("sTargetMotherVol",sTargetMotherVol,dummySolid,G4Transform3D(rotation,translation));
-  }    
-  G4ThreeVector TargetMotherVolPosition=TargetMVOrigin-target_hall_position+targetPosition;
-  G4LogicalVolume* lvTargetMotherVol=new G4LogicalVolume(sTargetMotherVol,He,"lvTargetMother",0,0,0);
+  
+  G4ThreeVector TargetMVOrigin=G4ThreeVector(0., 0., NumiData->TargetContHalfLength) + containerDisplacement;
+  sTargetMotherVol = new G4Tubs("sTargetMotherVol", 0., NumiData->TargetContRout, NumiData->TargetContHalfLength, 0., 360.*deg);
+
+  G4ThreeVector TargetMotherVolPosition= TargetMVOrigin - target_hall_position + targetPosition;
+  
+  G4LogicalVolume* lvTargetMotherVol=new G4LogicalVolume(sTargetMotherVol, Air, "lvTargetMother", 0, 0, 0);
   //TargetRegion->AddRootLogicalVolume(lvTargetMotherVol);
   G4VPhysicalVolume* pvTargetMotherVol=new G4PVPlacement(0,TargetMotherVolPosition,"pvTargetMother",lvTargetMotherVol,TGAR,false,0);
+
+  vol_name= "pvTargetMother_HeliumFill";
+  G4VSolid* HelSolid=new G4Tubs("ContSolid", 0., NumiData->TargetContRin, NumiData->TargetContHalfLength - 2*NumiData->UpstrFlangeL - NumiData->UpstrBerSupportL, 0., 360.*deg);
+  G4ThreeVector HelVolPos=G4ThreeVector(0., 0., NumiData->TargetContHalfLength + NumiData->UpstrFlangeL)-TargetMVOrigin + containerDisplacement;
+  G4LogicalVolume* lvHelTube=new G4LogicalVolume(HelSolid, He, vol_name.append("LV"),0,0,0);
+  G4VPhysicalVolume* pvTargetMotherVolHelFill = new G4PVPlacement(0,HelVolPos,vol_name,lvHelTube,pvTargetMotherVol,true,0);
   
   //------------------------------------------------------------------------------------------------
   //Target
   //------------------------------------------------------------------------------------------------
-  // Carbon Target
-  
   //First create one segment
   G4double TGT_w=NumiData->TargetSWidth/2.;
   G4double TGT_h=NumiData->TargetSHeight/2.;
   G4double TGT_l=NumiData->TargetSLength/2.; //these are 0.5*true dimension
+  // Carbon Target
   
   G4VSolid* TGT1_solid;
-  G4Tubs* CPG_solid;
-  if (NumiData->TargetEndRounded) {
-    TGT_l=TGT_l-NumiData->TargetSWidth/2.;
-    G4Box* TGT2_solid=new G4Box("TGT2_solid",TGT_w,TGT_h,TGT_l);
-    G4Tubs* TGTRE_solid=new G4Tubs("TGTRE_solid",0.,TGT_w,TGT_h,0.,360.*deg); 
-    rotation=G4RotationMatrix(0,0,0); rotation.rotateX(90.*deg);
-    translation=G4ThreeVector(0,0,-TGT_l);
-    TGT1_solid=new G4UnionSolid("TGT1_solid",TGT2_solid,TGTRE_solid,G4Transform3D(rotation,translation));
-    translation=G4ThreeVector(0,0,TGT_l);
-    TGT1_solid=new G4UnionSolid("TGT1_solid",TGT1_solid,TGTRE_solid,G4Transform3D(rotation,translation));
+  
+  if (NumiData->TargetEndRounded){
+    TGT_l=TGT_l - NumiData->TargetSWidth/2.;
+    G4Box* TGT2_solid   =new G4Box("TGT2_solid",TGT_w,TGT_h,TGT_l);
+    G4Tubs* TGTRE_solid =new G4Tubs("TGTRE_solid",0.,TGT_w,TGT_h,0.,360.*deg);
+    rotation    =G4RotationMatrix(0,0,0); rotation.rotateX(90.*deg);
+    translation =G4ThreeVector(0,0,-TGT_l);
+    TGT1_solid  =new G4UnionSolid("TGT1_solid",TGT2_solid,TGTRE_solid,G4Transform3D(rotation,translation));
+    translation =G4ThreeVector(0,0,TGT_l);
+    TGT1_solid  =new G4UnionSolid("TGT1_solid",TGT1_solid,TGTRE_solid,G4Transform3D(rotation,translation));
   }
-  else{ 
+    else
+  {
     TGT1_solid=new G4Box("TGT1_solid",TGT_w,TGT_h,TGT_l);
   }
-  CPG_solid=new G4Tubs("CPG_solid",0.,NumiData->TargetCPGRadius,2.*TGT_l,0.,360.*deg);
-  rotation=G4RotationMatrix(0,0,0);
-  translation=G4ThreeVector(0,NumiData->TargetCPGPosition,0);
-  G4SubtractionSolid* TGT_solid=new G4SubtractionSolid("TGT_solid",TGT1_solid,CPG_solid,G4Transform3D(rotation,translation));
-  translation=G4ThreeVector(0,-NumiData->TargetCPGPosition,0);
-  TGT_solid=new G4SubtractionSolid("TGT_solid",TGT_solid,CPG_solid,G4Transform3D(rotation,translation));
-  G4LogicalVolume* LVTargetFin=new G4LogicalVolume(TGT_solid,Target,"LVTargetFin",0,0,0);
+  
+  G4LogicalVolume* LVTargetFin=new G4LogicalVolume(TGT1_solid,Target,"LVTargetFin",0,0,0);
   //Now create TargetSegmentNo of target fins and place them
-  for (G4int ii=0;ii<NumiData->TargetSegmentNo;ii++){
+  for (G4int ii=0; ii<NumiData->TargetSegmentNo; ii++){
     rotation=G4RotationMatrix(0,0,0);
     rotation.rotateX(atan(NumiData->TargetDydz));
     rotation.rotateY(atan(NumiData->TargetDxdz));
     // with this translation rotation axis is at the begining of the volume (x0,y0,z0) and not at its center
     translation=G4ThreeVector(-(sin(atan(NumiData->TargetDxdz)))*cos(atan(NumiData->TargetDydz))*NumiData->TargetSLength/2.,(sin(atan(NumiData->TargetDydz)))*NumiData->TargetSLength/2.,(1-cos(atan(NumiData->TargetDxdz))*cos(atan(NumiData->TargetDydz)))*NumiData->TargetSLength/2.);
-    G4ThreeVector targetSegmentPosition=G4ThreeVector(0.,0.,NumiData->TargetSLength/2.+(NumiData->TargetSegmentPitch+NumiData->TargetSLength)*ii)-TargetMVOrigin-translation;
-    new G4PVPlacement(G4Transform3D(rotation,targetSegmentPosition),"TGT1",LVTargetFin,pvTargetMotherVol,false,0);
+    G4ThreeVector targetSegmentPosition
+        = G4ThreeVector( NumiData->TargetSXOffset - NumiData->TargetSWidth/2.,
+                         NumiData->TargetSYOffset - NumiData->TargetSHeight/2.,
+                         NumiData->TargetSZOffset + TGT_l + ((NumiData->TargetSegmentPitch + NumiData->TargetSLength)*ii))
+          - TargetMVOrigin
+          - translation;
+    new G4PVPlacement(G4Transform3D(rotation, targetSegmentPosition), "TGT1", LVTargetFin, pvTargetMotherVolHelFill, true, ii);
   }
   
   // Budal Monitor
@@ -103,119 +108,161 @@ void NumiDetectorConstruction::ConstructTarget()
   rotation.rotateZ(90.*deg);
   // with this translation rotation axis is at the begining of the volume (x0,y0,z0) and not at its center
   translation=G4ThreeVector(-(sin(atan(NumiData->BudalDxdz)))*cos(atan(NumiData->BudalDydz))*NumiData->TargetSLength/2.,(sin(atan(NumiData->BudalDydz)))*NumiData->TargetSLength/2.,(1-cos(atan(NumiData->BudalDxdz))*cos(atan(NumiData->BudalDydz)))*NumiData->TargetSLength/2.);
-  G4ThreeVector budalMonitorPosition=G4ThreeVector(NumiData->BudalX0,NumiData->BudalY0,NumiData->BudalZ0+NumiData->TargetSLength/2.)-TargetMVOrigin;
+  G4ThreeVector budalMonitorPosition=G4ThreeVector(NumiData->BudalX0, NumiData->BudalY0 ,NumiData->BudalZ0 + NumiData->TargetSLength/2.) - TargetMVOrigin - translation;
   G4LogicalVolume* LVBudalMonitor=new G4LogicalVolume(TGT1_solid,Target,"LVBudalMonitor",0,0,0);
-  new G4PVPlacement(G4Transform3D(rotation,budalMonitorPosition),"BudalMonitor",LVBudalMonitor,pvTargetMotherVol,false,0);
+  new G4PVPlacement(G4Transform3D(rotation,budalMonitorPosition),"BudalMonitor",LVBudalMonitor,pvTargetMotherVolHelFill,true,0);
   
   //Container
+  
   G4LogicalVolume* lvContTube;
   G4VSolid* sContSolid;
-  for (G4int ii=0;ii<NumiData->NContainerN;ii++){
-    vol_name=NumiData->CTubeVolName[ii];
-    sContSolid=new G4Tubs("ContSolid",NumiData->CTubeRin[ii],NumiData->CTubeRout[ii],NumiData->CTubeLength[ii]/2.,0.,360.*deg);
-    G4ThreeVector ContPosition=G4ThreeVector(0.,0.,NumiData->CTubeZ0[ii]+NumiData->CTubeLength[ii]/2.)-TargetMVOrigin;//target_hall_position+targetPosition;    
-    lvContTube=new G4LogicalVolume(sContSolid,GetMaterial(NumiData->CTubeGeantMat[ii]),vol_name.append("LV"),0,0,0);
-    CNT[ii]=new G4PVPlacement(0,ContPosition,vol_name,lvContTube,pvTargetMotherVol,false,ii);
+  
+  for (G4int ii=0; ii<NumiData->NContainerN; ii++)
+  {
+    vol_name    =NumiData->CTubeVolName[ii];
+    sContSolid  =new G4Tubs("ContSolid",NumiData->CTubeRin[ii],NumiData->CTubeRout[ii],NumiData->CTubeLength[ii] - 2*NumiData->UpstrFlangeL - NumiData->UpstrBerSupportL,0.,360.*deg);
+    G4ThreeVector ContPosition=G4ThreeVector(0.,0.,NumiData->CTubeZ0[ii]+NumiData->CTubeLength[ii] + NumiData->UpstrFlangeL) - TargetMVOrigin + containerDisplacement;
+    lvContTube  =new G4LogicalVolume(sContSolid,GetMaterial(NumiData->CTubeGeantMat[ii]),vol_name.append("LV"),0,0,0);
+    CNT[ii]     =new G4PVPlacement(0,ContPosition,vol_name,lvContTube,pvTargetMotherVol,false,1);
   }
 
-  //Rings that hold target and cooling pipes
-  G4LogicalVolume* lvTgtRing;
-  G4Box* TGT_box_solid;
-  G4VSolid* STgtRing;
-  for (G4int ii=0;ii<NumiData->NTgtRingN;ii++){
-    vol_name=NumiData->TgtRingVolName[ii];
-    STgtRing = new G4Tubs("STgtRing",NumiData->TgtRingRin[ii],NumiData->TgtRingRout[ii],NumiData->TgtRingLength[ii]/2.,0.,360.*deg);
-    G4ThreeVector TgtRingPosition=G4ThreeVector(0.,0.,NumiData->TgtRingZ0[ii]+NumiData->TgtRingLength[ii]/2.)-TargetMVOrigin;
-    //make holes for pipes
-    CPG_solid=new G4Tubs("CPG_solid",0.,NumiData->CPipeRadiusOut[0],2*NumiData->TgtRingLength[ii],0.,360.*deg);
-    rotation=G4RotationMatrix(0,0,0);
-    translation=G4ThreeVector(0,NumiData->CPipeY0[0],0);
-    STgtRing = new G4SubtractionSolid("STgtRing",STgtRing,CPG_solid,G4Transform3D(rotation,translation));
-    translation=G4ThreeVector(0,-NumiData->CPipeY0[0],0);
-    STgtRing = new G4SubtractionSolid("RingSolid",STgtRing,CPG_solid,G4Transform3D(rotation,translation));
-    // clip off edges so that target fits inside
-    G4double TGT_w=NumiData->TargetSWidth/2.;
-    G4double TGT_h=NumiData->TargetSHeight/2.;
-    G4double TGT_l=NumiData->TargetSLength/2.; //these are 0.5*true dimension
-    TGT_box_solid=new G4Box("TgtBox",1.1*TGT_w,1.025*TGT_h,TGT_l);
-    STgtRing = new G4SubtractionSolid("RingSolid",STgtRing,TGT_box_solid);
-    lvTgtRing=new G4LogicalVolume(STgtRing,GetMaterial(NumiData->TgtRingGeantMaterial[ii]),vol_name.append("LV"),0,0,0);
-    new G4PVPlacement(0,TgtRingPosition,vol_name,lvTgtRing,pvTargetMotherVol,false,0);
-  }
+  vol_name    = "ContainerWaterRing";
+  sContSolid  =new G4Tubs("ContSolid", NumiData->TargetContRin + ((3.*mm*16.5*mm)/14*mm), NumiData->TargetContRout - 3*mm, NumiData->TargetContHalfLength - 2*NumiData->UpstrFlangeL - NumiData->UpstrBerSupportL, 0., 360.*deg);
+  G4ThreeVector ContPosition=G4ThreeVector(0., 0., NumiData->TargetContHalfLength + NumiData->UpstrFlangeL)-TargetMVOrigin + containerDisplacement;
+  lvContTube  =new G4LogicalVolume(sContSolid,Water,vol_name.append("LV"),0,0,0);
+  new G4PVPlacement(0,ContPosition,vol_name,lvContTube,pvTargetMotherVol,false,1);
 
-  //Cooling pipes
-  G4Tubs* CP_solid;
-  G4Tubs* CP_water_solid;
-  G4Torus* CPipe_tor;
-  G4Torus* CPipeW_tor;
-  for (G4int ii=0;ii<NumiData->NCPipeN;ii++){
-    sprintf(no,"%d",ii+1);
-    vol_name="PV"; vol_name=vol_name.append(NumiData->CPipeVolName[ii]);
-    Sname="S";  Sname=Sname.append(NumiData->CPipeVolName[ii]);
-    LVname="LV"; LVname=LVname.append(NumiData->CPipeVolName[ii]);
-    PVname=""; PVname=PVname.append(NumiData->CPipeVolName[ii]);
- 
-    if (NumiData->CPipeCurvRad[ii]==0){
-      CP_solid=new G4Tubs(Sname,NumiData->CPipeRadiusIn[ii],NumiData->CPipeRadiusOut[ii]-tgtGap,NumiData->CPipeLength[ii]/2.-tgtGap,0.,360.*deg);
-      LVCPipe[ii]=new G4LogicalVolume(CP_solid,GetMaterial(NumiData->CPGeantMat[ii]),LVname,0,0,0);
-      // Position the pipe
-      rotation=G4RotationMatrix(0,0,0);
-      rotation.rotateX(atan(NumiData->CPipeDYDZ[ii]));
-      rotation.rotateY(atan(NumiData->CPipeDXDZ[ii]));
-      translation=G4ThreeVector(-(sin(atan(NumiData->CPipeDXDZ[ii])))*cos(atan(NumiData->CPipeDYDZ[ii]))*NumiData->CPipeLength[ii]/2.,(sin(atan(NumiData->CPipeDYDZ[ii])))*NumiData->CPipeLength[ii]/2.,(1-cos(atan(NumiData->CPipeDXDZ[ii]))*cos(atan(NumiData->CPipeDYDZ[ii])))*NumiData->CPipeLength[ii]/2.);
-      G4ThreeVector CPipe_position=G4ThreeVector(NumiData->CPipeX0[ii],NumiData->CPipeY0[ii],NumiData->CPipeZ0[ii]+NumiData->CPipeLength[ii]/2.)-TargetMVOrigin-translation;
-      PVCPipe[ii]=new G4PVPlacement(G4Transform3D(rotation,CPipe_position),PVname,LVCPipe[ii],pvTargetMotherVol,false,0);
-      if (NumiData->CPipeFilledWater[ii]) {
-	Sname=Sname.append("_water");
-	LVname=LVname.append("_water");
-	PVname=PVname.append("_water");
-	if (NumiData->CPipeRadiusIn[ii]==0) {
-	  CP_water_solid=new 
-	    G4Tubs(Sname,0.,NumiData->CPipeRadiusOut[ii]-NumiData->CPipeWallThick[ii],NumiData->CPipeLength[ii]/2.-tgtGap,0.,360.*deg);
-	}
-	else {
-	  CP_water_solid=new 
-	    G4Tubs(Sname,NumiData->CPipeRadiusIn[ii]+NumiData->CPipeWallThick[ii],NumiData->CPipeRadiusOut[ii]-NumiData->CPipeWallThick[ii],NumiData->CPipeLength[ii]/2.-tgtGap,0.,360.*deg);
-	}
-	LVCPipeW[ii]=new G4LogicalVolume(CP_water_solid,Water,LVname,0,0,0);
-	G4VisAttributes * WaterPipeAtt=new G4VisAttributes(G4Colour(0.,0.,1.));
-	LVCPipeW[ii]->SetVisAttributes(WaterPipeAtt);
-	new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),PVname,LVCPipeW[ii],PVCPipe[ii],false,0);
-      }
-    }
+  //VXADD Adding berilium upstream window
+  G4double UpstreamHoleL      = 2*NumiData->UpstrBerSupportL + 2*NumiData->UpstrFlangeL;
+  
+  G4LogicalVolume* lvUpstrFlange;
+  G4VSolid*        sFinalSolid;
+  G4VSolid*        sTempSolid;
+  
+  
+  vol_name = "UpstreamFlange";
+  
+  //Create the support for the Berilium window.
+  sFinalSolid = new G4Tubs("UpstreamSupport", 0., NumiData->UpstrBerSupportRout, NumiData->UpstrBerSupportL, 0., 360.*deg);
+  //Create the Flange and unite that with the support.
+  sTempSolid  = new G4Tubs("UpstreamFlange", 0., NumiData->UpstrFlangeRout, NumiData->UpstrFlangeL, 0., 360.*deg);
+  G4ThreeVector FlangePos = G4ThreeVector(0.,0.,NumiData->UpstrFlangeL + NumiData->UpstrBerSupportL) + containerDisplacement;
+  rotation    = G4RotationMatrix(0,0,0);
+  sFinalSolid = new G4UnionSolid("sTempSolid", sFinalSolid, sTempSolid, G4Transform3D(rotation, FlangePos));
+
+  //Now create the hole that passes that throught
+  sTempSolid  = new G4Tubs("tempObject", 0., NumiData->UpstrBerLayerRout, UpstreamHoleL, 0., 360.*deg);
+  G4ThreeVector HolePos = G4ThreeVector(0.,0.,NumiData->UpstrBerSupportL);
+  rotation    = G4RotationMatrix(0,0,0);
+  sFinalSolid = new G4SubtractionSolid("sTempSolid", sFinalSolid, sTempSolid, G4Transform3D(rotation, HolePos));
+
+  //Now create the hole for teh berilium window to be placed in
+  sTempSolid  = new G4Tubs("tempObject", 0., NumiData->UpstrBerLayerRout, NumiData->UpstrBerSupportL/2, 0., 360.*deg);
+  HolePos     = G4ThreeVector(0.,0.,NumiData->UpstrBerSupportL/2);
+  rotation    = G4RotationMatrix(0,0,0);
+  sFinalSolid = new G4SubtractionSolid("sTempSolid", sFinalSolid, sTempSolid, G4Transform3D(rotation, HolePos));
+
+  G4ThreeVector FinalBerPos =  G4ThreeVector(0., 0., NumiData->UpstrBerSupportL) - TargetMVOrigin;
+  
+  lvUpstrFlange = new G4LogicalVolume(sFinalSolid , GetMaterial(NumiData->UpstrFlangeMat), vol_name.append("LV"), 0, 0, 0);
+  new G4PVPlacement(0, FinalBerPos, vol_name, lvUpstrFlange, pvTargetMotherVol, false, 1);
+
+  //Now Add the actual berilium window
+  vol_name      ="BeUp1";
+  sFinalSolid   = new G4Tubs("UpstreamFlange", 0., NumiData->UpstrBerLayerRout, NumiData->UpstrBerLayerL, 0., 360.*deg);
+  G4ThreeVector BerPos = G4ThreeVector(0., 0., NumiData->UpstrBerLayerL) - TargetMVOrigin;
+  rotation      = G4RotationMatrix(0,0,0);
+  lvUpstrFlange = new G4LogicalVolume(sFinalSolid , GetMaterial(NumiData->UpstrBerLayerMat), vol_name.append("LV"), 0, 0, 0);
+  new G4PVPlacement(0, BerPos, vol_name, lvUpstrFlange, pvTargetMotherVol, false, 1);
+
+  
+  //Create the downstream berilium window starting from the Flange
+  vol_name    = "TGTExitCyl1";
+  sFinalSolid = new G4Tubs(vol_name, 0., NumiData->UpstrFlangeRout, NumiData->UpstrFlangeL, 0., 360.*deg);
+  sTempSolid  = new G4Tubs(vol_name, 0., NumiData->DwstrBerWindowRout, NumiData->UpstrFlangeL + 2.*mm, 0., 360.*deg);
+  HolePos     = G4ThreeVector(0.,0.,0.) - containerDisplacement;
+  rotation    = G4RotationMatrix(0,0,0);
+  sFinalSolid = new G4SubtractionSolid(vol_name, sFinalSolid, sTempSolid, G4Transform3D(rotation, HolePos));
+
+  G4ThreeVector finalDest = G4ThreeVector(0., 0., NumiData->TargetContHalfLength * 2 - NumiData->UpstrFlangeL) - TargetMVOrigin + containerDisplacement;
+  
+  lvUpstrFlange = new G4LogicalVolume(sFinalSolid , GetMaterial(NumiData->UpstrFlangeMat), vol_name.append("LV"), 0, 0, 0);
+  new G4PVPlacement(0, finalDest, vol_name, lvUpstrFlange, pvTargetMotherVol, false, 1);
+
+  //Now Add the actual berilium window
+  vol_name      ="BeDW";
+  sFinalSolid   = new G4Tubs("UpstreamFlange", 0., NumiData->DwstrBerWindowRout, NumiData->UpstrBerLayerL, 0., 360.*deg);
+  finalDest     = G4ThreeVector(0., 0., NumiData->TargetContHalfLength * 2 - NumiData->UpstrBerLayerL) - TargetMVOrigin;
+  rotation      = G4RotationMatrix(0,0,0);
+  lvUpstrFlange = new G4LogicalVolume(sFinalSolid , GetMaterial(NumiData->UpstrBerLayerMat), vol_name.append("LV"), 0, 0, 0);
+  new G4PVPlacement(0, finalDest, vol_name, lvUpstrFlange, pvTargetMotherVol, false, 1);
+
+  /**
+   * Construct Cooling for the fins. This are all relative to the target fins variables so that it does not need much specific variables in DataInput
+   */
+  
+  //Number of fins * length of a fin
+  G4double    FinCoolerZLength;
+  //Solid for the scheleton the same will be used for both left and right side so we need that to create the Volume
+  G4VSolid*    FinCoolerOuterBox;
+  G4VSolid*    FinCoolerWaterTubeOuterBox;
+  
+  //Solid to shape the FincCoolerOuterBox
+  G4VSolid*    FinCoolerBoxIn;
+  //Solid for the water pipes
+  G4VSolid*    FinCoolerPipe;
+
+  //Volume variables
+  G4LogicalVolume* NoWaterFinCooler;
+  G4LogicalVolume* WatterFinCooler;
+  G4LogicalVolume* FinCoolingWaterPipe;
+  
+  FinCoolerZLength  = NumiData->TargetSegmentNo * (NumiData->TargetSegmentPitch + NumiData->TargetSLength);
+  FinCoolerZLength -= NumiData->TargetSegmentPitch;
+  
+  FinCoolerOuterBox = new G4Box("CoolerBox", NumiData->FinCoolerXlength/2, NumiData->FinCoolerYLength/2, FinCoolerZLength/2);
+  FinCoolerWaterTubeOuterBox = new G4Box("WaterCoolerBox", NumiData->FinCoolerXlength/2, NumiData->FinCoolerYLength/2, FinCoolerZLength/2);
+  FinCoolerBoxIn    = new G4Box("InternalNoFillBox",NumiData->FinCoolerBoxInXLength/2, NumiData->FinCoolerBoxInYLength/2, FinCoolerZLength/2);
+
+  G4ThreeVector FinCoolerBoxInPos = G4ThreeVector(NumiData->FinCoolerXlength/2 - NumiData->FinCoolerBoxInXLength/2, 0., 0.);
+  rotation       = G4RotationMatrix(0,0,0);
+  FinCoolerOuterBox = new G4SubtractionSolid("CoolerBox", FinCoolerOuterBox, FinCoolerBoxIn, G4Transform3D(rotation, FinCoolerBoxInPos));
+
+  //Create the tunnel to place the the water tubes
+  FinCoolerPipe  = new G4Tubs("WaterSolid", 0., NumiData->WaterPipeRout, FinCoolerZLength/2, 0., 360.*deg);
+
+  //Cooling part with the water tubes
+  G4ThreeVector WaterPipePos = G4ThreeVector(0., NumiData->FinCoolerYLength/2 - NumiData->WaterPipeRout, 0.);
+  FinCoolerWaterTubeOuterBox = new G4SubtractionSolid("WaterCoolerBox", FinCoolerWaterTubeOuterBox, FinCoolerPipe, G4Transform3D(rotation, WaterPipePos));
+  
+  WaterPipePos = G4ThreeVector(0.,-NumiData->FinCoolerYLength/2 + NumiData->WaterPipeRout, 0.);
+  FinCoolerWaterTubeOuterBox = new G4SubtractionSolid("WaterCoolerBox", FinCoolerWaterTubeOuterBox, FinCoolerPipe, G4Transform3D(rotation, WaterPipePos));
+
+  //place the non material tunnel in the middle of the clamps
+  FinCoolerBoxInPos = G4ThreeVector(-NumiData->FinCoolerXlength/2 + NumiData->FinCoolerBoxInXLength/2, 0., 0.);
+  FinCoolerWaterTubeOuterBox = new G4SubtractionSolid("WaterCoolerBox", FinCoolerWaterTubeOuterBox, FinCoolerBoxIn, G4Transform3D(rotation, FinCoolerBoxInPos));
+  
+  //Place the no water Clamp into the target mother volume
+  vol_name = "NoWaterCoolingPart";
+  finalDest = G4ThreeVector(NumiData->TargetSXOffset - NumiData->TargetSWidth - NumiData->FinCoolerXlength/2., NumiData->TargetSYOffset - NumiData->FinCoolingYOffset - NumiData->FinCoolerYLength/2, NumiData->TargetSZOffset + FinCoolerZLength/2.) - TargetMVOrigin;
+  NoWaterFinCooler    = new G4LogicalVolume(FinCoolerOuterBox, Al, vol_name.append("LV"), 0, 0, 0);
+  new G4PVPlacement(0, finalDest, vol_name, NoWaterFinCooler, pvTargetMotherVolHelFill, false, 1);
+
+  //Place the water cooled Clamp into the target mother volume
+  vol_name = "WaterCoolingPart";
+  finalDest = G4ThreeVector(NumiData->TargetSXOffset + NumiData->FinCoolerXlength/2., NumiData->TargetSYOffset - NumiData->FinCoolingYOffset - NumiData->FinCoolerYLength/2, NumiData->TargetSZOffset + FinCoolerZLength/2.) - TargetMVOrigin;
+  FinCoolingWaterPipe = new G4LogicalVolume(FinCoolerWaterTubeOuterBox, Al, vol_name.append("LV"), 0, 0, 0);
+  new G4PVPlacement(0, finalDest, vol_name, FinCoolingWaterPipe, pvTargetMotherVolHelFill, false, 1);
+  
+  //Place the water tubes into the water cooled Clamp
+  vol_name = "FinCoolingWaterPipe";
+  FinCoolingWaterPipe = new G4LogicalVolume(FinCoolerPipe, Water, vol_name.append("LV"), 0, 0, 0);
     
-    if (NumiData->CPipeCurvRad[ii]!=0){
-      G4double dPhi=NumiData->CPipeCloseAng[ii]-NumiData->CPipeOpenAng[ii];
-      /*                        
-	if((-NumiData->CPipeOpenAng[ii]+NumiData->CPipeCloseAng[ii])>NumiData->CPipeOpenAng[ii]){
-	dPhi=-2*NumiData->CPipeOpenAng[ii]+NumiData->CPipeCloseAng[ii]; 
-      }
-      else {
-	dPhi=360.*deg-2*NumiData->CPipeOpenAng[ii]+NumiData->CPipeCloseAng[ii]; //there is a bug in G4Torus (geant4.6) visualization, so use this to visualize it; should be fixed in 4.7.x
-      }
-      */
-      CPipe_tor=new G4Torus(Sname,NumiData->CPipeRadiusOut[ii]-NumiData->CPipeWallThick[ii],NumiData->CPipeRadiusOut[ii],NumiData->CPipeCurvRad[ii],NumiData->CPipeOpenAng[ii],dPhi);
-      LVCPipe[ii]=new G4LogicalVolume(CPipe_tor,GetMaterial(NumiData->CPGeantMat[ii]),LVname,0,0,0);
-
-      // Position the pipe  
-      rotation=G4RotationMatrix(0,0,0);
-      rotation.rotateX(atan(NumiData->CPipeDYDZ[ii]));
-      rotation.rotateY(atan(NumiData->CPipeDXDZ[ii]));
-      translation=G4ThreeVector(-(sin(atan(NumiData->CPipeDXDZ[ii])))*cos(atan(NumiData->CPipeDYDZ[ii]))*NumiData->CPipeLength[ii]/2.,(sin(atan(NumiData->CPipeDYDZ[ii])))*NumiData->CPipeLength[ii]/2.,(1-cos(atan(NumiData->CPipeDXDZ[ii]))*cos(atan(NumiData->CPipeDYDZ[ii])))*NumiData->CPipeLength[ii]/2.);
-      G4ThreeVector CPipe_position=G4ThreeVector(NumiData->CPipeX0[ii],NumiData->CPipeY0[ii],NumiData->CPipeZ0[ii]+NumiData->CPipeLength[ii]/2.)-TargetMVOrigin-translation;
-      PVCPipe[ii]=new G4PVPlacement(G4Transform3D(rotation,CPipe_position),PVname,LVCPipe[ii],pvTargetMotherVol,false,0);
-      
-      if (NumiData->CPipeFilledWater[ii]) {
-	Sname=Sname.append("_water");
-	LVname=LVname.append("_water");
-	PVname=PVname.append("_water"); 
-	CPipeW_tor=new G4Torus(Sname,0.,(NumiData->CPipeRadiusOut[ii]-NumiData->CPipeWallThick[ii])-tgtGap,NumiData->CPipeCurvRad[ii],NumiData->CPipeOpenAng[ii],dPhi);
-	LVCPipeW[ii]=new G4LogicalVolume(CPipeW_tor,Water,LVname,0,0,0);
-	G4VisAttributes * WaterPipeAtt=new G4VisAttributes(G4Colour(0.,0.,1.)); 
-	LVCPipeW[ii]->SetVisAttributes(WaterPipeAtt);
-	new G4PVPlacement(G4Transform3D(rotation,CPipe_position),PVname,LVCPipeW[ii],pvTargetMotherVol,false,0);
-      }
-    }
-  }
-  G4cout << "Target Constructed" << G4endl;  
+  finalDest = G4ThreeVector(NumiData->TargetSXOffset + NumiData->FinCoolerXlength/2.,  NumiData->TargetSYOffset - NumiData->FinCoolingYOffset - NumiData->WaterPipeRout, NumiData->TargetSZOffset + FinCoolerZLength/2.) - TargetMVOrigin;
+  new G4PVPlacement(0, finalDest, vol_name, FinCoolingWaterPipe, pvTargetMotherVolHelFill, false, 0);
+  
+  finalDest = G4ThreeVector(NumiData->TargetSXOffset + NumiData->FinCoolerXlength/2.,  NumiData->TargetSYOffset - NumiData->FinCoolingYOffset - NumiData->FinCoolerYLength + NumiData->WaterPipeRout, NumiData->TargetSZOffset + FinCoolerZLength/2.) - TargetMVOrigin;
+  new G4PVPlacement(0, finalDest, vol_name, FinCoolingWaterPipe, pvTargetMotherVolHelFill, false, 1);
+  
+  G4cout << "Target Constructed" << G4endl;
 }

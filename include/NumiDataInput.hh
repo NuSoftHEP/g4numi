@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh,v 1.22.2.4 2009/09/24 16:43:38 martens Exp $
+// $Id: NumiDataInput.hh,v 1.22.2.5 2009/10/20 16:13:55 martens Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -31,7 +31,8 @@ private:
 public:
   void SetTargetZ0(G4double val) {
     TargetZ0 = val;
-    HPBaffleZ0 += (val + 0.45*m);
+    //Modified by Vamis Xhagjika to meet Nova criteria
+    HPBaffleZ0 = (val - 697.6364*mm - HPBaffleLength); //OLD (val + 0.45*m);
   }
    void SetHornCurrent(G4double val) {
       HornCurrent = val;
@@ -232,6 +233,16 @@ public:
    // Target
    G4bool constructTarget;
    G4double TargetX0, TargetY0, TargetZ0, TargetDxdz, TargetDydz;
+
+   //VXADD Added By Vamis Xhagjika
+   G4double TargetContHalfLength, TargetContRin, TargetContRout, TargetContYOffset, TargetSYOffset, TargetSXOffset, TargetSZOffset;
+   
+   //Fin Cooling system variables
+   G4double FinCoolerXlength, FinCoolerYLength, FinCoolerBoxInXLength, FinCoolerBoxInYLength, WaterPipeRout, FinCoolingYOffset;
+    
+   G4int TargetContMaterial;
+   //~VXADD
+
    G4double TargetSLength, TargetSWidth, TargetSHeight, TargetA, TargetDensity;
    G4double  TargetZ, TargetRL;
    G4int TargetGEANTmat,TargetSegmentNo;
@@ -263,7 +274,13 @@ public:
   
   //Container
   G4int NContainerN;
-  vdouble_t CTubeZ0,CTubeLength,CTubeRin,CTubeRout;
+  
+  //VXADD Variables for the upstream window
+  G4double UpstrFlangeRout, UpstrFlangeL, UpstrBerSupportRout, UpstrBerSupportL, UpstrBerLayerRout, UpstrBerLayerL, UpstreamHoleRout, DwstrBerWindowRout;
+  G4int    UpstrFlangeMat, UpstrBerLayerMat;
+  //~VXADD
+   
+  vdouble_t CTubeZ0,CTubeY0,CTubeLength,CTubeRin,CTubeRout; 
   vint_t CTubeGeantMat;
   vstring_t CTubeVolName;
 

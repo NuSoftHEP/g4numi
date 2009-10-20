@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc,v 1.13.2.4 2009/09/24 16:43:38 martens Exp $
+// $Id: NumiDetectorConstruction.cc,v 1.13.2.5 2009/10/20 16:13:55 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -103,14 +103,16 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   // but horn 2 stays i the same place. If you want to make a 'gnumi-like' horn1 you need to go (in horn1 coordinates)
   // from -3*cm to 2.97m  (the -3 cm probably doesnt matter since not many particles will make it through there anyway)
 
-  G4ThreeVector horn2pos(0.,0.,10*m); 
+  //Placing horn at 19m for the NOvA ME configuration - L. Corwin 2009 July 01
+
+  G4ThreeVector horn2pos(0.,0.,19*m); 
   G4RotationMatrix horn2rot(0.,0.,0.);
   if (NumiData->jCompare) {
-    G4ThreeVector horn2pos(0.,0.,10.03*m);        
+    G4ThreeVector horn2pos(0.,0.,19.03*m);        
     ConstructHorn2(horn2pos,horn2rot);
   }
   else {
-    G4ThreeVector horn2pos(0.,0.,10.*m);
+    G4ThreeVector horn2pos(0.,0.,19.*m);
     ConstructHorn2(horn2pos,horn2rot);    
   }
 
