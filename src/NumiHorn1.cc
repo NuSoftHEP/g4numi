@@ -307,7 +307,7 @@ G4double NumiDetectorConstruction::PHorn1OCRout(G4double z)
 {
   G4double r=0;
 
-  //Difference in diameter from 1 current numi thickness to 5./8. nova thickness for the horn. The numbers are left in the formula below
+  //Difference in thickness from 1*in current numi to 5./8.*in nova for the horn. The numbers are left in the formula below
   //you have the diference in diameter between the nova and the numi hornOCRoutDelta = (5./8. - 1.) * 2.
 
   /**
