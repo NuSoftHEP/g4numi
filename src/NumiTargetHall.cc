@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // Target hall chase and duratek blocks modifications by Zachary Barnett.
-// $Id: NumiTargetHall.cc,v 1.11.2.4 2009/09/24 16:43:38 martens Exp $
+// $Id: NumiTargetHall.cc,v 1.11.2.5 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 #include "NumiDetectorConstruction.hh"
 
@@ -26,8 +26,8 @@ void NumiDetectorConstruction::ConstructTargetHall()
 
   G4Box* sTGAR=new G4Box("sTGAR",TGAR_width,TGAR_height,TGAR_length);
   G4LogicalVolume *lvTGAR=new G4LogicalVolume(sTGAR,Air,"lvTGAR",0,0,0);
-  TGAR = new G4PVPlacement(0,targetHallPosition,"TGAR",lvTGAR,ROCK,false,0);
- 
+  TGAR = new G4PVPlacement(0,targetHallPosition,"TGAR",lvTGAR,ROCK,false,0,NumiData->pSurfChk);
+
   NumiData->ApplyStepLimits(lvTGAR);
   if (NumiData->NTHConcreteSectionsN!=0){
     // Begin constructing Target Hall Concrete Chase
@@ -54,23 +54,29 @@ void NumiDetectorConstruction::ConstructTargetHall()
     // loop to place all the concrete sections
     for (G4int ii=0;ii<NumiData->NTHConcreteSectionsN;ii++) {
       
+      // Mike Martens comment.This is confusing to me. 
+      // Since the concrete blocks are placed in the TGAR volume, 
+      // why not just place them with z=0. In other words:
+      // translation = 
+      // G4ThreeVector(NumiData->THConcreteX0[ii],NumiData->THConcreteY0[ii],0)
+
       translation = G4ThreeVector(NumiData->THConcreteX0[ii], NumiData->THConcreteY0[ii], NumiData->THConcreteZ0[ii]) - targetHallPosition;
       
       // place sections 0 and 4
       if (ii == 0 || ii == 4) {
-	new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection0and4, TGAR, false, 0);
+	new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection0and4, TGAR, false, 0, NumiData->pSurfChk);
 	 }
       //place sections 1 and 3
       else if (ii == 1 || ii == 3) {
-	new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection1and3, TGAR, false, 0);
+	new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection1and3, TGAR, false, 0, NumiData->pSurfChk);
       }
       // place section 2
       else if (ii==2) {
-	new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection2, TGAR, false, 0);
+	new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection2, TGAR, false, 0, NumiData->pSurfChk);
       }
       // place section 5
 	 else if (ii == 5) {
-	   new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection5, TGAR, false, 0);
+	   new G4PVPlacement(0, translation, "Concrete Chase Section", lvConcreteSection5, TGAR, false, 0, NumiData->pSurfChk);
 	 }
     }
     G4cout <<"Concrete Chase Sections constructed" << G4endl;
@@ -113,11 +119,13 @@ void NumiDetectorConstruction::ConstructTargetHall()
     tempgnumiBC = new G4Box("sDuratekgnumiBC", 0.0531*m ,0.99625*m, NumiData->THBlockLength[0]/2);
     G4LogicalVolume *lvDuratekBlockgnumiBC = new G4LogicalVolume(tempgnumiBC, Fe, "lvDuratekBlockgnumiBC", 0, 0, 0);
 
-    tempgnumiD = new G4Box("sDuratekgnumiD", 0.5842*m,0.301475*m, 7.85*m);
+    // Mike Martens (Need to move Horn 2 by 9 meters downstream)
+    // Positions are changed in NumiDataInput.cc
+    tempgnumiD = new G4Box("sDuratekgnumiD", 0.5842*m,0.301475*m, 7.85*m+4.5*m);
     G4LogicalVolume *lvDuratekBlockgnumiD = new G4LogicalVolume(tempgnumiD, Fe, "lvDuratekBlockgnumiD", 0, 0,0);
     tempgnumiD3 = new G4Box("sDuratekgnumiD3", 0.5842*m, 0.286475*m, (6/2)*m);
     G4LogicalVolume *lvDuratekBlockgnumiD3 = new G4LogicalVolume(tempgnumiD3, Fe, "lvDuratekBlockgnumiD3",0,0,0);
-    tempgnumiD2 = new G4Box("sDuratekgnumiD2", 0.5842*m, 0.301475*m,15.349*m);
+    tempgnumiD2 = new G4Box("sDuratekgnumiD2", 0.5842*m, 0.301475*m,15.3485*m-4.5*m);
     G4LogicalVolume *lvDuratekBlockgnumiD2 = new G4LogicalVolume(tempgnumiD2, Fe, "lvDuratekBlockgnumiD2",0,0,0);
 
 
@@ -132,23 +140,23 @@ void NumiDetectorConstruction::ConstructTargetHall()
       
       // if statement controls which blocks are rotated about the Z axis for placement.  Also places the modified top covering blocks
       if (ii == 3 || (ii >= 6 && ii < 15)) {
-	new G4PVPlacement(tallrotation, DuratekCasing_position, "DuratekBlock", lvDuratekBlock, TGAR, false, 0); 
+	new G4PVPlacement(tallrotation, DuratekCasing_position, "DuratekBlock", lvDuratekBlock, TGAR, false, 0, NumiData->pSurfChk); 
       }
       else {
 	if (ii == 15 || ii == 16) {
-			 new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockCovering", lvDuratekBlockCovering, TGAR, false, 0);    
+			 new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockCovering", lvDuratekBlockCovering, TGAR, false, 0, NumiData->pSurfChk);    
 	}
 	else if(ii>=18 &&NumiData->g3Chase){//Added by Jasmine to make more like gnumi. 
-	  if(ii==18) new G4PVPlacement(0, DuratekCasing_position,"DuratekBlockgnumi", lvDuratekBlockgnumiA, TGAR, false, 0);    
-	  if(ii==19 || ii==20) new G4PVPlacement(0, DuratekCasing_position,"DuratekBlockgnumi", lvDuratekBlockgnumiBC, TGAR, false, 0);
-	  if(ii==21) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD, TGAR, false, 0);
-          if(ii==22) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD2, TGAR, false, 0);
-          if(ii==23) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD3, TGAR, false, 0);
+	  if(ii==18) new G4PVPlacement(0, DuratekCasing_position,"DuratekBlockgnumi", lvDuratekBlockgnumiA, TGAR, false, 0, NumiData->pSurfChk);    
+	  if(ii==19 || ii==20) new G4PVPlacement(0, DuratekCasing_position,"DuratekBlockgnumi", lvDuratekBlockgnumiBC, TGAR, false, 0, NumiData->pSurfChk);
+	  if(ii==21) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD, TGAR, false, 0, NumiData->pSurfChk);
+          if(ii==22) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD2, TGAR, false, 0, NumiData->pSurfChk);
+          if(ii==23) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD3, TGAR, false, 0, NumiData->pSurfChk);
    
 	}
 
 	else {
-	  new G4PVPlacement(0, DuratekCasing_position, "DuratekBlock", lvDuratekBlock, TGAR, false, 0);     
+	  new G4PVPlacement(0, DuratekCasing_position, "DuratekBlock", lvDuratekBlock, TGAR, false, 0, NumiData->pSurfChk);     
 	}
       }
     }
@@ -175,7 +183,7 @@ void NumiDetectorConstruction::ConstructTargetHall()
       //      BLK_log[ii]->SetVisAttributes(invisible);
       volName="THBLK"; volName.append(no);
       G4ThreeVector blockPosition=G4ThreeVector(NumiData->THBlockX0[ii],NumiData->THBlockY0[ii],NumiData->THBlockZ0[ii]+NumiData->THBlockLength[ii]/2.)-targetHallPosition;
-      new G4PVPlacement(0,blockPosition,volName,lvTHBLK,TGAR,false,0);
+      new G4PVPlacement(0,blockPosition,volName,lvTHBLK,TGAR,false,0, NumiData->pSurfChk);
     }
     G4cout << "GNUMI like Target Hall Constructed" << G4endl;
   }

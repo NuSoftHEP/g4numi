@@ -146,7 +146,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   lvMHorn1->SetVisAttributes(invisible);
   rotation=hornrot;
   translation=hornpos-TargetHallPosition;
-  G4VPhysicalVolume* pvMHorn1 = new G4PVPlacement(G4Transform3D(rotation,translation),"MHorn1",lvMHorn1,TGAR,false,0);
+  G4VPhysicalVolume* pvMHorn1 = new G4PVPlacement(G4Transform3D(rotation,translation),"MHorn1",lvMHorn1,TGAR,false,0, NumiData->pSurfChk);
 
 
   /**
@@ -162,8 +162,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   G4LogicalVolume *lvHorn1Box = new G4LogicalVolume(sHorn1Box, boxmat, "lvHorn1Box",0,0,0);
   ND->ApplyStepLimits(lvHorn1Box); // Limit Step Size
   translation += G4ThreeVector(0.,0.,(MVzPos[nMV] - MVzPos[0])/2.+.5*cm);
-  new G4PVPlacement(G4Transform3D(rotation,translation),"Horn1Box",lvHorn1Box,TGAR,false,0);
-
+  new G4PVPlacement(G4Transform3D(rotation,translation),"Horn1Box",lvHorn1Box,TGAR,false,0, NumiData->pSurfChk);
 
   
   //Front part
@@ -178,7 +177,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   ND->ApplyStepLimits(lvHorn1Front); // Limit Step Size
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=-MHorn1Origin+G4ThreeVector(0.,0.,OCZ0);
-  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1Front",lvHorn1Front,pvMHorn1,false,0);
+  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1Front",lvHorn1Front,pvMHorn1,false,0, NumiData->pSurfChk);
   
   //Outer Conductor
   G4Polycone* sPHorn1OC=new G4Polycone("sPHorn1OC",0.,360.*deg,nOut+1,&OCzPos[0],&OCRin[0],&OCRout[0]);
@@ -190,7 +189,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   lvPHorn1OC->SetFieldManager(FieldMgr2,true); //attach the local field to logical volume
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=G4ThreeVector(0.,0.,0.)-MHorn1Origin;
-  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1OC",lvPHorn1OC,pvMHorn1,false,0);
+  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1OC",lvPHorn1OC,pvMHorn1,false,0, NumiData->pSurfChk);
  
   //Inner Conductor
   G4Polycone* sPHorn1IC=new G4Polycone("sPHorn1IC",0.,360.*deg,nIn+1,&ICzPos[0],&ICRin[0],&ICRout[0]);
@@ -202,7 +201,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   lvPHorn1IC->SetFieldManager(FieldMgr,true); //attach the local field to logical volume
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=G4ThreeVector(0.,0.,0)-MHorn1Origin;
-  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1IC",lvPHorn1IC,pvMHorn1,false,0);
+  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1IC",lvPHorn1IC,pvMHorn1,false,0, NumiData->pSurfChk);
    
   //Field Part
   G4Polycone* sPConeF=new G4Polycone("sPCone1F",0.,360.*deg,nF+1,&FzPos[0],&FRin[0],&FRout[0]);
@@ -223,8 +222,8 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   lvPHorn1F->SetFieldManager(FieldMgr3,true); //attach the local field to logical volume
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=G4ThreeVector(0.,0.,0)-MHorn1Origin;
-  G4VPhysicalVolume *pvPHorn1F=new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1F",lvPHorn1F,pvMHorn1,false,0);
-  
+  G4VPhysicalVolume *pvPHorn1F=new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn1F",lvPHorn1F,pvMHorn1,false,0, NumiData->pSurfChk);
+
   //Spider Support
   for (G4int ii=0;ii<G4int(ND->Horn1SS.size());ii++){
     for (G4int jj=0;jj<ND->NHorn1SpidersPerPlaneN;jj++){
@@ -238,6 +237,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
     }
   }
 
+
   //Horn end
   G4VSolid* sPHorn1End;
   for (G4int ii=0;ii<ND->NPHorn1EndN;ii++)
@@ -248,7 +248,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
       ND->ApplyStepLimits(lvPHorn1End); // Limit Step Size
       rotation=G4RotationMatrix(0.,0.,0.);
       translation=G4ThreeVector(0.,0.,ND->PHorn1EndZ0[ii]+ND->PHorn1EndLength[ii]/2.)-MHorn1Origin;
-      new G4PVPlacement(G4Transform3D(rotation,translation),volName,lvPHorn1End,pvMHorn1,false,0);
+      new G4PVPlacement(G4Transform3D(rotation,translation),volName,lvPHorn1End,pvMHorn1,false,0, NumiData->pSurfChk);
     }
     
 }
@@ -290,7 +290,7 @@ void NumiDetectorConstruction::ConstructSpiderSupport(NumiHornSpiderSupport *HSS
   G4RotationMatrix rotPos=G4RotationMatrix(0.,0.,angle);
   G4ThreeVector transPos=G4ThreeVector((rIn+(bottomThickMid-bottomH/2.))*sin(angle),(rIn+(bottomThickMid-bottomH/2.))*cos(angle),zPos);
   G4Transform3D position3D=G4Transform3D(rotPos,transPos);
-  new G4PVPlacement(position3D,"SpiderSupport",lvSpider,motherVolume,false,copyNo);
+  new G4PVPlacement(position3D,"SpiderSupport",lvSpider,motherVolume,false,copyNo, NumiData->pSurfChk);
 
   G4double ceramicRodL=rOut-rIn-topH-bottomThickMid-stripH-2.*mm;
   G4Tubs *sCeramicRod=new G4Tubs("sCeramicRod",0.,ceramicRodR,ceramicRodL/2.,0.,360.*deg);
@@ -300,7 +300,7 @@ void NumiDetectorConstruction::ConstructSpiderSupport(NumiHornSpiderSupport *HSS
   rotPos.rotateX(90.*deg); rotPos.rotateZ(-angle);
   transPos=transPos+G4ThreeVector((bottomH/2.+stripH+topH+ceramicRodL/2.)*sin(angle),(bottomH/2.+stripH+topH+ceramicRodL/2.)*cos(angle),0);
   position3D=G4Transform3D(rotPos,transPos);
-  new G4PVPlacement(position3D,"CeramicRod",lvCeramicRod,motherVolume,false,copyNo);
+  new G4PVPlacement(position3D,"CeramicRod",lvCeramicRod,motherVolume,false,copyNo, NumiData->pSurfChk);
 }
 
 G4double NumiDetectorConstruction::PHorn1OCRout(G4double z)

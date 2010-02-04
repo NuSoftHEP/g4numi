@@ -7,7 +7,7 @@
 // pixels in the muon monitors is modelled and acts as the active
 // elements of the monitors.
 //
-// $Id: NumiSecMonitors.cc,v 1.7.2.4 2009/09/24 16:43:38 martens Exp $
+// $Id: NumiSecMonitors.cc,v 1.7.2.5 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -116,7 +116,7 @@ void NumiDetectorConstruction::ConstructSecMonitors()
   G4LogicalVolume *LVhadmon = new G4LogicalVolume(Shadmon, Air, "LVHadMon", 0, 0, 0);
   G4ThreeVector hadmon_pos = G4ThreeVector(0., 0.2*m, 0.2*m);
   
-  G4PVPlacement *HadMon = new G4PVPlacement(0, hadmon_pos, "PVHadMon", LVhadmon, ShldBox, false, 0);
+  G4PVPlacement *HadMon = new G4PVPlacement(0, hadmon_pos, "PVHadMon", LVhadmon, ShldBox, false, 0, NumiData->pSurfChk);
   
   G4Box *SHadCell = new G4Box( "SHadCell", 3*in/2.0, 3*in/2.0, 1*mm/2.0 );
   G4LogicalVolume *LVHadCell = new G4LogicalVolume(SHadCell, He, "LVHadCell", 0, 0, 0);
@@ -126,7 +126,7 @@ void NumiDetectorConstruction::ConstructSecMonitors()
   for( int i = 0; i < 9; ++i ){
     for( int j = 0; j < 9; ++j ){
       cellPos = G4ThreeVector( (i-4)*11.4*cm, (j-4)*11.4*cm, 0 );
-      new G4PVPlacement( 0, cellPos, volName, LVHadCell, HadMon, false, i*9+j ); 
+      new G4PVPlacement( 0, cellPos, volName, LVHadCell, HadMon, false, i*9+j, NumiData->pSurfChk ); 
     }
   }
 
@@ -145,17 +145,17 @@ void NumiDetectorConstruction::ConstructSecMonitors()
   G4Box *Smumonalcv_0 = new G4Box("SMuMonAlcv_0", MuAlcv0_width/2.0, MuAlcv0_height/2.0, MuAlcv0_length/2.0);
   G4LogicalVolume *LVmumonalcv_0 = new G4LogicalVolume(Smumonalcv_0, Air, "LVMuMonAlcv_0", 0, 0, 0);
   G4ThreeVector mumonalcv_0_pos = G4ThreeVector(0., y_MuAlcv0, z_MuAlcv0) - tunnelPos;
-  MuMonAlcv_0 = new G4PVPlacement(zrot, mumonalcv_0_pos, "MuMonAlcv_0", LVmumonalcv_0, pvTUNE, false, 0);
+  MuMonAlcv_0 = new G4PVPlacement(zrot, mumonalcv_0_pos, "MuMonAlcv_0", LVmumonalcv_0, pvTUNE, false, 0, NumiData->pSurfChk);
 
   G4Box *Smumonalcv_1 = new G4Box("SMuMonAlcv_1", MuAlcv1_width/2.0, MuAlcv1_height/2.0, MuAlcv1_length/2.0);
   G4LogicalVolume *LVmumonalcv_1 = new G4LogicalVolume(Smumonalcv_1, Air,"LVMuMonAlcv_1", 0, 0, 0);
   G4ThreeVector mumonalcv_pos = G4ThreeVector(0., y_MuAlcv1, z_MuAlcv1);
-  MuMonAlcv_1 = new G4PVPlacement(zrot, mumonalcv_pos, "MuMonAlcv_1", LVmumonalcv_1, ROCK, false, 0);
+  MuMonAlcv_1 = new G4PVPlacement(zrot, mumonalcv_pos, "MuMonAlcv_1", LVmumonalcv_1, ROCK, false, 0, NumiData->pSurfChk);
 
   G4Box *Smumonalcv_2 = new G4Box("SMuMonAlcv_2", MuAlcv2_width/2.0, MuAlcv2_height/2.0, MuAlcv2_length/2.0);
   G4LogicalVolume *LVmumonalcv_2 = new G4LogicalVolume(Smumonalcv_2, Air,"LVMuMonAlcv_2", 0, 0, 0);
   mumonalcv_pos = G4ThreeVector(0., y_MuAlcv2, z_MuAlcv2);
-  MuMonAlcv_2 = new G4PVPlacement(zrot, mumonalcv_pos, "MuMonAlcv_2", LVmumonalcv_2, ROCK, false, 0);
+  MuMonAlcv_2 = new G4PVPlacement(zrot, mumonalcv_pos, "MuMonAlcv_2", LVmumonalcv_2, ROCK, false, 0, NumiData->pSurfChk);
 
 
 
@@ -171,15 +171,15 @@ void NumiDetectorConstruction::ConstructSecMonitors()
   G4ThreeVector MuMonAlcvShot_2_UpPos = G4ThreeVector(0., 0., -MuAlcv2_length/2.0 + Shotcrete_depth/2.0);
   G4ThreeVector MuMonAlcvShot_2_DownPos = G4ThreeVector(0., 0., MuAlcv2_length/2.0 - Shotcrete_depth/2.0);
 
-  new G4PVPlacement(0, MuMonAlcvShot_1_UpPos, "MuMonAlcvShot_1_Up", LVMuMonAlcvShot, MuMonAlcv_1, false, 0);
-  new G4PVPlacement(0, MuMonAlcvShot_1_DownPos, "MuMonAlcvShot_1_Down", LVMuMonAlcvShot, MuMonAlcv_1, false, 0);
-  new G4PVPlacement(0, MuMonAlcvShot_2_UpPos, "MuMonAlcvShot_2_Up", LVMuMonAlcvShot, MuMonAlcv_2, false, 0);
-  new G4PVPlacement(0, MuMonAlcvShot_2_DownPos, "MuMonAlcvShot_2_Down", LVMuMonAlcvShot, MuMonAlcv_2, false, 0);
+  new G4PVPlacement(0, MuMonAlcvShot_1_UpPos, "MuMonAlcvShot_1_Up", LVMuMonAlcvShot, MuMonAlcv_1, false, 0, NumiData->pSurfChk);
+  new G4PVPlacement(0, MuMonAlcvShot_1_DownPos, "MuMonAlcvShot_1_Down", LVMuMonAlcvShot, MuMonAlcv_1, false, 0, NumiData->pSurfChk);
+  new G4PVPlacement(0, MuMonAlcvShot_2_UpPos, "MuMonAlcvShot_2_Up", LVMuMonAlcvShot, MuMonAlcv_2, false, 0, NumiData->pSurfChk);
+  new G4PVPlacement(0, MuMonAlcvShot_2_DownPos, "MuMonAlcvShot_2_Down", LVMuMonAlcvShot, MuMonAlcv_2, false, 0, NumiData->pSurfChk);
 
   G4Box *SMuMonAlcvFill_0 = new G4Box("SMuMonAlcvFill_0", MuAlcv0_width/2.0, MuAlcv0_height/2.0, Backfill_depth/2.0);
   G4LogicalVolume *LVMuMonAlcvFill_0 = new G4LogicalVolume(SMuMonAlcvFill_0, Shotcrete, "LVMuMonAlcvFill_0", 0, 0, 0);
   G4ThreeVector MuMonAlcvFill_0 = G4ThreeVector(0., 0., MuAlcv0_length/2.0 - Backfill_depth/2.0);
-  new G4PVPlacement(0, MuMonAlcvFill_0, "MuMonAlcvFill_0", LVMuMonAlcvFill_0, MuMonAlcv_0, false, 0);
+  new G4PVPlacement(0, MuMonAlcvFill_0, "MuMonAlcvFill_0", LVMuMonAlcvFill_0, MuMonAlcv_0, false, 0, NumiData->pSurfChk);
 
 
   G4cout << "Muon Monitor Alcoves(1,2,3) Constructed" << G4endl;
@@ -202,9 +202,9 @@ void NumiDetectorConstruction::ConstructSecMonitors()
   G4ThreeVector MuMon_pos1 = G4ThreeVector(0., -y_MuAlcv1/cos(beam_angle), 0.);
   G4ThreeVector MuMon_pos2 = G4ThreeVector(0., -y_MuAlcv2/cos(beam_angle), 0.);
 
-  G4PVPlacement *MuMon0 = new G4PVPlacement(0, MuMon_pos0, "MuMon_0", LVMuMon, MuMonAlcv_0, false, 0);
-  new G4PVPlacement(0, MuMon_pos1, "MuMon_1", LVMuMon, MuMonAlcv_1, false, 0);
-  new G4PVPlacement(0, MuMon_pos2, "MuMon_2", LVMuMon, MuMonAlcv_2, false, 0);
+  G4PVPlacement *MuMon0 = new G4PVPlacement(0, MuMon_pos0, "MuMon_0", LVMuMon, MuMonAlcv_0, false, 0, NumiData->pSurfChk);
+  new G4PVPlacement(0, MuMon_pos1, "MuMon_1", LVMuMon, MuMonAlcv_1, false, 0, NumiData->pSurfChk);
+  new G4PVPlacement(0, MuMon_pos2, "MuMon_2", LVMuMon, MuMonAlcv_2, false, 0, NumiData->pSurfChk);
 
 
   G4Box *SMuCell = new G4Box( "SMuCell", 3*in/2.0, 3*in/2.0, 1*mm/2.0 );
@@ -214,8 +214,9 @@ void NumiDetectorConstruction::ConstructSecMonitors()
   for( int i = 0; i < 9; ++i ){
     for( int j = 0; j < 9; ++j ){
       cellPos = G4ThreeVector( (i-4)*10.*in, (j-4)*10.*in, 0 );
-      new G4PVPlacement( 0, cellPos, volName, LVMuCell, MuMon0, false, i*9+j ); 
+      new G4PVPlacement( 0, cellPos, volName, LVMuCell, MuMon0, false, i*9+j, NumiData->pSurfChk ); 
     }
   }
+    G4cout << "Numi SecMonitors constructed" << G4endl;
 
 }

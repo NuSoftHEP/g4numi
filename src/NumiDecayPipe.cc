@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDecayPipe.cc,v 1.8.2.4 2009/09/24 16:43:38 martens Exp $
+// $Id: NumiDecayPipe.cc,v 1.8.2.5 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -38,7 +38,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
   G4Tubs* sTUNE = new G4Tubs("TUNE_S",0.,r,l,0,360.*deg);
   G4LogicalVolume* lvTUNE = new G4LogicalVolume(sTUNE,GetMaterial(NumiData->TunnelGEANTmat),"TUNE_log",0,0,0); 
   lvTUNE->SetVisAttributes(G4VisAttributes::Invisible);
-  pvTUNE = new G4PVPlacement(0,tunnelPosition,"TUNE",lvTUNE,ROCK,false,0);
+  pvTUNE = new G4PVPlacement(0,tunnelPosition,"TUNE",lvTUNE,ROCK,false,0,NumiData->pSurfChk);
 
   // Shielding
   l=NumiData->ShieldLength/2.;
@@ -48,7 +48,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
 
   G4Tubs* sSC01 = new G4Tubs("SC01_solid",rIn,rOut,l,0,360.*deg);
   G4LogicalVolume* lvSC01 = new G4LogicalVolume(sSC01,GetMaterial(NumiData->ShieldGEANTmat),"SC01_log",0,0,0); 
-  new G4PVPlacement(0,sc01Position,"SC01",lvSC01,pvTUNE,false,0);
+  new G4PVPlacement(0,sc01Position,"SC01",lvSC01,pvTUNE,false,0,NumiData->pSurfChk);
 
   // Decay Pipe
   l=NumiData->DecayPipeLength/2.;
@@ -57,7 +57,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
 
   G4Tubs* sDPIP = new G4Tubs("sDPIP",0.,r,l,0,360.*deg);
   G4LogicalVolume* lvDPIP = new G4LogicalVolume(sDPIP,GetMaterial(NumiData->DecayPipeGEANTmat),"lvDPIP",0,0,0); 
-  G4VPhysicalVolume* pvDPIP = new G4PVPlacement(0,decayPipePosition,"DPIP",lvDPIP,pvTUNE,false,0);
+  G4VPhysicalVolume* pvDPIP = new G4PVPlacement(0,decayPipePosition,"DPIP",lvDPIP,pvTUNE,false,0,NumiData->pSurfChk);
  
   // Decay Volume
   l=(NumiData->DecayPipeLength-NumiData->DecayPipeEWinThick)/2.;
@@ -66,8 +66,11 @@ void NumiDetectorConstruction::ConstructDecayPipe()
   decayVolumePosition=G4ThreeVector(0,0,(-NumiData->DecayPipeEWinThick)/2.);//for non flat window
 
   G4Tubs* sDVOL = new G4Tubs("DVOL_solid",0.,r,l,0,360.*deg);
-  G4LogicalVolume* lvDVOL = new G4LogicalVolume(sDVOL,DecayPipeVacuum,"DVOL_log",0,0,0); 
-  G4VPhysicalVolume* pvDVOL=new G4PVPlacement(0,decayVolumePosition,"DVOL",lvDVOL,pvDPIP,false,0);
+
+  // Martens Changed DecayPipeVacuum to He
+  //  G4LogicalVolume* lvDVOL = new G4LogicalVolume(sDVOL,DecayPipeVacuum,"DVOL_log",0,0,0); 
+  G4LogicalVolume* lvDVOL = new G4LogicalVolume(sDVOL,He,"DVOL_log",0,0,0); 
+  G4VPhysicalVolume* pvDVOL=new G4PVPlacement(0,decayVolumePosition,"DVOL",lvDVOL,pvDPIP,false,0,NumiData->pSurfChk);
 
   // Upstream window
   //couple of tubes and spheres and a polycone
@@ -91,7 +94,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
     
     G4ThreeVector translation=G4ThreeVector(0.,0.,UpWnTubeZ0[ii]+UpWnTubeLength[ii]/2.)-G4ThreeVector(0,0,(-NumiData->DecayPipeEWinThick+NumiData->DecayPipeLength)/2.);
     G4RotationMatrix rotation=G4RotationMatrix(0.,0.,0.);
-    new G4PVPlacement(G4Transform3D(rotation,translation),UpWnTubeVolName[ii],lvUpWnTube,pvDVOL,false,0);
+    new G4PVPlacement(G4Transform3D(rotation,translation),UpWnTubeVolName[ii],lvUpWnTube,pvDVOL,false,0,NumiData->pSurfChk);
   }
 
   //Spherical Al part
@@ -110,7 +113,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
 						       Al,
 						       "lvAlUpWn",
 						       0,0,0);
-  new G4PVPlacement(0,sphereAlPos,"UpWn1",upwnSteelSphere1,pvDVOL,false,0);
+  new G4PVPlacement(0,sphereAlPos,"UpWn1",upwnSteelSphere1,pvDVOL,false,0,NumiData->pSurfChk);
 
   //Spherical Fe part
   G4ThreeVector sphereFePos=G4ThreeVector(0,0,(NumiData->DecayPipeEWinThick-NumiData->DecayPipeLength)/2.-69.3*in+19.303*in-3./8.*in);
@@ -122,7 +125,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
 						       Fe,
 						       "lvFeUpWn",
 						       0,0,0);
-  new G4PVPlacement(0,sphereFePos,"UpWn2",upwnSteelSphere2,pvDVOL,false,0);
+  new G4PVPlacement(0,sphereFePos,"UpWn2",upwnSteelSphere2,pvDVOL,false,0,NumiData->pSurfChk);
   
   G4ThreeVector upwnPos=G4ThreeVector(0,0,(NumiData->DecayPipeEWinThick-NumiData->DecayPipeLength)/2.);
   //G4double polyConeZ0=45.28*m;
@@ -141,7 +144,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
 				       0.,360.*deg,
 				       NpolyConeDivN,z,Rin,Rout);
   G4LogicalVolume *lvPolyCone=new G4LogicalVolume(sPolyCone,Fe,"lvUpWnPolyCone",0,0,0);
-  new G4PVPlacement(0,upwnPos,"UpWnPolyCone",lvPolyCone,pvDVOL,false,0);
+  new G4PVPlacement(0,upwnPos,"UpWnPolyCone",lvPolyCone,pvDVOL,false,0,NumiData->pSurfChk);
    
   // Downstream window
   l=NumiData->DecayPipeEWinThick/2.;
@@ -150,7 +153,7 @@ void NumiDetectorConstruction::ConstructDecayPipe()
 
   G4Tubs* sDNWN = new G4Tubs("sDNWN",0.,r,l,0,360.*deg);
   G4LogicalVolume* lvDNWN = new G4LogicalVolume(sDNWN,GetMaterial(NumiData->DecayPipeEWinmat),"lvDNWN",0,0,0); 
-  new G4PVPlacement(0,dnwnPos,"DNWN",lvDNWN,pvDPIP,false,0);
+  new G4PVPlacement(0,dnwnPos,"DNWN",lvDNWN,pvDPIP,false,0,NumiData->pSurfChk);
 
   G4cout << "Decay Pipe Constructed" <<G4endl;
 }

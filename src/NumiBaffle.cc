@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-//$Id: NumiBaffle.cc,v 1.3.2.4 2009/09/24 16:43:38 martens Exp $
+//$Id: NumiBaffle.cc,v 1.3.2.5 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 
 
@@ -28,5 +28,7 @@ void NumiDetectorConstruction::ConstructBaffle()
   G4Tubs* sBaffle=new G4Tubs("sBaffle",HPBRin,HPBRout,HPBlength/2.,0.,360.*deg);
   G4LogicalVolume* lvBaffle=new G4LogicalVolume(sBaffle,Target,"lvBaffle",0,0,0);
   G4ThreeVector bafflePos=G4ThreeVector(NumiData->HPBaffleX0,NumiData->HPBaffleY0,NumiData->HPBaffleZ0+HPBlength/2.)-targetHallPosition;
-  new G4PVPlacement(0,bafflePos,"Baffle",lvBaffle,TGAR,false,0);
+  new G4PVPlacement(0,bafflePos,"Baffle",lvBaffle,TGAR,false,0,NumiData->pSurfChk);
+
+  G4cout << "Baffle Constructed" << G4endl;
 }
