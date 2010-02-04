@@ -12,7 +12,7 @@ if [ X$1 == X ] ; then
     echo "Usage: setup.sh minos"
     echo "   or: setup.sh nova"
     return
-elfi [ $1 == "minos" ] ; then
+elif [ $1 == "minos" ] ; then
     echo "Setting up for MINOS configuration"
     export TARGET_TYPE="minos"
 elif [ $1 == "nova" ] ; then
@@ -28,6 +28,7 @@ if [ $TARGET_TYPE == "nova" ] ; then
     echo ""
     cp -v src/NumiDetectorConstruction.cc.me_target src/NumiDetectorConstruction.cc
     cp -v src/NumiTarget.cc.me_target src/NumiTarget.cc
+    cp -v src/NumiTargetHall.cc.me_target src/NumiTargetHall.cc
     cp -v src/NumiHorn1.cc.me_target src/NumiHorn1.cc
     cp -v src/NumiDataInput.cc.me_target src/NumiDataInput.cc
     cp -v include/NumiDataInput.hh.me_target include/NumiDataInput.hh
@@ -36,6 +37,7 @@ elif [ $TARGET_TYPE == "minos" ] ; then
     echo ""
     cp -v src/NumiDetectorConstruction.cc.le_target src/NumiDetectorConstruction.cc    
     cp -v src/NumiTarget.cc.le_target src/NumiTarget.cc
+    cp -v src/NumiTargetHall.cc.le_target src/NumiTargetHall.cc
     cp -v src/NumiHorn1.cc.le_target src/NumiHorn1.cc
     cp -v src/NumiDataInput.cc.le_target src/NumiDataInput.cc
     cp -v include/NumiDataInput.hh.le_target include/NumiDataInput.hh

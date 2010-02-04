@@ -143,8 +143,9 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   lvMHorn2->SetVisAttributes(invisible);
   rotation=hornrot;
   translation=hornpos-TargetHallPosition;
-  G4VPhysicalVolume* pvMHorn2 = new G4PVPlacement(G4Transform3D(rotation,translation),"MHorn2",lvMHorn2,TGAR,false,0);
+  G4VPhysicalVolume* pvMHorn2 = new G4PVPlacement(G4Transform3D(rotation,translation),"MHorn2",lvMHorn2,TGAR,false,0,NumiData->pSurfChk);
       
+#if(0) //Martens -- removed Horn 2 box
   /**
    * FLUGG - Volume added to follow particles by Alex Himmel 3-21-07
    */
@@ -157,8 +158,8 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   G4LogicalVolume *lvHorn2Box = new G4LogicalVolume(sHorn2Box, boxmat, "lvHorn2Box",0,0,0);
   ND->ApplyStepLimits(lvHorn2Box); // Limit Step Size
   translation += G4ThreeVector(0.,0.,(MVzPos[nMV] - MVzPos[0])/2.+.5*cm);
-  new G4PVPlacement(G4Transform3D(rotation,translation),"Horn2Box",lvHorn2Box,TGAR,false,0);
-
+  new G4PVPlacement(G4Transform3D(rotation,translation),"Horn2Box",lvHorn2Box,TGAR,false,0,NumiData->pSurfChk);
+#endif
 
   //Front part
   G4VSolid* sHorn2Front;
@@ -172,7 +173,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   ND->ApplyStepLimits(lvHorn2Front); // Limit Step Size
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=-MHorn2Origin+G4ThreeVector(0.,0.,OCZ0);
-  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2Front",lvHorn2Front,pvMHorn2,false,0);
+  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2Front",lvHorn2Front,pvMHorn2,false,0,NumiData->pSurfChk);
     
   //Outer Conductor
   G4Polycone* sPHorn2OC=new G4Polycone("sPHorn2OC",0.,360.*deg,nOut+1,&OCzPos[0],&OCRin[0],&OCRout[0]);
@@ -184,7 +185,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   lvPHorn2OC->SetFieldManager(FieldMgr2,true); //attach the local field to logical volume
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=G4ThreeVector(0.,0.,0.)-MHorn2Origin;
-  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2OC",lvPHorn2OC,pvMHorn2,false,0);
+  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2OC",lvPHorn2OC,pvMHorn2,false,0,NumiData->pSurfChk);
 
   //Inner Conductor
   G4Polycone* sPHorn2IC=new G4Polycone("sPHorn2IC",0.,360.*deg,nIn+1,&ICzPos[0],&ICRin[0],&ICRout[0]);
@@ -196,7 +197,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   lvPHorn2IC->SetFieldManager(FieldMgr,true); //attach the local field to logical volume
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=G4ThreeVector(0.,0.,0)-MHorn2Origin;
-  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2IC",lvPHorn2IC,pvMHorn2,false,0);
+  new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2IC",lvPHorn2IC,pvMHorn2,false,0,NumiData->pSurfChk);
       
   //Field Part
   G4Polycone* sPConeF=new G4Polycone("sPCone2F",0.,360.*deg,nF+1,&FzPos[0],&FRin[0],&FRout[0]);
@@ -216,7 +217,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   lvPHorn2F->SetFieldManager(FieldMgr3,true); //attach the local field to logical volume
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=G4ThreeVector(0.,0.,0)-MHorn2Origin;
-  G4VPhysicalVolume *pvPHorn2F=new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2F",lvPHorn2F,pvMHorn2,false,0);
+  G4VPhysicalVolume *pvPHorn2F=new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2F",lvPHorn2F,pvMHorn2,false,0,NumiData->pSurfChk);
 
   //Spider support
   for (G4int ii=0;ii<G4int(ND->Horn2SS.size());ii++){
@@ -238,9 +239,9 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
       ND->ApplyStepLimits(lvPHorn2End); // Limit Step Size
       rotation=G4RotationMatrix(0.,0.,0.);
       translation=G4ThreeVector(0.,0.,ND->PHorn2EndZ0[ii]+ND->PHorn2EndLength[ii]/2.)-MHorn2Origin;
-      new G4PVPlacement(G4Transform3D(rotation,translation),volName,lvPHorn2End,pvMHorn2,false,0);
+      new G4PVPlacement(G4Transform3D(rotation,translation),volName,lvPHorn2End,pvMHorn2,false,0,NumiData->pSurfChk);
     }
-     
+  G4cout << "Numi Horn 2 Constructed" << G4endl;
 }
 G4double NumiDetectorConstruction::PHorn2OCRout(G4double z)
 {

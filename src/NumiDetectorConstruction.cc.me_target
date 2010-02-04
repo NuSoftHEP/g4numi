@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.1 2009/09/24 16:39:13 martens Exp $
+// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.2 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -25,6 +25,7 @@
 #include "G4Transform3D.hh"
 #include "G4PhysicalVolumeStore.hh"
 #include "G4LogicalVolumeStore.hh"
+#include "G4Circle.hh"
 
 #include "G4RegionStore.hh"
 #include "G4SolidStore.hh"
@@ -91,6 +92,49 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   ROCK_log->SetVisAttributes(G4VisAttributes::Invisible);
   ROCK = new G4PVPlacement(0,G4ThreeVector(),ROCK_log,"ROCK",0,false,0);
   
+
+  // Martens: Used for debugging placement of target hall components
+  // The center of the ROCK volume (0,0,0) is the MCZERO location.
+  // Should not be left in for actual running
+ 
+  //  G4Box*          CenterMarker_solid;
+  //  G4LogicalVolume*   CenterMarker_log;
+  //  G4VPhysicalVolume* CenterMarker;
+  
+  //  CenterMarker_solid = new G4Box("CenterMarker_solid",0.5*mm,0.5*mm,0.5*mm);
+  //  CenterMarker_log = new G4LogicalVolume(CenterMarker_solid,Target,"CenterMarker_log",0,0,0);  
+  
+  //  G4ThreeVector CenterMarkerPosition = G4ThreeVector(0,0,0);
+  //  CenterMarker = new G4PVPlacement(0,CenterMarkerPosition,"MCZERO",CenterMarker_log,ROCK,false,0);
+  
+  //  CenterMarkerPosition = G4ThreeVector(0,0,-380*cm);
+  //  CenterMarker = new G4PVPlacement(0,CenterMarkerPosition,"Baffle_Start",CenterMarker_log,ROCK,false,0);
+  
+  //  CenterMarkerPosition = G4ThreeVector(0,0,-230*cm);
+  //  CenterMarker = new G4PVPlacement(0,CenterMarkerPosition,"Baffle_End",CenterMarker_log,ROCK,false,0);
+
+  //  CenterMarkerPosition = G4ThreeVector(0,0,-143.3*cm);
+  //  CenterMarker = new G4PVPlacement(0,CenterMarkerPosition,"Budal_HFVS_Start",CenterMarker_log,ROCK,false,0);
+  
+  //  CenterMarkerPosition = G4ThreeVector(0,0,-140.4*cm);
+  //  CenterMarker = new G4PVPlacement(0,CenterMarkerPosition,"Budal_VFHS_Start",CenterMarker_log,ROCK,false,0);
+  
+  //  CenterMarkerPosition = G4ThreeVector(0,0,-137.55*cm);
+  //  CenterMarker = new G4PVPlacement(0,CenterMarkerPosition,"Target_Segments_Start",CenterMarker_log,ROCK,false,0);
+  
+  //  CenterMarkerPosition = G4ThreeVector(0,0,-20.0*cm);
+  //  CenterMarker = new G4PVPlacement(0,CenterMarkerPosition,"Target_End",CenterMarker_log,ROCK,false,0);
+
+
+  //  CenterMarkerPosition = G4ThreeVector(0,0,-380*cm);
+  //  G4Circle circle(CenterMarkerPosition);
+  //  circle.SetScreenDiameter(1.0);
+  //  circle.SetFillStyle(G4Circle::filled);
+  //  G4Colour colour(1.0,0.0,0.0);	
+  //  G4VisAttributes attribs(colour);
+  //  circle.SetVisAttributes(attribs);
+
+
   ConstructTargetHall();
   ConstructDecayPipe();
   ConstructBaffle();
@@ -119,8 +163,8 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   if (NumiData->constructTarget){
     ConstructTarget();
   }
-    ConstructHadronAbsorber(); 
-   ConstructSecMonitors();
+  ConstructHadronAbsorber(); 
+  ConstructSecMonitors();
 
 #ifndef FLUGG
   //Set Vis Attributes according to solid material (only for volumes not explicitly set)

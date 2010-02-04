@@ -40,7 +40,7 @@ void NumiDetectorConstruction::ConstructHorns()
       vol_name="PM0";
       vol_name.append(no);
       vol_name.append("_lv"); 
-      PHORN[jj]=new G4PVPlacement(0,G4ThreeVector(0,0,NumiData->PhornZ0[jj]+NumiData->PhornZ1[jj])-target_hall_position, vol_name,Horn_PM_lv[jj],TGAR,false,0);
+      PHORN[jj]=new G4PVPlacement(0,G4ThreeVector(0,0,NumiData->PhornZ0[jj]+NumiData->PhornZ1[jj])-target_hall_position, vol_name,Horn_PM_lv[jj],TGAR,false,0, NumiData->pSurfChk);
 
       // Inner conductor
       for (G4int ii=0;ii<NumiData->PhornNpoint[jj]+1;ii++){
@@ -60,7 +60,7 @@ void NumiDetectorConstruction::ConstructHorns()
 
       vol_name="PI0";
       vol_name.append(no);
-      new G4PVPlacement(0,G4ThreeVector(0,0,0), vol_name,Horn_in_lv,PHORN[jj],false,0);
+      new G4PVPlacement(0,G4ThreeVector(0,0,0), vol_name,Horn_in_lv,PHORN[jj],false,0, NumiData->pSurfChk);
 
       // Outer conductor
       G4Tubs* Horn_out=new 
@@ -75,7 +75,7 @@ void NumiDetectorConstruction::ConstructHorns()
 
       vol_name="PO0";
       vol_name.append(no);
-      new G4PVPlacement(0,G4ThreeVector(0,0,((NumiData->PhornZ2[jj]-NumiData->PhornZ1[jj])/2.)), vol_name,Horn_out_lv,PHORN[jj],false,0);
+      new G4PVPlacement(0,G4ThreeVector(0,0,((NumiData->PhornZ2[jj]-NumiData->PhornZ1[jj])/2.)), vol_name,Horn_out_lv,PHORN[jj],false,0, NumiData->pSurfChk);
      
       // Inside horns (field part)
       for (G4int kk=0;kk<NumiData->PhornNpoint[jj]+1;kk++){
@@ -92,7 +92,7 @@ void NumiDetectorConstruction::ConstructHorns()
 
 vol_name="PF0";
       vol_name.append(no);
-      new G4PVPlacement(0,G4ThreeVector(0,0,0), vol_name,Horn_inside_lv,PHORN[jj],false,0);
+      new G4PVPlacement(0,G4ThreeVector(0,0,0), vol_name,Horn_inside_lv,PHORN[jj],false,0, NumiData->pSurfChk);
     
     // Front and End cover
       if (NumiData->PhornThickFront[jj]!=0){
@@ -106,7 +106,7 @@ vol_name="PF0";
 	G4LogicalVolume* Horn_fc_lv=new G4LogicalVolume(Horn_front_cover,material,"Horn_front_cover_lv",0,0,0);
 	G4ThreeVector PC_position=G4ThreeVector(0,0,NumiData->PhornZ0[jj]+NumiData->PhornZ1[jj]-(NumiData->PhornThickFront[jj])/2.)
 	  -target_hall_position;
-	new G4PVPlacement(0,PC_position, vol_name,Horn_fc_lv,TGAR,false,0);
+	new G4PVPlacement(0,PC_position, vol_name,Horn_fc_lv,TGAR,false,0, NumiData->pSurfChk);
       }
       if (NumiData->PhornThickEnd[jj]!=0){
 	vol_name="PC0";
@@ -119,7 +119,7 @@ vol_name="PF0";
 	G4LogicalVolume* Horn_ec_lv=new G4LogicalVolume(Horn_end_cover,material,"Horn_end_cover_lv",0,0,0);
 	G4ThreeVector PC_position=G4ThreeVector(0,0,NumiData->PhornZ0[jj]+NumiData->PhornZ2[jj]+(NumiData->PhornThickEnd[jj])/2.)
 	  -target_hall_position;
-	new G4PVPlacement(0,PC_position, vol_name,Horn_ec_lv,TGAR,false,0);
+	new G4PVPlacement(0,PC_position, vol_name,Horn_ec_lv,TGAR,false,0, NumiData->pSurfChk);
       }
     }
     G4cout << "Horns constructed" << G4endl;

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh.le_target,v 1.1.2.1 2009/09/24 16:39:13 martens Exp $
+// $Id: NumiDataInput.hh.le_target,v 1.1.2.2 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -173,6 +173,7 @@ public:
   G4String extNtupleFileName;
 
  public:
+   G4bool pSurfChk;
    G4bool NImpWeightOn, createNuNtuple,createHadmmNtuple, createASCII;
    G4bool useFlukaInput, useMarsInput, useMuonBeam, useMuonInput, solidMuMons;
    G4int fNEvents;
