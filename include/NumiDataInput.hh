@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh,v 1.22.2.5 2009/10/20 16:13:55 martens Exp $
+// $Id: NumiDataInput.hh,v 1.22.2.6 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -174,6 +174,7 @@ public:
   G4String extNtupleFileName;
 
  public:
+   G4bool pSurfChk;
    G4bool NImpWeightOn, createNuNtuple,createHadmmNtuple, createASCII;
    G4bool useFlukaInput, useMarsInput, useMuonBeam, useMuonInput, solidMuMons;
    G4int fNEvents;
@@ -232,57 +233,120 @@ public:
    
    // Target
    G4bool constructTarget;
-   G4double TargetX0, TargetY0, TargetZ0, TargetDxdz, TargetDydz;
 
-   //VXADD Added By Vamis Xhagjika
-   G4double TargetContHalfLength, TargetContRin, TargetContRout, TargetContYOffset, TargetSYOffset, TargetSXOffset, TargetSZOffset;
-   
-   //Fin Cooling system variables
-   G4double FinCoolerXlength, FinCoolerYLength, FinCoolerBoxInXLength, FinCoolerBoxInYLength, WaterPipeRout, FinCoolingYOffset;
-    
-   G4int TargetContMaterial;
-   //~VXADD
+   G4double TargetSegLength;
+   G4double TargetSegWidth;
+   G4double TargetSegHeight;
+   G4double TargetSegPitch;
+   G4double TargetGraphiteHeight;	
+   G4bool   TargetEndRounded;
+   G4double TargetSegmentNo;
 
-   G4double TargetSLength, TargetSWidth, TargetSHeight, TargetA, TargetDensity;
-   G4double  TargetZ, TargetRL;
-   G4int TargetGEANTmat,TargetSegmentNo;
-   G4double TargetSegmentPitch,TargetCPGRadius,TargetCPGPosition;
-   G4bool TargetEndRounded;
-   
-   //Rings holding target and cooling pipes
-   G4int NTgtRingN;
-   vdouble_t TgtRingZ0, TgtRingLength, TgtRingRin,TgtRingRout;
-   vint_t TgtRingGeantMaterial;
-   vstring_t TgtRingVolName;
-   
-   //Budal
-   G4double BudalX0,BudalY0,BudalZ0,BudalDxdz,BudalDydz;
+   G4double BudalVFHSLength;
+   G4double BudalVFHSWidth;
+   G4double BudalVFHSHeight;
+   G4double BudalVFHSPitch;
+   G4bool   BudalVFHSEndRounded;
+
+   G4double BudalHFVSLength;
+   G4double BudalHFVSWidth;
+   G4double BudalHFVSHeight;
+   G4double BudalHFVSPitch;
+   G4bool   BudalHFVSEndRounded;
+
+   G4double TargetA;
+   G4double TargetZ;
+   G4double TargetDensity;
+
+   G4double TotalTargetLength;
+   G4double TargetX0;
+   G4double TargetY0;
+   G4double TargetZ0;
+   G4double TargetDxdz;
+   G4double TargetDydz;
+
+   G4double TargetEndtoDnFlange;
+   G4double TargetCanisterCenterOffset;
+
+   G4double TargetDnFlangeLength;
+   G4double TargetDnFlangeOutRad;
+   G4double TargetDnFlangeX0;
+   G4double TargetDnFlangeY0;
+   G4double TargetDnFlangeZ0;
+
+   G4double TargetDnFlangeCutoutLength;
+   G4double TargetDnBeWindowRadius;
+   G4double TargetDnBeWindowLength;
+
+   G4double TargetOutsideCasingOutRad;
+   G4double TargetOutsideCasingInRad;
+   G4double TargetCasingWaterOutRad;
+   G4double TargetCasingWaterInRad;
+   G4double TargetInsideCasingOutRad;
+   G4double TargetInsideCasingInRad;
+
+   G4double TargetCasingLength;
+   G4double TargetCasingX0;
+   G4double TargetCasingY0;
+   G4double TargetCasingZ0;
+
+   G4double TargetUpFlangeLength;
+   G4double TargetUpFlangeOutRad;
+   G4double TargetUpFlangeX0;
+   G4double TargetUpFlangeY0;
+   G4double TargetUpFlangeZ0;
+
+   G4double TargetUpBeFlangeLength;
+   G4double TargetUpBeFlangeOutRad;
+   G4double TargetUpBeFlangeX0;
+   G4double TargetUpBeFlangeY0;
+   G4double TargetUpBeFlangeZ0;
+
+   G4double TargetUpBeFlangeCutoutLength;
+   G4double TargetUpBeFlangeCutoutRadius;
+
+   G4double TargetUpBeWindowRadius;
+   G4double TargetUpBeWindowLength;
+
+   G4double PressingPlateLength;
+   G4double PressingPlateHeight;
+   G4double PressingPlateWidth;
+   G4double PressingPlateX0;
+   G4double PressingPlateY0;
+   G4double PressingPlateZ0;
+
+   G4double PressingPlateCutoutWidth;
+   G4double PressingPlateCutoutHeight;
+
+   G4double CoolingPlateLength;
+   G4double CoolingPlateHeight;
+   G4double CoolingPlateWidth;
+   G4double CoolingPlateX0;
+   G4double CoolingPlateY0;
+   G4double CoolingPlateZ0;
+
+   G4double CoolingWaterPipeOutRad;
+   G4double CoolingWaterPipeX0;
+   G4double CoolingWaterPipeY0;
+
+   G4double CoolingPlateCutoutWidth;
+   G4double CoolingPlateCutoutHeight;
+
+
    
   //HPBaffle 
-  G4int HPBaffle, HPBaffleGEANTMat;
-  G4double HPBaffleX0,HPBaffleY0,HPBaffleZ0,HPBaffleDXDZ,HPBaffleDYDZ;
-  G4double HPBaffleLength,HPBaffleRin,HPBaffleRout;
+  G4double HPBaffleLength;
+  G4double HPBaffleRin;
+  G4double HPBaffleRout;
+  G4double HPBaffleX0;
+  G4double HPBaffleY0;
+  G4double HPBaffleZ0;
+  G4double HPBaffleDXDZ;
+  G4double HPBaffleDYDZ;
 
-  //Cooling pipes
-  G4int NCPipeN;
-  vbool_t CPipeFilledWater;
-  vdouble_t CPipeX0,CPipeY0,CPipeZ0,CPipeLength,CPipeRadiusIn,CPipeRadiusOut,CPipeWallThick;
-  vdouble_t CPipeDXDZ,CPipeDYDZ;
-  vint_t CPGeantMat;
-  vdouble_t CPipeCurvRad,CPipeOpenAng,CPipeCloseAng;
-  vstring_t CPipeVolName;
-  
-  //Container
-  G4int NContainerN;
-  
-  //VXADD Variables for the upstream window
-  G4double UpstrFlangeRout, UpstrFlangeL, UpstrBerSupportRout, UpstrBerSupportL, UpstrBerLayerRout, UpstrBerLayerL, UpstreamHoleRout, DwstrBerWindowRout;
-  G4int    UpstrFlangeMat, UpstrBerLayerMat;
-  //~VXADD
-   
-  vdouble_t CTubeZ0,CTubeY0,CTubeLength,CTubeRin,CTubeRout; 
-  vint_t CTubeGeantMat;
-  vstring_t CTubeVolName;
+
+  G4int HPBaffle;
+
 
   // Tunnel
   G4double TunnelZ0, TunnelRadius, TunnelLength, TunnelA, TunnelZ;

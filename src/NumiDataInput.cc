@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.31.2.5 2009/10/20 16:13:55 martens Exp $
+// $Id: NumiDataInput.cc,v 1.31.2.6 2010/02/04 22:00:03 martens Exp $
 //----------------------------------------------------------------------
 
 
@@ -36,6 +36,7 @@ NumiDataInput::NumiDataInput()
     { G4Exception("NumiDataInput constructed twice.");}
 //  fNumiDataInput = this;
 
+  pSurfChk = true; // Set to pSurfChk to true to check for overlapping regions
   debugOn = false;
   NImpWeightOn = true; 
   createNuNtuple=false;  createHadmmNtuple=false;
@@ -51,11 +52,11 @@ NumiDataInput::NumiDataInput()
   KillTracking = true; // false for ahimmel
   testTheta = M_PI/6.;
   
-   StepLimit = 0.0; 
+  StepLimit = 0.0; 
 
   extNtupleFileName=""; //fluka or mars or muon ntuple with particles coming of the target
   //Set the energy threshold for 'killing' particles
-   KillTrackingThreshold = 0.05*GeV; //for defaut neutrino MC g4numi 
+  KillTrackingThreshold = 0.05*GeV; //for defaut neutrino MC g4numi 
    //KillTrackingThreshold = 0.001*GeV; //for muon beam MC
 
 
@@ -193,7 +194,7 @@ if(!vacuumworld && !airhrn){
 
   protonKineticEnergy = sqrt(pow((.938*GeV),2)+pow(protonMomentum,2))-0.938*GeV;
 
-    //Rock        1
+  //Rock        1
   //=======================================================================
   RockRadius  = 10.0*m;
   RockHalfLen = 1200.0*m;
@@ -214,173 +215,160 @@ if(!vacuumworld && !airhrn){
   TargetAreaWidth    = 8.5*m;
   TargetAreaGEANTmat = 15;
   
-  // Target   1
-  //=======================================================================
 
-  //VXADD Added By Vamis Xhagjika
-  TargetContHalfLength  = 75.*cm;
-  TargetContRin	        = 123.*mm;
-  TargetContRout        = 150.*mm;
-  TargetContYOffset     =-50.*mm;
-  TargetContMaterial    = 9;
-  TargetSYOffset        = 3.2*mm;
-  TargetSXOffset        = 3.2*mm;
-  TargetSZOffset        = 100.*mm;
-  //~VXADD
+  // =================================================
+  // Nova Medium Energy Target
+  // =================================================
 
-  //Modified by Vamis Xhagjika. OLD value written in comment on the right beggining with OLD
+  //  48 Target segments 
+  // + 1 Budal VFHS (Vertical Fin for Horizontal Scan)
+  // + 1 Budal HFVS (Horizontal Fin for Vertical Scan)
+
+  TargetDxdz           = 0.0; // doesn't
+  TargetDydz           = 0.0; // work properly yet
+  TargetSegLength      = 24.0*mm;
+  TargetSegWidth       = 6.4*mm;
+  TargetSegHeight      = 63.0*mm;
+  TargetSegPitch       = 0.5*mm;
+  TargetGraphiteHeight = 150.0*mm;
+  TargetEndRounded     = true;
+  TargetSegmentNo      = 48;
+
+  BudalVFHSLength      = TargetSegLength;
+  BudalVFHSWidth       = TargetSegWidth;
+  BudalVFHSHeight      = TargetSegHeight;
+  BudalVFHSPitch       = 4.5*mm;
+  BudalVFHSEndRounded  = TargetEndRounded;
+
+  BudalHFVSLength      = TargetSegLength;
+  BudalHFVSWidth       = TargetSegWidth;
+  BudalHFVSHeight      = TargetSegHeight;
+  BudalHFVSPitch       = 5.0*mm;
+  BudalHFVSEndRounded  = TargetEndRounded;
+
+  // The material "Target" is defined in NumiMaterials.cc
+  // using these properties
+  TargetA              = 12.01*g/mole;
+  TargetZ              = 6.0;
+  TargetDensity        = 1.78*g/cm3;
+   
+
+  // Default location of the Target wrt the MCZERO location
+  // Downstream end of target is fixed at -20 cm with respect to MCZERO
+  // MCZERO is at location (0,0,0) in the ROCK volume.
+  // Work upstream from there to find the upstream end of the Target
+  TotalTargetLength =   
+    TargetSegmentNo*TargetSegLength 
+    + (TargetSegmentNo-1)*TargetSegPitch 
+    + BudalVFHSLength + BudalVFHSPitch 
+    + BudalHFVSLength + BudalHFVSPitch;
   TargetX0           = 0.0;
-  TargetY0           = 0.; //OLD -1.1*mm;
-  TargetZ0           = -2*TargetContHalfLength - 89.458*mm;//OLD -0.45*m; //-0.35*m-10.*cm;
-  TargetDxdz         = 0.0; // doesn't
-  TargetDydz         = 0.0; // work properly yet
-  TargetSLength      = 24.*mm;//OLD 20.*mm;
-  TargetSWidth       = 6.40E-03*m;
-  TargetSHeight      = 63.0E-03*m;//OLD 18.0E-03*m;
-  TargetCPGRadius    = 3.2*mm; // Cooling pipe groove
-  TargetCPGPosition  = 10.7*mm;
-  TargetEndRounded   = true;
-  TargetSegmentNo    = 49;//47;
-  TargetSegmentPitch = 0.5*mm;//OLD 0.3*mm;
-  TargetA            = 12.01*g/mole;
-  TargetZ            = 6.;
-  TargetDensity      = 1.78*g/cm3; //1.815*g/cm3;//1.754*g/cm3;
-  TargetRL           = 25.692;
-  TargetGEANTmat     = 18;
+  TargetY0           = 0.0;
+  TargetZ0           = -20*cm - TotalTargetLength;
 
-  //VXADD
-  //Fin Cooling system variables, This variables control the form and shape of the cooling system for the fins
-  FinCoolerXlength       = 7.0 *mm;
-  FinCoolerYLength       =22.0 *mm;
-  FinCoolerBoxInXLength  = 2.0 *mm;
-  FinCoolerBoxInYLength  =14.0 *mm;
-  WaterPipeRout          = 2.5 *mm;
-  FinCoolingYOffset      =31.0 *mm;
-  //~VXADD
-  
-  //Budal Monitor
-  BudalX0   = 0.;
-  BudalY0   = 3.2*mm;
-  BudalZ0   = TargetSZOffset - TargetSLength - TargetSegmentPitch;//Distance from first fin (Vertical Budal Monitor)
-  BudalDxdz = 0.;
-  BudalDydz = 0.;
-  
-  //HPBaffle           1 // Only the length and position can be changed currently
+  //  G4cout << "TargetZ0 = " << TargetZ0/cm << " (should be equal to -143.3 cm)" << G4endl;;
+
+
+  // The distance between the downstream end of the target and the
+  // downstream canister flange is 8 cm.
+  // The centerline of the target canister is 4.15 cm below the beamline 
+  TargetEndtoDnFlange = 8.0*cm;
+  TargetCanisterCenterOffset = -4.15*cm;
+
+  // The X0, YO, and Z0 for the flanges and cansiter are with respect to the
+  // the canister center for X0 and Y0 and the start of the target material for Z0 
+  // X0 and Y0 are the locations of the center of the volume, and Z0 is the location of the upstream end.
+  TargetDnFlangeLength = 2.5*cm;
+  TargetDnFlangeOutRad = 15.0*cm;
+  TargetDnFlangeX0     = 0.0;
+  TargetDnFlangeY0     = TargetCanisterCenterOffset;
+  TargetDnFlangeZ0     = TotalTargetLength + TargetEndtoDnFlange;
+
+  // Part of downstream flange is cutout to remove material
+  // Part of downstream flange is cutout for the Be window
+  TargetDnFlangeCutoutLength = 1.75*cm;
+  TargetDnBeWindowRadius     = 60*mm;
+  TargetDnBeWindowLength     = 1*mm;
+
+
+  // The body of the target canister is modeled with three layers 
+  // to approximate the actual geometry given in nova-doc 3681-v3 :
+  //   The outer shell is 3mm thick aluminum
+  TargetOutsideCasingOutRad = 15.0*cm;
+  TargetOutsideCasingInRad  = 14.7*cm;
+  TargetCasingWaterOutRad   = TargetOutsideCasingInRad;
+  TargetCasingWaterInRad    = 13.37*cm;
+  TargetInsideCasingOutRad  = TargetCasingWaterInRad;
+  TargetInsideCasingInRad   = 12.3*cm;
+
+  TargetCasingLength = 145*cm;
+  TargetCasingX0     = 0.0;
+  TargetCasingY0     = TargetCanisterCenterOffset;
+  TargetCasingZ0     = TargetDnFlangeZ0 - TargetCasingLength;
+
+
+  // Upstream flange
+  TargetUpFlangeLength = 2.5 * cm;
+  TargetUpFlangeOutRad = 15.0 * cm;
+  TargetUpFlangeX0     = 0.0;
+  TargetUpFlangeY0     = TargetCanisterCenterOffset;
+  TargetUpFlangeZ0     = TargetCasingZ0 - TargetUpFlangeLength;
+
+
+  // Upstream Be window flange
+  TargetUpBeFlangeLength = 0.5*in ;
+  TargetUpBeFlangeOutRad = 2.73*in / 2.0;
+  TargetUpBeFlangeX0 = 0.0;
+  TargetUpBeFlangeY0 = 0.0; 
+  TargetUpBeFlangeZ0 =  TargetUpFlangeZ0 - TargetUpBeFlangeLength;
+
+  TargetUpBeFlangeCutoutLength = 0.25*in;
+  TargetUpBeFlangeCutoutRadius = 1.75/2.0*in;
+
+  TargetUpBeWindowRadius = 0.5*in;
+  TargetUpBeWindowLength = 0.01*in;
+
+  // The target graphite material is clamped between the pressing plate and cooling plate 
+  // Pressing plate 
+  PressingPlateLength = TotalTargetLength;
+  PressingPlateHeight = TargetGraphiteHeight - TargetSegHeight;
+  PressingPlateWidth  = 20.0*mm;
+  PressingPlateX0     = -PressingPlateWidth/2.0 - TargetSegWidth/2.0;
+  PressingPlateY0     = -PressingPlateHeight/2.0 -TargetSegHeight + TargetSegWidth/2.0;
+  PressingPlateZ0     = 0.0;
+
+  PressingPlateCutoutWidth  = 5.0*mm;
+  PressingPlateCutoutHeight = 60.0*mm;
+
+  // Cooling plate
+  CoolingPlateLength = TotalTargetLength;
+  CoolingPlateHeight = PressingPlateHeight;
+  CoolingPlateWidth  = 20.0*mm;
+  CoolingPlateX0     = CoolingPlateWidth/2.0 + TargetSegWidth/2.0;
+  CoolingPlateY0     = -CoolingPlateHeight/2.0 - TargetSegHeight + TargetSegWidth/2.0;
+  CoolingPlateZ0     = 0.0;
+
+  CoolingPlateCutoutWidth  = PressingPlateCutoutWidth;
+  CoolingPlateCutoutHeight = PressingPlateCutoutHeight;
+
+  // The water cooling runs through the cooling plate
+  CoolingWaterPipeOutRad = 5.0*mm;
+  CoolingWaterPipeX0     = 0.0*mm;
+  CoolingWaterPipeY0     = CoolingPlateCutoutHeight/2.0 + (CoolingPlateHeight - CoolingPlateCutoutHeight)/4.0;
+
+
   //=======================================================================
-  HPBaffleGEANTMat   =  18;
-  HPBaffleLength     =  1.20*m;
+  //  Baffle
+  //=======================================================================
+  HPBaffleLength     =  1.50*m;
   HPBaffleRin        =  5.5*mm;
   HPBaffleRout       =  3.*cm;
   HPBaffleX0         =  0.00;
   HPBaffleY0         =  0.00;
-  HPBaffleZ0         =  TargetZ0 - 27.466*in - HPBaffleLength; //OLD -3.14*m;
+  HPBaffleZ0         =  -380*cm;
   HPBaffleDXDZ       =  0.0;
   HPBaffleDYDZ       =  0.0;
- 
-  //VXRM This part of the code is removed from the executable since it is not used anymore in the nova configuration
-  //Cooling pipes
-  NCPipeN = 19;
-  //=======================================================================
-  // CPipeDXDZ=-99999 and CPipeDYDZ=0 puts curved part in z-y plane
-  //=======================================================================
-  G4int CPGeantMat_[]        = {10     ,   10   ,10     , 10     , 10    , 10    ,  10   , 10    , 10     , 10           ,10            , 31     , 31      ,10        ,10        ,  10     ,  10     , 10      ,10  };
-  G4bool CPipeFilledWater_[] = { true  , true   ,true   , true   ,  true , true  ,false  ,true   , false  , true         ,true          , true   ,true     ,true      ,true      , true    , true    , true    , true};
-  G4double CPipeX0_[]        = {0.     ,0.      ,0.     , 0.     ,   0.  ,0.     , 0.    , 0.    ,  0.    , 0.           ,0.            , 0      , 0       ,0         ,0         , 0       , 0       , 0       , 0};
-  G4double CPipeY0_[]        = {1.05e-2,-1.05e-2,1.05e-2,-1.05e-2,3.5e-2 ,-3.5e-2, 0.    , 0.    ,  0.    , 1.05e-2      ,-1.05e-2      , 5.95e-2, -5.95e-2,5.95e-2   ,-5.95e-2  , 5.95e-2 , -5.95e-2,5.95e-2  ,-5.95e-2};
-  G4double CPipeZ0_[]        = {-0.275 , -0.275 ,-0.30  ,-0.30   , -.3001,-.3001 ,.969   , .9695 , .9735  , 0.955        ,0.955         , -0.215 , -0.215  ,-.071     ,-.071     ,-0.287   ,-0.287   , -.30    , -.30};
-  G4double CPipeDXDZ_[]      = {    0  ,  0     , 0     ,  0     ,-99999 ,-99999 , 0     ,  0    , 0      , 0            ,0             , 0.     , 0.      ,0.        ,0         , 0.      , 0.      , 0.      , 0.};
-  G4double CPipeDYDZ_[]      = {    0  ,  0     , 0     ,  0     , 0     ,0      , 0     ,  0    , 0      , 0            ,0             , 0.     , 0.      ,0.        ,0         , 0.      , 0.      , 0.      , 0.};
-  G4double CPipeLength_[]    = {1.230  , 1.230  , .025  , .025   , 0     ,0      , 5e-4  ,  4e-3 , 3e-3   , 14.e-3      ,14.e-3         , 14.4e-2, 14.4e-2 ,2e-2      ,2e-2      , 7.2e-2      ,7.2e-2  , 13e-3   ,13e-3};
-  G4double CPipeRadiusOut_[] = {3e-3   , 3e-3   ,3e-3   ,3e-3    , 3e-3  ,3e-3   ,13.52e-3,14.1e-3,14.1e-3, 3.4e-3       , 3.4e-3       , 5e-3   , 5e-3    ,4e-3      ,4e-3      , 7.5e-3      , 7.5e-3 , 3e-3    ,3e-3};
-  G4double CPipeRadiusIn_[]  = {   0.  ,    0.  ,   0.  ,   0.   , 0.    ,   0.  ,7.52e-3,7.3e-3,7.3e-3   , 0.           , 0.           , 0      , 0       ,0         ,0         , 0           , 0        , 0.      ,0.}; 
-  //CPipeRadiusIn is not the inner pipe radius - use radiusOut and wallthickness for that
-  G4double CPipeWallThick_[] = {4e-4   ,4e-4    ,4e-4   ,4e-4    ,4e-4   ,4e-4   , 0     ,1.6e-3 , 0      , 0.8e-3       , 0.8e-3       , 1.e-3  , 1.e-3   ,1e-3      ,1e-3      , 1.1e-3      , 1.1e-3  , 4e-4    , 4e-4}; 
-  G4double CPipeCurvRad_[]   = {0      , 0      , 0     , 0      ,2.45e-2,2.45e-2, 0     ,   0   , 0      , 0            , 0            , 0      , 0       ,0         ,0         , 0           , 0        , 0       , 0}; // straight tube if this is 0;
-  G4double CPipeOpenAng_[]   = {0      , 0      , 0     , 0      ,90.    ,90.    , 0     ,   0   , 0      , 0            , 0            , 0      , 0       ,0         ,0         , 0           , 0        , 0       , 0   };
-  G4double CPipeCloseAng_[]  = {0      , 0      , 0     , 0      ,270.   ,270.   , 0     ,   0   , 0      , 0            , 0            , 0      , 0       ,0         ,0         , 0           , 0        , 0       , 0  };
-  G4String CPipeVolName_[]   = {"Pipe1","Pipe2" ,"Pipe3","Pipe4" ,"Pipe5","Pipe6","Pipe7","Pipe8","Pipe9" ,"PipeAdapter1","PipeAdapter2","PipeC1","PipeC2" ,"PipeEndT","PipeEndB","PipeBellowT","PipeBellowB"  ,"Pipe1tp","Pipe2btm" };
-  
-  for (G4int ii=0;ii<NCPipeN;ii++){
-    if(airhrn){
-      CPGeantMat.push_back(15);
-    }
-    else{
-    CPGeantMat.push_back(CPGeantMat_[ii]);
-    }
-    CPipeFilledWater.push_back(CPipeFilledWater_[ii]);
-    CPipeX0.push_back(CPipeX0_[ii]*m);
-    CPipeY0.push_back(CPipeY0_[ii]*m);    
-    CPipeZ0.push_back(CPipeZ0_[ii]*m);
-    CPipeDXDZ.push_back(CPipeDXDZ_[ii]);
-    CPipeDYDZ.push_back(CPipeDYDZ_[ii]);
-    CPipeLength.push_back(CPipeLength_[ii]*m);
-    CPipeRadiusOut.push_back(CPipeRadiusOut_[ii]*m);
-    CPipeRadiusIn.push_back(CPipeRadiusIn_[ii]*m);
-    CPipeWallThick.push_back(CPipeWallThick_[ii]*m);
-    CPipeCurvRad.push_back(CPipeCurvRad_[ii]*m);
-    CPipeOpenAng.push_back(CPipeOpenAng_[ii]*deg);
-    CPipeCloseAng.push_back(CPipeCloseAng_[ii]*deg);
-    CPipeVolName.push_back(CPipeVolName_[ii]);
-  }
-  //~VXRM
-  
-  //Container
-  //=======================================================================
-  // Z0 with respect to the first target finPVPla
-  //Modified by Vamis Xhagjika Dimensions should be in mm.
 
-  NContainerN=2;
-
-  //VXADD variables for the upstream window
-  UpstrFlangeRout      = TargetContRout;
-  UpstrFlangeL         = 6.35*mm;
-  UpstrFlangeMat       = 9;
-
-  UpstrBerSupportRout  = 69.342*mm / 2;
-  UpstrBerSupportL     = 6.35*mm;
-
-  UpstrBerLayerRout    = 44.45*mm / 2;
-  UpstrBerLayerL       = 0.25*mm;
-  UpstrBerLayerMat     = 5;
-
-  DwstrBerWindowRout   = 120.*mm / 2;
-      
-  UpstreamHoleRout     = 12.7*mm;
-  //~VXADD
-  
-  G4double CTubeZ0_[]     ={0.                      , 0.                                    };
-  G4double CTubeY0_[]     ={0.                      , 0.                                    };
-  G4double CTubeLength_[] ={TargetContHalfLength    , TargetContHalfLength                  };
-  G4double CTubeRin_[]    ={TargetContRout - 3.*mm  , TargetContRin                         };
-  G4double CTubeRout_[]   ={TargetContRout          , TargetContRin+((3.*mm*16.5*mm)/14.*mm)};
-  G4int CTubeGeantMat_[]  ={   9                    , 9                                     };
-  G4String CTubeVolName_[]={"ContOuterLayer"        , "ContInnerLayer"                      };
-
- for (G4int ii=0;ii<NContainerN;ii++){
-    CTubeZ0.push_back(CTubeZ0_[ii]*mm);
-    CTubeLength.push_back(CTubeLength_[ii]*mm);
-    CTubeRin.push_back(CTubeRin_[ii]*mm);
-    CTubeRout.push_back(CTubeRout_[ii]*mm);
-    CTubeGeantMat.push_back(CTubeGeantMat_[ii]);
-    CTubeVolName.push_back(CTubeVolName_[ii]);
- }
- //Rings holding target and cooling pipes
- NTgtRingN = 5;
- G4double TgtRingZ0_[]         = {-0.03   ,  0.212   , 0.455    , 0.697   , 0.939 };
- G4double TgtRingLength_[]     = {8e-3    ,  8e-3    , 8e-3     , 8e-3    , 8e-3 };
- G4double TgtRingRin_[]        = {9.5e-3  , 9.5e-3   , 9.5e-3   , 9.5e-3  , 9.5e-3};
- G4double TgtRingRout_[]       = {14.55e-3, 14.55e-3 , 14.55e-3 , 14.55e-3, 14.55e-3};
- G4int TgtRingGeantMaterial_[] = {9       , 9        , 9        , 9       , 9 };
- G4String TgtRingVolName_[]    = {"Ring1" , "Ring2"  , "Ring3"  , "Ring4" , "Ring5" };
-
-for (G4int ii=0;ii<NTgtRingN;ii++){
-    TgtRingZ0.push_back(TgtRingZ0_[ii]*m);
-    TgtRingLength.push_back(TgtRingLength_[ii]*m);
-    TgtRingRin.push_back(TgtRingRin_[ii]*m);
-    TgtRingRout.push_back(TgtRingRout_[ii]*m);
-    TgtRingGeantMaterial.push_back(TgtRingGeantMaterial_[ii]);
-    TgtRingVolName.push_back(TgtRingVolName_[ii]);
- }
 
   //Tunnel         1
   //=======================================================================
@@ -638,15 +626,16 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
                               };
 
   //This next block puts all the block coordinates into vectors and assigns the unit "meters" to the values.
-
+  // Mike Martens (Need to move Horn 2 by 9 meters downstream)
+  // Lengths of blocks 21, 22, 23 are set in NumiTargetHall.cc
   for (G4int ii=0;ii<THBlockNblock;ii++){
     THBlockX0.push_back(THBlockX0_[ii]*m);
     THBlockY0.push_back(THBlockY0_[ii]*m);
     if(ii==21){
-      THBlockZ0.push_back(1.15*m);
+      THBlockZ0.push_back(1.15*m+4.5*m);
     }
-    else if(ii==22) THBlockZ0.push_back(30.34*m);
-    else if(ii==23) THBlockZ0.push_back(12*m);
+    else if(ii==22) THBlockZ0.push_back(30.3485*m+4.5*m);
+    else if(ii==23) THBlockZ0.push_back(12*m+9*m);
     else    THBlockZ0.push_back(THBlockZ0_[0]*m);
     THBlockDxdz.push_back(THBlockDxdz_[0]*m);
     THBlockDydz.push_back(THBlockDydz_[0]*m);
