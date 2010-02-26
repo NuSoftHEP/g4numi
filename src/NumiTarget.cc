@@ -520,5 +520,5 @@ void NumiDetectorConstruction::ConstructTarget()
 
   new G4PVPlacement(0, translation, "CoolingWater", CoolingWaterLV, pvTargetMotherVol, false, 0, NumiData->pSurfChk);
 
-  G4cout << "Target Constructed" << G4endl;
+  G4cout << "NOvA Medium Energy Target Constructed" << G4endl;
 }

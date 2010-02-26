@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.31.2.6 2010/02/04 22:00:03 martens Exp $
+// $Id: NumiDataInput.cc,v 1.31.2.7 2010/02/26 22:48:52 corwin Exp $
 //----------------------------------------------------------------------
 
 
@@ -57,6 +57,7 @@ NumiDataInput::NumiDataInput()
   extNtupleFileName=""; //fluka or mars or muon ntuple with particles coming of the target
   //Set the energy threshold for 'killing' particles
   KillTrackingThreshold = 0.05*GeV; //for defaut neutrino MC g4numi 
+
    //KillTrackingThreshold = 0.001*GeV; //for muon beam MC
 
 
@@ -632,10 +633,15 @@ if(!vacuumworld && !airhrn){
     THBlockX0.push_back(THBlockX0_[ii]*m);
     THBlockY0.push_back(THBlockY0_[ii]*m);
     if(ii==21){
+	
+      //Moving blocks 21,22,and 23 to accomodate NOvA position for horn2
+   	
       THBlockZ0.push_back(1.15*m+4.5*m);
+
     }
     else if(ii==22) THBlockZ0.push_back(30.3485*m+4.5*m);
     else if(ii==23) THBlockZ0.push_back(12*m+9*m);
+
     else    THBlockZ0.push_back(THBlockZ0_[0]*m);
     THBlockDxdz.push_back(THBlockDxdz_[0]*m);
     THBlockDydz.push_back(THBlockDydz_[0]*m);
