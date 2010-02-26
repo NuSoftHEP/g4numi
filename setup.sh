@@ -1,5 +1,6 @@
 #!/bin/bash
 # Mike Martens 9/22/09
+# Luke Corwin 11/10/2009
 #
 # Script to setup environment variables for compiling and running g4numi
 # Run as setup.sh minos or setup.sh nova
@@ -31,7 +32,9 @@ if [ $TARGET_TYPE == "nova" ] ; then
     cp -v src/NumiTargetHall.cc.me_target src/NumiTargetHall.cc
     cp -v src/NumiHorn1.cc.me_target src/NumiHorn1.cc
     cp -v src/NumiDataInput.cc.me_target src/NumiDataInput.cc
+    cp -v src/NumiTargetHall.cc.me_target src/NumiTargetHall.cc
     cp -v include/NumiDataInput.hh.me_target include/NumiDataInput.hh
+    cp -v ../g4numi_flugg/for/fluscw.f.me_target ../g4numi_flugg/for/fluscw.f 
     echo ""
 elif [ $TARGET_TYPE == "minos" ] ; then
     echo ""
@@ -40,7 +43,9 @@ elif [ $TARGET_TYPE == "minos" ] ; then
     cp -v src/NumiTargetHall.cc.le_target src/NumiTargetHall.cc
     cp -v src/NumiHorn1.cc.le_target src/NumiHorn1.cc
     cp -v src/NumiDataInput.cc.le_target src/NumiDataInput.cc
+    cp -v src/NumiTargetHall.cc.le_target src/NumiTargetHall.cc
     cp -v include/NumiDataInput.hh.le_target include/NumiDataInput.hh
+    cp -v ../g4numi_flugg/for/fluscw.f.le_target ../g4numi_flugg/for/fluscw.f
     echo ""
 fi
 

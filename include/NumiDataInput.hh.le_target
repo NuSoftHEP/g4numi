@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh.le_target,v 1.1.2.2 2010/02/04 22:00:03 martens Exp $
+// $Id: NumiDataInput.hh.le_target,v 1.1.2.3 2010/02/26 22:48:52 corwin Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -165,15 +165,15 @@ public:
    void SetKillTrackingThreshold(G4double th ){
       KillTrackingThreshold=th;
    }
-   
-
+    
+    void SetjCompare(G4bool _jc);
+    void Setg3Chase(G4bool _gc);
 
  private:
   G4bool debugOn;
   G4String extNtupleFileName;
 
  public:
-   G4bool pSurfChk;
    G4bool NImpWeightOn, createNuNtuple,createHadmmNtuple, createASCII;
    G4bool useFlukaInput, useMarsInput, useMuonBeam, useMuonInput, solidMuMons;
    G4int fNEvents;
@@ -294,7 +294,10 @@ public:
 
   // Horn 1 & 2
   G4int PhornNphorn;
-
+  
+  G4double Horn1X, Horn1Y, Horn1Z;
+  G4double Horn2X, Horn2Y, Horn2Z;
+  
   vdouble_t PhornZ1, PhornZ2;  
   vint_t  PhornNpoint;  
   vdouble_t PhornAin, PhornBin, PhornCin, PhornAout, PhornBout, PhornCout;
