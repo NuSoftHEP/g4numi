@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDecayPipe.cc,v 1.8.2.5 2010/02/04 22:00:03 martens Exp $
+// $Id: NumiDecayPipe.cc,v 1.8.2.6 2010/02/26 22:48:52 corwin Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -66,11 +66,11 @@ void NumiDetectorConstruction::ConstructDecayPipe()
   decayVolumePosition=G4ThreeVector(0,0,(-NumiData->DecayPipeEWinThick)/2.);//for non flat window
 
   G4Tubs* sDVOL = new G4Tubs("DVOL_solid",0.,r,l,0,360.*deg);
-
   // Martens Changed DecayPipeVacuum to He
   //  G4LogicalVolume* lvDVOL = new G4LogicalVolume(sDVOL,DecayPipeVacuum,"DVOL_log",0,0,0); 
   G4LogicalVolume* lvDVOL = new G4LogicalVolume(sDVOL,He,"DVOL_log",0,0,0); 
   G4VPhysicalVolume* pvDVOL=new G4PVPlacement(0,decayVolumePosition,"DVOL",lvDVOL,pvDPIP,false,0,NumiData->pSurfChk);
+
 
   // Upstream window
   //couple of tubes and spheres and a polycone

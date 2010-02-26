@@ -149,6 +149,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   G4VPhysicalVolume* pvMHorn1 = new G4PVPlacement(G4Transform3D(rotation,translation),"MHorn1",lvMHorn1,TGAR,false,0, NumiData->pSurfChk);
 
 
+#if(0) // Martens -- removed Horn1Box
   /**
    * FLUGG - 
    * Volume added to follow particles by Alex Himmel 3-21-07
@@ -163,7 +164,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   ND->ApplyStepLimits(lvHorn1Box); // Limit Step Size
   translation += G4ThreeVector(0.,0.,(MVzPos[nMV] - MVzPos[0])/2.+.5*cm);
   new G4PVPlacement(G4Transform3D(rotation,translation),"Horn1Box",lvHorn1Box,TGAR,false,0, NumiData->pSurfChk);
-
+#endif
   
   //Front part
   G4VSolid* sHorn1Front;
@@ -251,6 +252,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
       new G4PVPlacement(G4Transform3D(rotation,translation),volName,lvPHorn1End,pvMHorn1,false,0, NumiData->pSurfChk);
     }
     
+  G4cout << "NOvA Horn 1 Constructed" << G4endl;
 }
 
 void NumiDetectorConstruction::ConstructSpiderSupport(NumiHornSpiderSupport *HSS,G4double angle,G4double zPos,G4double rIn,G4double rOut,G4VPhysicalVolume *motherVolume, G4int copyNo)
