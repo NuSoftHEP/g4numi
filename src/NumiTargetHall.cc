@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // Target hall chase and duratek blocks modifications by Zachary Barnett.
-// $Id: NumiTargetHall.cc,v 1.11.2.7 2010/03/02 22:49:41 corwin Exp $
+// $Id: NumiTargetHall.cc,v 1.11.2.8 2010/03/10 21:20:52 corwin Exp $
 //----------------------------------------------------------------------
 #include "NumiDetectorConstruction.hh"
 
