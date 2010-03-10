@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.31.2.8 2010/03/02 22:49:41 corwin Exp $
+// $Id: NumiDataInput.cc,v 1.31.2.9 2010/03/10 21:20:52 corwin Exp $
 //----------------------------------------------------------------------
 
 
@@ -15,6 +15,7 @@
 #include "G4UserLimits.hh"
 //#include "globals.hh"
 #include <math.h>
+#include <fstream>
 
 static const G4double in=2.54*cm;
 
@@ -35,6 +36,38 @@ NumiDataInput::NumiDataInput()
   if (fNumiDataInput)
     { G4Exception("NumiDataInput constructed twice.");}
 //  fNumiDataInput = this;
+
+//Adding code, based on Alex Himmel to allow for the use of CURRENT and TARGETZ environment variables
+  bool useFile = false;
+  bool useSystFile = false;
+  int runPeriodFile = -999;
+  double targetZFile = -999.;
+  double hornCurrentFile = -999.;
+  
+  std::ifstream datafile("../runConfig.inp");
+  if (datafile.is_open()) {
+    useFile = true;
+    datafile  >> runPeriodFile >> targetZFile >> hornCurrentFile;
+    datafile.close();
+    G4cout << G4endl << G4endl << G4endl << G4endl
+	   << G4endl << G4endl << G4endl << G4endl 
+	   << G4endl << G4endl << G4endl << G4endl 
+    << G4endl << G4endl << G4endl << G4endl 
+        << "Using parameters from runConfig.inp: " << G4endl
+           << "  Run Period = " << runPeriodFile << G4endl
+           << "  Target Z = " << targetZFile << G4endl
+           << "  Horn Current = " << hornCurrentFile << G4endl;
+    if (hornCurrentFile == 185) hornCurrentFile = 182.1;
+    else if (hornCurrentFile == 170) hornCurrentFile = 167.3;
+    else if (hornCurrentFile == 200) hornCurrentFile = 196.9;
+    else if (hornCurrentFile == 0) hornCurrentFile = 0;
+    else {
+        G4cout << "Several horn currents are translated from nominal values to actual values (e.g. 185 to 182.1).  This current is not one of them, so I will just use the nominal value." << G4endl;
+    }
+  }  
+
+  //
+
 
   pSurfChk = true; // Set to pSurfChk to true to check for overlapping regions
   debugOn = false;
@@ -202,6 +235,11 @@ if(!vacuumworld && !airhrn){
   RockDensity = 2.41*g/cm3; // not
   RockRadLen  = 0.0;        // used
 
+  double TargetConfigZ = 0*cm; //Incorporating TARGETZ environment variable
+  if (useFile) {
+    TargetConfigZ = -1*targetZFile*cm; //TARGETZ is specified in negative cm
+  }
+
   constructTarget = true;
   //TargetArea          1
   //=======================================================================
@@ -265,7 +303,7 @@ if(!vacuumworld && !airhrn){
     + BudalHFVSLength + BudalHFVSPitch;
   TargetX0           = 0.0;
   TargetY0           = 0.0;
-  TargetZ0           = -20*cm - TotalTargetLength;
+  TargetZ0           = (-20*cm - TotalTargetLength) + TargetConfigZ;//Allows TARGETZ to shift position of the target
 
   //  G4cout << "TargetZ0 = " << TargetZ0/cm << " (should be equal to -143.3 cm)" << G4endl;;
 
@@ -366,7 +404,7 @@ if(!vacuumworld && !airhrn){
   HPBaffleRout       =  3.*cm;
   HPBaffleX0         =  0.00;
   HPBaffleY0         =  0.00;
-  HPBaffleZ0         =  -380*cm;
+  HPBaffleZ0         =  -380*cm+ TargetConfigZ; //If the target is shifted, the baffle must move too.
   HPBaffleDXDZ       =  0.0;
   HPBaffleDYDZ       =  0.0;
 
@@ -663,6 +701,19 @@ if(!vacuumworld && !airhrn){
 
   //VXMOD
   HornCurrent=200000.*ampere;//OLD 182100.*ampere;
+  //Added by L. Corwin to incorporate CURRENT environment variable
+  if (useFile) {
+    HornCurrent = hornCurrentFile*1000*ampere; // Convert to kA
+  }
+
+  G4cout << "Running with: " << G4endl
+    // << "  Run Period = " << runPeriod << G4endl
+       << "  Target Z = " << TargetConfigZ/cm << " cm" << G4endl
+       << "  Horn Current = " << HornCurrent/ampere/1000. << " kA" << G4endl;
+
+
+
+
   //~VXMOD
   NPHorn2EndN=3;
   
