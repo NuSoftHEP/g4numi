@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.2 2010/02/04 22:00:03 martens Exp $
+// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.3 2010/04/14 18:53:42 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -81,15 +81,18 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
       DefineMaterials();
   }
 
-  /* FLUGG - Fluka wants a rectangular world volume
-  //Define world volume 
-  G4Tubs* ROCK_solid = new G4Tubs("ROCK_solid",0.,NumiData->RockRadius,NumiData->RockHalfLen,0,360.*deg);
-  //  ROCK_log = new G4LogicalVolume(ROCK_solid,DoloStone,"ROCK_log",0,0,0);
-  */
+
+  // Define world volume 
+
+  // FLUGG - Fluka wants a rectangular world volume
+  // G4Tubs* ROCK_solid = new G4Tubs("ROCK_solid",0.,NumiData->RockRadius,NumiData->RockHalfLen,0,360.*deg);
+  // ROCK_log = new G4LogicalVolume(ROCK_solid,DoloStone,"ROCK_log",0,0,0);
+
   G4Box* ROCK_solid = new G4Box("ROCK_solid",NumiData->RockRadius,
-                                NumiData->RockRadius,NumiData->RockHalfLen); 
+				NumiData->RockRadius,NumiData->RockHalfLen); 
+
   ROCK_log = new G4LogicalVolume(ROCK_solid, DoloStone,"ROCK_log",0,0,0); 
-  ROCK_log->SetVisAttributes(G4VisAttributes::Invisible);
+  //  ROCK_log->SetVisAttributes(G4VisAttributes::Invisible);
   ROCK = new G4PVPlacement(0,G4ThreeVector(),ROCK_log,"ROCK",0,false,0);
   
 
@@ -135,8 +138,8 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   //  circle.SetVisAttributes(attribs);
 
 
-  ConstructTargetHall();
   ConstructDecayPipe();
+  ConstructTargetHall();
   ConstructBaffle();
   // insertion point for horn 1 is @3cm
   // drawings have z=0 at insertion point
