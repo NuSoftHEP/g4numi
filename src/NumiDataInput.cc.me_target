@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.4 2010/03/10 21:20:52 corwin Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.5 2010/04/14 18:53:42 martens Exp $
 //----------------------------------------------------------------------
 
 
@@ -263,10 +263,13 @@ if(!vacuumworld && !airhrn){
   // + 1 Budal VFHS (Vertical Fin for Horizontal Scan)
   // + 1 Budal HFVS (Horizontal Fin for Vertical Scan)
 
+  // Martens 3/26/10
+  // Change the target width to 7.4 mm
+
   TargetDxdz           = 0.0; // doesn't
   TargetDydz           = 0.0; // work properly yet
   TargetSegLength      = 24.0*mm;
-  TargetSegWidth       = 6.4*mm;
+  TargetSegWidth       = 7.4*mm;
   TargetSegHeight      = 63.0*mm;
   TargetSegPitch       = 0.5*mm;
   TargetGraphiteHeight = 150.0*mm;
@@ -305,7 +308,7 @@ if(!vacuumworld && !airhrn){
   TargetY0           = 0.0;
   TargetZ0           = (-20*cm - TotalTargetLength) + TargetConfigZ;//Allows TARGETZ to shift position of the target
 
-  //  G4cout << "TargetZ0 = " << TargetZ0/cm << " (should be equal to -143.3 cm)" << G4endl;;
+  G4cout << "TargetZ0 = " << TargetZ0/cm << " cm. (Should be equal to -143.3 cm for the NOvA design.)" << G4endl;;
 
 
   // The distance between the downstream end of the target and the
@@ -399,8 +402,12 @@ if(!vacuumworld && !airhrn){
   //=======================================================================
   //  Baffle
   //=======================================================================
+
+  // Martens 3/26/10
+  // Increase the baffle inner diameter from 11 to 13 mm.
+
   HPBaffleLength     =  1.50*m;
-  HPBaffleRin        =  5.5*mm;
+  HPBaffleRin        =  (13.0/2.0)*mm;
   HPBaffleRout       =  3.*cm;
   HPBaffleX0         =  0.00;
   HPBaffleY0         =  0.00;
@@ -408,6 +415,8 @@ if(!vacuumworld && !airhrn){
   HPBaffleDXDZ       =  0.0;
   HPBaffleDYDZ       =  0.0;
 
+
+  G4cout << "HPBaffleZ0 = " << HPBaffleZ0/cm << " cm. (Should be equal to -380.0 cm for the NOvA design.)" << G4endl;;
 
   //Tunnel         1
   //=======================================================================

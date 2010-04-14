@@ -7,7 +7,7 @@
 // volumes are rotated. In the G4NuMI world, the beam is horizontal,
 // while all the MC elements are rotated. 
 //
-// $Id: NumiHadronAbsorber.cc,v 1.8.2.5 2010/02/04 22:00:03 martens Exp $
+// $Id: NumiHadronAbsorber.cc,v 1.8.2.6 2010/04/14 18:53:42 martens Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -176,7 +176,7 @@ void NumiDetectorConstruction::ConstructHadronAbsorber()
     blockPos = G4ThreeVector(CoreX_pos, CoreY_pos, CoreZ_pos);
     new G4PVPlacement(0, AlholePosL, Alhole_log, "AlholeL", BLK_log[ii], false, 0,NumiData->pSurfChk);
     new G4PVPlacement(0, AlholePosR, Alhole_log, "AlholeR", BLK_log[ii], false, 0,NumiData->pSurfChk);
-    new G4PVPlacement(0, blockPos, volName, BLK_log[ii], HadrBox, false, 0);
+    new G4PVPlacement(0, blockPos, volName, BLK_log[ii], HadrBox, false, 0, NumiData->pSurfChk);
   }	
 
 
