@@ -29,6 +29,15 @@ void NumiMagneticField::GetFieldValue(const double Point[3],double *Bfield) cons
   Bfield[1] = B*Point[0]/radius;
   Bfield[2] = 0.;
 
+  // Martens -- used to verify the horn current that was used
+  static bool first_call = true;
+  if (first_call) {
+    G4cout << "First call to NumiMagneticField::GetFieldValue" << G4endl;
+    G4cout << "  Horn current is set to " << NumiData->HornCurrent/ampere << " Amperes " << G4endl;
+    first_call = false;
+  }
+
+
   if(NumiData->jCompare) {// Make gnumi like horns - this is for validation
     G4Navigator* numinavigator=new G4Navigator(); //geometry navigator
     G4Navigator* theNavigator=G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
