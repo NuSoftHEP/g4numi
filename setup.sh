@@ -1,14 +1,17 @@
 #!/bin/bash
-# Mike Martens 9/22/09
-# Luke Corwin 11/10/2009
 #
-# Script to setup environment variables for compiling and running g4numi
+# Mike Martens 3/16/2010
+#
 # Run as setup.sh minos or setup.sh nova
+# Script to setup environment variables for compiling and running g4numi
 #
-# The correct combination seems to be GEANT4.9.0, CLHEP2.0.3.2, ROOT5.20.0, 
-# but this was determined by trial and error.
-    
+# Updated to link to code in the /grid/fermiapp/nova/novasrt area
+# This script applies only to g4numi (and not g4numi_flugg)
+# 
+# Uses GEANT4.9.0, CLHEP2.0.3.2, ROOT5.20.0, XERCES2.8.0 
+#    
 
+echo ""
 if [ X$1 == X ] ; then
     echo "Usage: setup.sh minos"
     echo "   or: setup.sh nova"
@@ -25,6 +28,20 @@ else
     return
 fi
 
+
+# Use the following to locate the directory of this file (setup.sh) 
+#  and change directory to that location
+
+script_dir="${BASH_SOURCE[0]}"
+if([ -h "${script_dir}" ]) then
+    while([ -h "${script_dir}" ]) do script_dir=`readlink "${script_dir}"`; done
+fi
+cd `dirname ${script_dir}`
+script_dir=`pwd`
+
+echo "Found script directory: $script_dir"
+
+
 if [ $TARGET_TYPE == "nova" ] ; then
     echo ""
     cp -v src/NumiDetectorConstruction.cc.me_target src/NumiDetectorConstruction.cc
@@ -32,9 +49,7 @@ if [ $TARGET_TYPE == "nova" ] ; then
     cp -v src/NumiTargetHall.cc.me_target src/NumiTargetHall.cc
     cp -v src/NumiHorn1.cc.me_target src/NumiHorn1.cc
     cp -v src/NumiDataInput.cc.me_target src/NumiDataInput.cc
-    cp -v src/NumiTargetHall.cc.me_target src/NumiTargetHall.cc
     cp -v include/NumiDataInput.hh.me_target include/NumiDataInput.hh
-    cp -v ../g4numi_flugg/for/fluscw.f.me_target ../g4numi_flugg/for/fluscw.f 
     echo ""
 elif [ $TARGET_TYPE == "minos" ] ; then
     echo ""
@@ -43,58 +58,82 @@ elif [ $TARGET_TYPE == "minos" ] ; then
     cp -v src/NumiTargetHall.cc.le_target src/NumiTargetHall.cc
     cp -v src/NumiHorn1.cc.le_target src/NumiHorn1.cc
     cp -v src/NumiDataInput.cc.le_target src/NumiDataInput.cc
-    cp -v src/NumiTargetHall.cc.le_target src/NumiTargetHall.cc
     cp -v include/NumiDataInput.hh.le_target include/NumiDataInput.hh
-    cp -v ../g4numi_flugg/for/fluscw.f.le_target ../g4numi_flugg/for/fluscw.f
     echo ""
 fi
 
+# I have not got this to compile with GEANT4.9.3
+# From the ReleaseNotes for GEANT4.9.3
+#   This release of Geant4 has been verified with CLHEP, release 2.0.4.5. 
+#   Use of a different CLHEP version may cause incorrect simulation results. 
+# export G4INSTALL=/grid/fermiapp/nova/novasrt/geant4/geant4.9.3
 
-# If this script does not work, you might want to try the one 
-# of the novasoft setup scripts
-#. /nas-pool/e929/code/novasoft/setup/setup_novasoft_fnal.sh
-#. /nas-pool/e929/code/novasoft/setup/setup_novasoft_fnal.sh -r development
-#. /nas-pool/e929/code/novasoft/setup/setup_novasoft_fnal.csh -r S09.05.01
-
-
-export CLHEP_DIR=/nas-pool/e929/code/clhep/2.0.3.2
-export CLHEP_BASE_DIR=/nas-pool/e929/code/clhep/2.0.3.2
-export CLHEP_INCLUDE_DIR=/nas-pool/e929/code/clhep/2.0.3.2/include
-export CLHEP_LIB_DIR=/nas-pool/e929/code/clhep/2.0.3.2/lib
-echo "Using CLHELP version ${CLHEP_DIR}"
-
-export G4INSTALL=/nas-pool/e929/code/geant4/geant4.9.0
-export G4INCLUDE=/nas-pool/e929/code/geant4/geant4.9.0/include/
-export G4LIB=/nas-pool/e929/code/geant4/geant4.9.0/lib
+export G4INSTALL=/grid/fermiapp/nova/novasrt/geant4/geant4.9.0
+export G4INCLUDE=$G4INSTALL/include/
+export G4LIB=$G4INSTALL/lib
 export G4SYSTEM=Linux-g++
 export G4LIB_BUILD_SHARED=1
-export G4LEVELGAMMADATA=/nas-pool/e929/code/geant4/geant4.9.0/data/PhotonEvaporation2.0
-export G4LEDATA=/nas-pool/e929/code/geant4/geant4.9.0/data/G4EMLOW4.3
-export G4NEUTRONHPDATA=/nas-pool/e929/code/geant4/geant4.9.0/data/G4NDL3.11
-export G4VMC=/nas-pool/e929/code/geant4_vmc/geant4_vmc.2.3
-echo "Using GEANT 4 version ${G4INSTALL}"
+export G4LEVELGAMMADATA=$G4INSTALL/data/PhotonEvaporation2.0
+export G4LEDATA=$G4INSTALL/data/G4EMLOW4.3
+export G4NEUTRONHPDATA=$G4INSTALL/data/G4NDL3.11
+export G4VMC=$G4INSTALL/geant4_vmc/geant4_vmc.2.3
 
-export ROOTSYS=/nas-pool/e929/code/root/root.5.20.00
-echo "Using ROOT version ${ROOTSYS}"
+export CLHEP_DIR=/grid/fermiapp/nova/novasrt/clhep/2.0.3.2
+export CLHEP_BASE_DIR=$CLHEP_DIR
+export CLHEP_INCLUDE_DIR=$CLHEP_DIR/include
+export CLHEP_LIB_DIR=$CLHEP_DIR/lib
 
-export XERCESCROOT=/nas-pool/e929/code/xerces-c/xerces-c-src_2_8_0
-echo "Using Xerces version ${XERCESCROOT}"
+export XERCESCROOT=/grid/fermiapp/nova/novasrt/xerces-c/xerces-c-src_2_8_0
 
-#setup gcc
-setup gcc v3_4_3
-echo "Using gcc version ${GCC_DIR}"
+export ROOTSYS=/grid/fermiapp/nova/novasrt/root/root.5.20.00
+
+echo "Using GEANT4   version ${G4INSTALL}"
+echo "Using CLHELP   version ${CLHEP_DIR}"
+echo "Using Xerces   version ${XERCESCROOT}"
+echo "Using ROOT     version ${ROOTSYS}"
+echo -n "Using gcc      version "
+gcc -dumpversion
+echo "  (This script has worked with gcc 3.4.6)"
+echo ""
+
+# Warn user if adding directories multiple times 
+if (echo $LD_LIBRARY_PATH | grep -i geant4) ; then
+ echo ""
+ echo "WARNING!  GEANT4 directory already exists in LD_LIBRARY_PATH"
+ echo ""
+fi
+if (echo $LD_LIBRARY_PATH | grep -i clhep) ; then
+ echo ""
+ echo "WARNING!  CLHEP directory already exists in LD_LIBRARY_PATH"
+ echo ""
+fi
+if (echo $LD_LIBRARY_PATH | grep -i xerces) ; then
+ echo ""
+ echo "WARNING!  Xerces directory already exists in LD_LIBRARY_PATH"
+ echo ""
+fi
+if (echo $LD_LIBRARY_PATH | grep -i root) ; then
+ echo ""
+ echo "WARNING!  ROOT directory already exists in LD_LIBRARY_PATH"
+ echo ""
+fi
 
 # set library path
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${ROOTSYS}/lib:${G4LIB}/Linux-g++:${CLHEP_LIB_DIR}:${XERCESCROOT}/lib"
 
 
 # set path
+if (echo $PATH | grep -i root) ; then
+ echo ""
+ echo "WARNING!  ROOT directory already exists in PATH"
+ echo ""
+fi
 export PATH="${PATH}:${ROOTSYS}/bin"
 
 # set the g4numi working directory
-
 export G4NUMI_WORK=$PWD
 export G4WORKDIR=$G4NUMI_WORK
+echo ""
 echo "Setting working directory to ${G4WORKDIR}"
 
 echo ""
