@@ -32,6 +32,9 @@ extern void G__set_cpp_environmentg4numiCint();
 #include "../include/data_t.hh"
 #include "../include/hadmmtuple_t.hh"
 #include "../include/zptuple_t.hh"
+#include <algorithm>
+namespace std { }
+using namespace std;
 
 #ifndef G__MEMFUNCBODY
 #endif
@@ -39,6 +42,8 @@ extern void G__set_cpp_environmentg4numiCint();
 extern G__linked_taginfo G__g4numiCintLN_TClass;
 extern G__linked_taginfo G__g4numiCintLN_TBuffer;
 extern G__linked_taginfo G__g4numiCintLN_TMemberInspector;
+extern G__linked_taginfo G__g4numiCintLN_vectorlEROOTcLcLTSchemaHelpercOallocatorlEROOTcLcLTSchemaHelpergRsPgR;
+extern G__linked_taginfo G__g4numiCintLN_reverse_iteratorlEvectorlEROOTcLcLTSchemaHelpercOallocatorlEROOTcLcLTSchemaHelpergRsPgRcLcLiteratorgR;
 extern G__linked_taginfo G__g4numiCintLN_iteratorlEbidirectional_iterator_tagcOTObjectmUcOlongcOconstsPTObjectmUmUcOconstsPTObjectmUaNgR;
 extern G__linked_taginfo G__g4numiCintLN_data_t;
 extern G__linked_taginfo G__g4numiCintLN_hadmmtuple_t;
