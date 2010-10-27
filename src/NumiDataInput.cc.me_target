@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.6 2010/04/14 21:26:14 martens Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.7 2010/10/27 17:38:03 corwin Exp $
 //----------------------------------------------------------------------
 
 
@@ -43,11 +43,12 @@ NumiDataInput::NumiDataInput()
   int runPeriodFile = -999;
   double targetZFile = -999.;
   double hornCurrentFile = -999.;
+  int rhcFile = 0;
   
   std::ifstream datafile("../runConfig.inp");
   if (datafile.is_open()) {
     useFile = true;
-    datafile  >> runPeriodFile >> targetZFile >> hornCurrentFile;
+    datafile  >> runPeriodFile >> targetZFile >> hornCurrentFile >> rhcFile;
     datafile.close();
     G4cout << G4endl << G4endl << G4endl << G4endl
 	   << G4endl << G4endl << G4endl << G4endl 
@@ -230,8 +231,13 @@ if(!vacuumworld && !airhrn){
   RockDensity = 2.41*g/cm3; // not
   RockRadLen  = 0.0;        // used
 
+// Run Period & Target
+// =====================================================================
+  int runPeriod = 1;
+
   double TargetConfigZ = 0*cm; //Incorporating TARGETZ environment variable
   if (useFile) {
+    runPeriod = runPeriodFile;	
     TargetConfigZ = -1*targetZFile*cm; //TARGETZ is specified in negative cm
   }
 
@@ -709,6 +715,10 @@ if(!vacuumworld && !airhrn){
   if (useFile) {
     HornCurrent = hornCurrentFile*1000*ampere; // Convert to kA
   }
+
+  if (rhcFile) {//Current convention of defining RHC
+    HornCurrent *= -1;
+  } 
 
   G4cout << "Running with: " << G4endl
     // << "  Run Period = " << runPeriod << G4endl
