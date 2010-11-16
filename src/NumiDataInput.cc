@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.32 2009/09/24 19:31:04 ahimmel Exp $
+// $Id: NumiDataInput.cc,v 1.33 2010/11/16 18:58:20 ahimmel Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDataInput.hh"
@@ -33,6 +33,7 @@ NumiDataInput::NumiDataInput()
 //  fNumiDataInput = this;
 
   bool useFile = false;
+  bool useSystFile = false;
   int runPeriodFile = -999;
   double targetZFile = -999.;
   double hornCurrentFile = -999.;
@@ -50,6 +51,11 @@ NumiDataInput::NumiDataInput()
            << "  Run Period = " << runPeriodFile << G4endl
            << "  Target Z = " << targetZFile << G4endl
            << "  Horn Current = " << hornCurrentFile << G4endl;
+    bool isReverse = false;
+    if (hornCurrentFile < 0) {
+      isReverse = true;
+      hornCurrentFile *= -1;
+    }
     if (hornCurrentFile == 185) hornCurrentFile = 182.1;
     else if (hornCurrentFile == 170) hornCurrentFile = 167.3;
     else if (hornCurrentFile == 200) hornCurrentFile = 196.9;
@@ -58,6 +64,23 @@ NumiDataInput::NumiDataInput()
         G4cout << "Unrecognized horn current " << hornCurrentFile << ", bailing." << G4endl;
         assert(false);
     }
+    if (isReverse) hornCurrentFile *= -1;
+  }  
+  
+  double targetShift = 0;
+  double horn1Offset = 0;
+  double currentCal = 0;
+    
+  std::ifstream systfile("../systConfig.inp");
+  if (systfile.is_open()) {
+    useSystFile = true;
+    systfile  >> targetShift >> horn1Offset >> currentCal;
+    systfile.close();
+    G4cout << G4endl << G4endl << G4endl << G4endl
+    << "Using systematic shifts from systConfig.inp: " << G4endl
+    << "  Target Shift = " << targetShift << " cm" << G4endl
+    << "  Horn 1 Offset = " << horn1Offset << " mm" << G4endl
+    << "  Current Cal = " << currentCal << "%" << G4endl;
   }  
       
   debugOn = false;
@@ -255,7 +278,7 @@ if(!vacuumworld && !airhrn){
   //=======================================================================
   TargetX0           = 0.0;
   TargetY0           = -1.1*mm;
-  TargetZ0           = -0.35*m + TargetConfigZ;
+  TargetZ0           = -0.35*m + TargetConfigZ + targetShift*cm;
   TargetDxdz         = 0.0; // doesn't
   TargetDydz         = 0.0; // work properly yet
   TargetSLength      = 20.*mm;
@@ -676,21 +699,36 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   HadrBox_length = 55.75*12*in-(4*12*in+2.24*in+9*12*in+9*in);
 
   
+  //======================================================================= 
+  // Horn Current
+  //  
   HornCurrent=182100.*ampere; 
   if (useFile) {
     HornCurrent = hornCurrentFile*ampere;
     if (HornCurrent < 250*ampere) HornCurrent *= 1000.; // Convert to kA
   }
   
-  if (runPeriod == 4) {
+  if (runPeriod == 4 && HornCurrent > 0) {
       HornCurrent *= -1;
   }
   
+  HornCurrent *= 1+currentCal/100.;
+  
   G4cout << "Running with: " << G4endl
        << "  Run Period = " << runPeriod << G4endl
-       << "  Target Z = " << TargetConfigZ/cm << " cm" << G4endl
+       << "  Target Z = " << TargetConfigZ/cm << " cm (actually " << TargetZ0+0.35*m << "+35 cm)" << G4endl
        << "  Horn Current = " << HornCurrent/ampere/1000. << " kA" << G4endl;
 
+  //======================================================================= 
+  // Horn2
+  //
+  this->Horn2X = 0;
+  this->Horn2Y = 0;
+  this->Horn2Z = 10*m;
+  if (jCompare) {
+    this->Horn2Z += 3*cm;
+  }
+  
   NPHorn2EndN=3;
   
   G4double PHorn2EndZ0_[]     ={135.861        ,137.611     ,139.486};
@@ -719,6 +757,13 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
     PHorn2EndVolName.push_back(PHorn2EndVolName_[ii]);
   }
 
+  //======================================================================= 
+  // Horn1
+  //
+  Horn1X = 0;
+  Horn1Y = 0 + horn1Offset*mm;
+  Horn1Z = 3.*cm;
+  
   NPHorn1EndN=3;
   G4double PHorn1EndZ0_[]     ={126.092        ,127.842     ,129.718};
   if (jCompare) {
@@ -746,7 +791,9 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
     PHorn1EndVolName.push_back(PHorn1EndVolName_[ii]);
   }
 
-  //Spider supports for Horn1
+  //======================================================================= 
+  // Spider supports for Horn1
+  //
   NHorn1SpiderSupportPlanesN=3;
   NHorn1SpidersPerPlaneN=3;
   Horn1SpiderSupportZ0.push_back(19.261*in);
@@ -799,7 +846,9 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   
   Horn1SS.push_back(dummy);
 
+  //======================================================================= 
   //Spider supports for Horn2
+  //
   NHorn2SpiderSupportPlanesN=1;
   NHorn2SpidersPerPlaneN=3;
   Horn2SpiderSupportZ0.push_back(59.809*in);
