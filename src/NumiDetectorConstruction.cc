@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc,v 1.13 2009/05/15 18:13:09 ahimmel Exp $
+// $Id: NumiDetectorConstruction.cc,v 1.14 2011/02/11 00:25:22 ahimmel Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -96,23 +96,16 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   ConstructBaffle();
   // insertion point for horn 1 is @3cm
   // drawings have z=0 at insertion point
-  G4ThreeVector horn1pos(0.,0.,3.*cm);
+  G4ThreeVector horn1pos(NumiData->Horn1X, NumiData->Horn1Y, NumiData->Horn1Z);
   G4RotationMatrix horn1rot(0.,0.,0.);
   ConstructHorn1(horn1pos,horn1rot);
   // Okay this is confusing. move horn 1 back by 3cm to match position in gnumi (and in drawings)
   // but horn 2 stays i the same place. If you want to make a 'gnumi-like' horn1 you need to go (in horn1 coordinates)
   // from -3*cm to 2.97m  (the -3 cm probably doesnt matter since not many particles will make it through there anyway)
 
-  G4ThreeVector horn2pos(0.,0.,10*m); 
+  G4ThreeVector horn2pos(NumiData->Horn2X, NumiData->Horn2Y, NumiData->Horn2Z);
   G4RotationMatrix horn2rot(0.,0.,0.);
-  if (NumiData->jCompare) {
-    G4ThreeVector horn2pos(0.,0.,10.03*m);        
-    ConstructHorn2(horn2pos,horn2rot);
-  }
-  else {
-    G4ThreeVector horn2pos(0.,0.,10.*m);
-    ConstructHorn2(horn2pos,horn2rot);    
-  }
+  ConstructHorn2(horn2pos,horn2rot);
 
   if (NumiData->constructTarget){
     ConstructTarget();

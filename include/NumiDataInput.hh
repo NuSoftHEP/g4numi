@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh,v 1.23 2010/08/17 14:46:28 jyuko Exp $
+// $Id: NumiDataInput.hh,v 1.24 2011/02/11 00:25:21 ahimmel Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -294,7 +294,10 @@ public:
 
   // Horn 1 & 2
   G4int PhornNphorn;
-
+  
+  G4double Horn1X, Horn1Y, Horn1Z;
+  G4double Horn2X, Horn2Y, Horn2Z;
+  
   vdouble_t PhornZ1, PhornZ2;  
   vint_t  PhornNpoint;  
   vdouble_t PhornAin, PhornBin, PhornCin, PhornAout, PhornBout, PhornCout;

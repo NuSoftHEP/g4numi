@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiTarget.cc,v 1.10 2008/02/14 19:30:20 koskinen Exp $
+// $Id: NumiTarget.cc,v 1.11 2011/02/11 00:25:22 ahimmel Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -93,7 +93,9 @@ void NumiDetectorConstruction::ConstructTarget()
     // with this translation rotation axis is at the begining of the volume (x0,y0,z0) and not at its center
     translation=G4ThreeVector(-(sin(atan(NumiData->TargetDxdz)))*cos(atan(NumiData->TargetDydz))*NumiData->TargetSLength/2.,(sin(atan(NumiData->TargetDydz)))*NumiData->TargetSLength/2.,(1-cos(atan(NumiData->TargetDxdz))*cos(atan(NumiData->TargetDydz)))*NumiData->TargetSLength/2.);
     G4ThreeVector targetSegmentPosition=G4ThreeVector(0.,0.,NumiData->TargetSLength/2.+(NumiData->TargetSegmentPitch+NumiData->TargetSLength)*ii)-TargetMVOrigin-translation;
-    new G4PVPlacement(G4Transform3D(rotation,targetSegmentPosition),"TGT1",LVTargetFin,pvTargetMotherVol,false,0);
+    char tgtname[99];
+    sprintf(tgtname,"TGT%i",ii);
+    new G4PVPlacement(G4Transform3D(rotation,targetSegmentPosition),tgtname,LVTargetFin,pvTargetMotherVol,false,0);
   }
   
   // Budal Monitor
