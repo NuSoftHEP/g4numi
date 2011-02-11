@@ -29,6 +29,18 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
 	TargetGasCmd->SetParameterName("choice",false);
 	TargetGasCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    GnumiHorns = new G4UIcmdWithABool("/NuMI/det/gnumiHorns",this); 
+	GnumiHorns->SetGuidance("Make gnumi-like horns"); 
+	GnumiHorns->SetParameterName("gnumiHorns",true); 
+	GnumiHorns->SetDefaultValue (ND->jCompare); 
+	GnumiHorns->AvailableForStates(G4State_PreInit,G4State_Idle); 
+
+    GnumiChase = new G4UIcmdWithABool("/NuMI/det/gnumiChase",this); 
+	GnumiChase->SetGuidance("Make gnumi-like target shielding"); 
+	GnumiChase->SetParameterName("gnumiChase",true); 
+	GnumiChase->SetDefaultValue (ND->g3Chase); 
+	GnumiChase->AvailableForStates(G4State_PreInit,G4State_Idle); 
+    
 	ConstructTarget = new G4UIcmdWithABool("/NuMI/det/constructTarget",this); 
 	ConstructTarget->SetGuidance("Target construction on/off"); 
 	ConstructTarget->SetParameterName("constructTarget",true); 
@@ -63,6 +75,9 @@ NumiDetectorMessenger::~NumiDetectorMessenger() {
 
 	delete TargetGasCmd;
 	delete TargetZ0Cmd;
+    delete GnumiHorns;
+    delete GnumiChase;
+    delete ConstructTarget;
 	delete HornCurrentCmd;
 	delete UpdateCmd;
 
@@ -81,6 +96,14 @@ void NumiDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
 	if ( command == HornCurrentCmd ) {
 		NumiDetector->SetHornCurrent(HornCurrentCmd->GetNewDoubleValue(newValue));
 	}
+	if ( command == GnumiHorns ) {
+        NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
+		NumiData->SetjCompare(GnumiHorns->GetNewBoolValue(newValue));
+	}
+	if ( command == GnumiChase ) {
+        NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
+		NumiData->Setg3Chase(GnumiChase->GetNewBoolValue(newValue));
+	}    
 	if ( command == ConstructTarget ) {
 	        NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
 		NumiData->constructTarget=ConstructTarget->GetNewBoolValue(newValue);

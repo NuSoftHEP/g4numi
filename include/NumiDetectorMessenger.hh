@@ -29,6 +29,8 @@ private:
 	G4UIcmdWithAString*         TargetGasCmd;
         G4UIcmdWithADoubleAndUnit*  TargetZ0Cmd;
         G4UIcmdWithADoubleAndUnit*  HornCurrentCmd;
+    G4UIcmdWithABool*           GnumiHorns;
+    G4UIcmdWithABool*           GnumiChase;    
         G4UIcmdWithABool*           ConstructTarget;
         //G4UIcmdWithAnInteger*     NbLayersCmd;    
         G4UIcmdWithoutParameter*    UpdateCmd;
