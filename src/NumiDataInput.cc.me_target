@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.7 2010/10/27 17:38:03 corwin Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.8 2011/08/05 20:33:01 corwin Exp $
 //----------------------------------------------------------------------
 
 
@@ -294,7 +294,12 @@ if(!vacuumworld && !airhrn){
   TargetA              = 12.01*g/mole;
   TargetZ              = 6.0;
   TargetDensity        = 1.78*g/cm3;
-   
+
+  //  Z=4.,A=9.01*g/mole, density=1.848*g/cm3
+  //Be Target 
+  //TargetA              = 9.01*g/mole;
+  //TargetZ              = 4.0;
+  //TargetDensity        = 1.848*g/cm3;
 
   // Default location of the Target wrt the MCZERO location
   // Downstream end of target is fixed at -20 cm with respect to MCZERO
