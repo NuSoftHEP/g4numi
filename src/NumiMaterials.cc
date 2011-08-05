@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiMaterials.cc,v 1.11.2.4 2009/09/24 16:43:38 martens Exp $
+// $Id: NumiMaterials.cc,v 1.11.2.5 2011/08/05 20:33:01 corwin Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -158,7 +158,7 @@ void NumiDetectorConstruction::DefineMaterials()
 
 #ifdef FLUGG
   Be = new G4Material("Berylliu", Z=4.,A=9.01*g/mole, density=1.848*g/cm3);
-  Target =  new G4Material("Carbon", Z=NumiData->TargetZ, A=NumiData->TargetA, density= NumiData->TargetDensity);
+  Target =  new G4Material("Carbon", Z=NumiData->TargetZ, A=NumiData->TargetA, density= NumiData->TargetDensity); //TargetZ, TargetA, etc., are defined in NumiDataInput.cc
 #else
   Be = new G4Material("Berillium", Z=4.,A=9.01*g/mole, density=1.848*g/cm3);
   C =  new G4Material("Carbon", Z=6., A=12.01*g/mole, density= 1.83*g/cm3);

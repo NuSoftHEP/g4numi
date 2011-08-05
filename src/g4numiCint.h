@@ -14,7 +14,9 @@
 #include <string.h>
 #define G__ANSIHEADER
 #define G__DICTIONARY
-#include "cint/G__ci.h"
+#define G__PRIVATE_GVALUE
+#include "G__ci.h"
+#include "FastAllocString.h"
 extern "C" {
 extern void G__cpp_setup_tagtableg4numiCint();
 extern void G__cpp_setup_inheritanceg4numiCint();
@@ -44,6 +46,8 @@ extern G__linked_taginfo G__g4numiCintLN_TBuffer;
 extern G__linked_taginfo G__g4numiCintLN_TMemberInspector;
 extern G__linked_taginfo G__g4numiCintLN_vectorlEROOTcLcLTSchemaHelpercOallocatorlEROOTcLcLTSchemaHelpergRsPgR;
 extern G__linked_taginfo G__g4numiCintLN_reverse_iteratorlEvectorlEROOTcLcLTSchemaHelpercOallocatorlEROOTcLcLTSchemaHelpergRsPgRcLcLiteratorgR;
+extern G__linked_taginfo G__g4numiCintLN_vectorlETVirtualArraymUcOallocatorlETVirtualArraymUgRsPgR;
+extern G__linked_taginfo G__g4numiCintLN_reverse_iteratorlEvectorlETVirtualArraymUcOallocatorlETVirtualArraymUgRsPgRcLcLiteratorgR;
 extern G__linked_taginfo G__g4numiCintLN_iteratorlEbidirectional_iterator_tagcOTObjectmUcOlongcOconstsPTObjectmUmUcOconstsPTObjectmUaNgR;
 extern G__linked_taginfo G__g4numiCintLN_data_t;
 extern G__linked_taginfo G__g4numiCintLN_hadmmtuple_t;
