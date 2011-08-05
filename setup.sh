@@ -8,7 +8,6 @@
 # Updated to link to code in the /grid/fermiapp/nova/novasrt area
 # This script applies only to g4numi (and not g4numi_flugg)
 # 
-# Uses GEANT4.9.0, CLHEP2.0.3.2, ROOT5.20.0, XERCES2.8.0 
 #    
 
 echo ""
@@ -22,9 +21,13 @@ elif [ $1 == "minos" ] ; then
 elif [ $1 == "nova" ] ; then
     echo "Setting up for NOvA configuration"
     export TARGET_TYPE="nova"
+elif [ $1 == "me" ] ; then
+    echo "Setting up for weird hybrid configuration"
+    export TARGET_TYPE="me"
 else 
     echo "Usage: setup.sh minos"
     echo "   or: setup.sh nova"
+    echo "   or: setup.sh me"
     return
 fi
 
@@ -41,6 +44,26 @@ script_dir=`pwd`
 
 echo "Found script directory: $script_dir"
 
+
+#if [ $TARGET_TYPE == "nova" ] ; then
+#    echo ""
+#    cp -v src/NumiDetectorConstruction.cc.me_target src/NumiDetectorConstruction.cc
+#    cp -v src/NumiTarget.cc.me_target src/NumiTarget.cc
+#    cp -v src/NumiTargetHall.cc.me_target src/NumiTargetHall.cc
+#    cp -v src/NumiHorn1.cc.me_target src/NumiHorn1.cc
+#    cp -v src/NumiDataInput.cc.me_target src/NumiDataInput.cc
+#    cp -v include/NumiDataInput.hh.me_target include/NumiDataInput.hh
+#    echo ""
+#elif [ $TARGET_TYPE == "minos" ] ; then
+#    echo ""
+#    cp -v src/NumiDetectorConstruction.cc.le_target src/NumiDetectorConstruction.cc    
+#    cp -v src/NumiTarget.cc.le_target src/NumiTarget.cc
+#    cp -v src/NumiTargetHall.cc.le_target src/NumiTargetHall.cc
+#    cp -v src/NumiHorn1.cc.le_target src/NumiHorn1.cc
+#    cp -v src/NumiDataInput.cc.le_target src/NumiDataInput.cc
+#    cp -v include/NumiDataInput.hh.le_target include/NumiDataInput.hh
+#    echo ""
+#fi
 
 if [ $TARGET_TYPE == "nova" ] ; then
     echo ""
@@ -60,6 +83,14 @@ elif [ $TARGET_TYPE == "minos" ] ; then
     cp -v src/NumiDataInput.cc.le_target src/NumiDataInput.cc
     cp -v include/NumiDataInput.hh.le_target include/NumiDataInput.hh
     echo ""
+elif [ $TARGET_TYPE == "me" ] ; then
+    echo "MINOS target and target position with ME horn 2 position"
+    cp -v src/NumiDetectorConstruction.cc.me_target src/NumiDetectorConstruction.cc
+    cp -v src/NumiTarget.cc.le_target src/NumiTarget.cc
+    cp -v src/NumiTargetHall.cc.me_target src/NumiTargetHall.cc
+    cp -v src/NumiHorn1.cc.le_target src/NumiHorn1.cc
+    cp -v src/NumiDataInput.cc.me_hybrid src/NumiDataInput.cc
+    cp -v include/NumiDataInput.hh.le_target include/NumiDataInput.hh
 fi
 
 # I have not got this to compile with GEANT4.9.3
@@ -68,24 +99,49 @@ fi
 #   Use of a different CLHEP version may cause incorrect simulation results. 
 # export G4INSTALL=/grid/fermiapp/nova/novasrt/geant4/geant4.9.3
 
-export G4INSTALL=/grid/fermiapp/nova/novasrt/geant4/geant4.9.0
-export G4INCLUDE=$G4INSTALL/include/
-export G4LIB=$G4INSTALL/lib
-export G4SYSTEM=Linux-g++
+
+#export G4INSTALL=/grid/fermiapp/nova/novasrt/geant4/geant4.9.0
+#export G4INSTALL=/grid/fermiapp/nusoft/products/prd/geant4/4.9.3/Linux+2.6-GCC_3_4
+#export G4INCLUDE=$G4INSTALL/include/
+#export G4LIB=$G4INSTALL/lib
+#export G4SYSTEM=Linux-g++
+#export G4LIB_BUILD_SHARED=1
+#export G4LEVELGAMMADATA=$G4INSTALL/data/PhotonEvaporation2.0
+#export G4LEDATA=$G4INSTALL/data/G4EMLOW4.3
+#export G4NEUTRONHPDATA=$G4INSTALL/data/G4NDL3.11
+#export G4VMC=$G4INSTALL/geant4_vmc/geant4_vmc.2.3
+
+#Try setting these variables with setup_nova_art values
+
+#setup geant4 v4_9_4_p01 -q gcc45
+
+#export G4INSTALL=/grid/fermiapp/nusoft/products/prd/geant4/4.9.3/Linux+2.6-GCC_3_4
+#export G4INCLUDE=/grid/fermiapp/nova/novaart/externals-0.2.0/geant4/v4_9_4/Linux64bit+2.6-2.5-gcc45/include
+#export G4LIB=/grid/fermiapp/nova/novaart/externals-0.2.0/geant4/v4_9_4/Linux64bit+2.6-2.5-gcc45/lib
+#export G4SYSTEM=Linux-g++
 export G4LIB_BUILD_SHARED=1
-export G4LEVELGAMMADATA=$G4INSTALL/data/PhotonEvaporation2.0
-export G4LEDATA=$G4INSTALL/data/G4EMLOW4.3
-export G4NEUTRONHPDATA=$G4INSTALL/data/G4NDL3.11
-export G4VMC=$G4INSTALL/geant4_vmc/geant4_vmc.2.3
+#export G4LEVELGAMMADATA=/grid/fermiapp/nova/novaart/externals-0.2.0/g4photon/v2_1/NULL/PhotonEvaporation2.1
+#export G4LEDATA=/grid/fermiapp/nova/novaart/externals-0.2.0/g4emlow/v6_19/NULL/G4EMLOW6.19
+#export G4NEUTRONHPDATA=/grid/fermiapp/nova/novaart/externals-0.2.0/g4neutron/v3_14/NULL/G4NDL3.14
+#export G4VMC=$G4INSTALL/geant4_vmc/geant4_vmc.2.3
 
-export CLHEP_DIR=/grid/fermiapp/nova/novasrt/clhep/2.0.3.2
-export CLHEP_BASE_DIR=$CLHEP_DIR
-export CLHEP_INCLUDE_DIR=$CLHEP_DIR/include
-export CLHEP_LIB_DIR=$CLHEP_DIR/lib
 
-export XERCESCROOT=/grid/fermiapp/nova/novasrt/xerces-c/xerces-c-src_2_8_0
 
-export ROOTSYS=/grid/fermiapp/nova/novasrt/root/root.5.20.00
+#export CLHEP_DIR=/grid/fermiapp/nova/novasrt/clhep/2.0.3.2
+#Override FLUGG settins because we don't need the 32-bit CLHEP here.
+#export CLHEP_DIR=/grid/fermiapp/nova/novaart/externals-0.2.0/clhep/v2_1_0_1/Linux64bit+2.6-2.5-gcc45
+#export CLHEP_DIR=$CLHEP_BASE_DIR
+#export CLHEP_BASE_DIR=$CLHEP_DIR
+#export CLHEP_INCLUDE_DIR=$CLHEP_DIR/include
+export CLHEP_INCLUDE_DIR=$CLHEP_BASE_DIR/include
+export CLHEP_LIB_DIR=$CLHEP_BASE_DIR/lib
+
+#export XERCESCROOT=/grid/fermiapp/nova/novasrt/xerces-c/xerces-c-src_2_8_0
+#export XERCESCROOT=/grid/fermiapp/nova/novaart/externals-0.2.0/xerces_c/v3_1_1/Linux64bit+2.6-2.5-gcc45
+
+
+#export ROOTSYS=/grid/fermiapp/nova/novasrt/root/root.5.20.00
+#export ROOTSYS=/grid/fermiapp/nova/novaart/externals-0.2.0/root/v5_28_00_p02/Linux64bit+2.6-2.5-nova
 
 echo "Using GEANT4   version ${G4INSTALL}"
 echo "Using CLHELP   version ${CLHEP_DIR}"
