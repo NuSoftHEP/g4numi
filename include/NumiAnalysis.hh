@@ -17,7 +17,9 @@
 #include "G4ios.hh"
 #include "G4TrajectoryContainer.hh"
 
-#include <map.h>
+//#include<map.h>
+
+#include "/usr/include/c++/4.1.1/backward/map.h"
 
 class G4Step;
 class TFile;
