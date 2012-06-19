@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.le_target,v 1.1.2.3 2010/04/14 18:53:42 martens Exp $
+// $Id: NumiDataInput.cc.le_target,v 1.1.2.4 2012/06/19 20:04:34 corwin Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDataInput.hh"
@@ -703,7 +703,7 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
     if (HornCurrent < 250*ampere) HornCurrent *= 1000.; // Convert to kA
   }
   
-  if (runPeriod == 4) {
+  if (runPeriod == 4 || runPeriod == 7 || runPeriod == 9) {
       HornCurrent *= -1;
   }
   
