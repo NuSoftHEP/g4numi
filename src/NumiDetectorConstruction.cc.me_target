@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.3 2010/04/14 18:53:42 martens Exp $
+// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.4 2012/07/25 21:36:40 corwin Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -152,14 +152,14 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
 
   //Placing horn at 19m for the NOvA ME configuration - L. Corwin 2009 July 01
 
-  G4ThreeVector horn2pos(0.,0.,19*m); 
+  G4ThreeVector horn2pos(0.,0.,19.2016*m); //New position from e-mail from Bob Zwaska 
   G4RotationMatrix horn2rot(0.,0.,0.);
-  if (NumiData->jCompare) {
+  if (NumiData->jCompare) {//Not sure what this is for.
     G4ThreeVector horn2pos(0.,0.,19.03*m);        
     ConstructHorn2(horn2pos,horn2rot);
   }
   else {
-    G4ThreeVector horn2pos(0.,0.,19.*m);
+    G4ThreeVector horn2pos(0.,0.,19.2016*m);
     ConstructHorn2(horn2pos,horn2rot);    
   }
 
