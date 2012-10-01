@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.4 2012/07/25 21:36:40 corwin Exp $
+// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.5 2012/10/01 15:25:08 corwin Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -152,14 +152,16 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
 
   //Placing horn at 19m for the NOvA ME configuration - L. Corwin 2009 July 01
 
-  G4ThreeVector horn2pos(0.,0.,19.2016*m); //New position from e-mail from Bob Zwaska 
+  G4double horn2_z = 19.204775*m;
+
+  G4ThreeVector horn2pos(0.,0.,horn2_z); //New position from e-mail from Bob Zwaska 
   G4RotationMatrix horn2rot(0.,0.,0.);
   if (NumiData->jCompare) {//Not sure what this is for.
     G4ThreeVector horn2pos(0.,0.,19.03*m);        
     ConstructHorn2(horn2pos,horn2rot);
   }
   else {
-    G4ThreeVector horn2pos(0.,0.,19.2016*m);
+    G4ThreeVector horn2pos(0.,0.,horn2_z);
     ConstructHorn2(horn2pos,horn2rot);    
   }
 
@@ -180,6 +182,11 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
     }
   }
 #endif
+  
+  //  FILE* output;
+  //output = fopen(det+".csv","a+");
+  // fprintf(output,"FHC    ,   ,      ,    ,       ,,RHC   ,    ,   ,       ,    \n");
+
 
   return ROCK;
 }
