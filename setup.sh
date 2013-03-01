@@ -93,6 +93,7 @@ elif [ $TARGET_TYPE == "me" ] ; then
     cp -v include/NumiDataInput.hh.le_target include/NumiDataInput.hh
 fi
 
+
 # I have not got this to compile with GEANT4.9.3
 # From the ReleaseNotes for GEANT4.9.3
 #   This release of Geant4 has been verified with CLHEP, release 2.0.4.5. 
@@ -114,6 +115,7 @@ fi
 #Try setting these variables with setup_nova_art values
 
 #setup geant4 v4_9_4_p01 -q gcc45
+
 
 #export G4INSTALL=/grid/fermiapp/nusoft/products/prd/geant4/4.9.3/Linux+2.6-GCC_3_4
 #export G4INCLUDE=/grid/fermiapp/nova/novaart/externals-0.2.0/geant4/v4_9_4/Linux64bit+2.6-2.5-gcc45/include
