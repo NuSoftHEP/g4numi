@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // Target hall chase and duratek blocks modifications by Zachary Barnett.
-// $Id: NumiTargetHall.cc.me_target,v 1.1.2.1 2010/02/04 22:00:04 martens Exp $
+// $Id: NumiTargetHall.cc.me_target,v 1.1.2.2 2013/03/01 22:04:19 corwin Exp $
 //----------------------------------------------------------------------
 #include "NumiDetectorConstruction.hh"
 
@@ -123,7 +123,7 @@ void NumiDetectorConstruction::ConstructTargetHall()
     // Positions are changed in NumiDataInput.cc
     tempgnumiD = new G4Box("sDuratekgnumiD", 0.5842*m,0.301475*m, 7.85*m+4.5*m);
     G4LogicalVolume *lvDuratekBlockgnumiD = new G4LogicalVolume(tempgnumiD, Fe, "lvDuratekBlockgnumiD", 0, 0,0);
-    tempgnumiD3 = new G4Box("sDuratekgnumiD3", 0.5842*m, 0.286475*m, (6/2)*m);
+    tempgnumiD3 = new G4Box("sDuratekgnumiD3", 0.5842*m, 0.286475*m-0.1*m, (6/2)*m);//Shrunk by 6mm to eliminate overlap with Horn 2.  (Corwin Feb. 15, 2013)
     G4LogicalVolume *lvDuratekBlockgnumiD3 = new G4LogicalVolume(tempgnumiD3, Fe, "lvDuratekBlockgnumiD3",0,0,0);
     tempgnumiD2 = new G4Box("sDuratekgnumiD2", 0.5842*m, 0.301475*m,15.3485*m-4.5*m);
     G4LogicalVolume *lvDuratekBlockgnumiD2 = new G4LogicalVolume(tempgnumiD2, Fe, "lvDuratekBlockgnumiD2",0,0,0);
@@ -151,7 +151,7 @@ void NumiDetectorConstruction::ConstructTargetHall()
 	  if(ii==19 || ii==20) new G4PVPlacement(0, DuratekCasing_position,"DuratekBlockgnumi", lvDuratekBlockgnumiBC, TGAR, false, 0, NumiData->pSurfChk);
 	  if(ii==21) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD, TGAR, false, 0, NumiData->pSurfChk);
           if(ii==22) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD2, TGAR, false, 0, NumiData->pSurfChk);
-          if(ii==23) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD3, TGAR, false, 0, NumiData->pSurfChk);
+	  if(ii==23) new G4PVPlacement(0, DuratekCasing_position, "DuratekBlockgnumi", lvDuratekBlockgnumiD3, TGAR, false, 0, NumiData->pSurfChk);
    
 	}
 
