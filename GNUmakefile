@@ -12,6 +12,9 @@ ifndef G4INSTALL
   G4INSTALL = ../..
 endif
 
+echo G4WORKDIR = $(G4WORKDIR)
+echo G4TARGET = $(G4TARGET)
+
 include $(G4INSTALL)/config/architecture.gmk
 
 #
