@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.8 2011/08/05 20:33:01 corwin Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.9 2013/03/01 22:04:19 corwin Exp $
 //----------------------------------------------------------------------
 
 
@@ -560,7 +560,7 @@ if(!vacuumworld && !airhrn){
                                -0.0377, //Block 20 (side 2 gnumi block)
                                0.657075,//Block 21 (top gnumi block)
 			       0.657075, // Block 22 (top gnumi block after h2)
-                               0.672075 //Block 23 above Horn2
+                               0.672075+0.05 //Block 23 above Horn2,moved 6 mm up to avoid overlap with Horn 2 (Corwin Feb. 15, 2013)
   };
 
   
@@ -854,7 +854,7 @@ if(!vacuumworld && !airhrn){
   dummy.topH=.108*in;
   dummy.topL=.4*in;
   dummy.bottomW=1.437*in;
-  dummy.bottomH=.345*in;
+  dummy.bottomH=.345*in-0.344*in;//Shortened to avoid overlaps (Corwin Feb. 15, 2013)
   dummy.bottomL=.4*in;
   dummy.bottomThickMid=.3*in;  //Thickness of bottom part in the middle
   dummy.bottomR=5.812*in;
