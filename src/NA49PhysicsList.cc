@@ -20,27 +20,25 @@
 #include "G4EmExtraPhysics.hh"
 #include "G4EmProcessOptions.hh"
 
-#include "HadronPhysicsFTFC.hh"
-#include "HadronPhysicsFTFP.hh"
+//#include "HadronPhysicsFTFC.hh"
+//#include "HadronPhysicsFTFP.hh"
 #include "HadronPhysicsFTFP_BERT.hh"
 #include "HadronPhysicsFTF_BIC.hh"
 #include "HadronPhysicsLHEP.hh"
-#include "HadronPhysicsLHEP_BERT.hh"
-#include "HadronPhysicsLHEP_EMV.hh"
-#include "HadronPhysicsLHEP_PRECO_HP.hh"
+//#include "HadronPhysicsLHEP_BERT.hh"
+//#include "HadronPhysicsLHEP_EMV.hh"
+//#include "HadronPhysicsLHEP_PRECO_HP.hh"
 #include "G4HadronInelasticQBBC.hh"
-#include "HadronPhysicsQGSC.hh"
+//#include "HadronPhysicsQGSC.hh"
 #include "HadronPhysicsQGSC_BERT.hh"
-#include "HadronPhysicsQGSC_EFLOW.hh"
+//#include "HadronPhysicsQGSC_EFLOW.hh"
 #include "HadronPhysicsQGSP.hh"
 #include "HadronPhysicsQGSP_BERT.hh"
 #include "HadronPhysicsQGSP_BERT_HP.hh"
 #include "HadronPhysicsQGSP_BIC.hh"
 #include "HadronPhysicsQGSP_BIC_HP.hh"
-
-#include "G4HadronInelasticQLHEP.hh"
+//#include "G4HadronInelasticQLHEP.hh"
 #include "G4IonPhysics.hh"
-
 #include "G4LossTableManager.hh"
 
 #include "G4ProcessManager.hh"
@@ -119,18 +117,6 @@ void NA49PhysicsList::AddPhysicsList(const G4String& name)
     delete emPhysicsList;
     emPhysicsList = new G4EmStandardPhysics_option1();
 
-  } else if (name == "FTFC") {
-
-    SetBuilderList1();
-    hadronPhys.push_back( new HadronPhysicsFTFC("hadron",true));
-    dump = true;
-
-  } else if (name == "FTFP") {
-
-    SetBuilderList1();
-    hadronPhys.push_back( new HadronPhysicsFTFP("hadron",true));
-    dump = true;
-
   } else if (name == "FTFP_BERT") {
 
     SetBuilderList1();
@@ -152,25 +138,6 @@ void NA49PhysicsList::AddPhysicsList(const G4String& name)
 
     SetBuilderList2();
     hadronPhys.push_back( new HadronPhysicsLHEP("hadron"));
-    dump = true;
-
-  } else if (name == "LHEP_BERT") {
-
-    SetBuilderList3();
-    hadronPhys.push_back( new HadronPhysicsLHEP_BERT("hadron"));
-    dump = true;
-
-  } else if (name == "LHEP_EMV") {
-
-    AddPhysicsList("emstandard_opt1");
-    SetBuilderList3();
-    hadronPhys.push_back( new HadronPhysicsLHEP_EMV("hadron"));
-    dump = true;
-
-  } else if (name == "LHEP_PRECO_HP") {
-
-    SetBuilderList3(true);
-    hadronPhys.push_back( new HadronPhysicsLHEP_PRECO_HP("hadron"));
     dump = true;
 
   } else if (name == "QBBC") {
@@ -209,22 +176,10 @@ void NA49PhysicsList::AddPhysicsList(const G4String& name)
     SetBuilderList0(true);
     hadronPhys.push_back( new G4HadronInelasticQBBC("QBBC",verboseLevel,
 						    false,false,false,true,true));
-  } else if (name == "QGSC") {
-
-    SetBuilderList4();
-    hadronPhys.push_back( new HadronPhysicsQGSC("hadron",true));
-    dump = true;
-
   } else if (name == "QGSC_BERT") {
 
     SetBuilderList4();
     hadronPhys.push_back( new HadronPhysicsQGSC_BERT("hadron",true));
-    dump = true;
-
-  } else if (name == "QGSC_EFLOW") {
-
-    SetBuilderList4();
-    hadronPhys.push_back( new HadronPhysicsQGSC_EFLOW("hadron",true));
     dump = true;
 
   } else if (name == "QGSC_EMV") {
@@ -368,7 +323,7 @@ void NA49PhysicsList::SetBuilderList4(G4bool)
 void NA49PhysicsList::SetBuilderList5(G4bool flagHP)
 {
   hadronPhys.push_back( new G4EmExtraPhysics("extra EM"));
-  hadronPhys.push_back( new G4HadronDElasticPhysics(verboseLevel,flagHP));
+  hadronPhys.push_back( new G4HadronDElasticPhysics(verboseLevel));
   hadronPhys.push_back( new G4QStoppingPhysics("stopping",verboseLevel));
   hadronPhys.push_back( new G4IonBinaryCascadePhysics("ionBIC"));
   hadronPhys.push_back( new G4NeutronTrackingCut("nTackingCut",verboseLevel));

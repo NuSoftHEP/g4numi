@@ -1,0 +1,33 @@
+
+/control/suppressAbortion 2
+/NuMI/run/DebugLevel 0
+/NuMI/run/useNuBeam true
+
+#I don't know what we'll eventually do with these water options. These are the defaults.
+/NuMI/run/useWaterInTgt false
+/NuMI/det/LengthOfWaterInTgt 3 cm
+
+#For now, these are the standards for the "me" beam configuration.
+/NuMI/det/RunPeriod 0
+/NuMI/det/UseCorrHornCurrent false
+/NuMI/det/BeamConfig me000z-200i
+
+#/NuMI/run/KillTracking true
+#/NuMI/run/KillTrackingThreshold 0.01 GeV
+
+#Until MINERvA accepts the changes I made to the "me" beam configuration, these cards will be required.
+#/NuMI/det/set/horn2Position 0 0 1900 cm
+#/NuMI/det/set/bafflePosition 0 0 -380 cm
+#/NuMI/det/set/targetPosition 0 0 -143.3 cm
+#/NuMI/det/set/deltaOuterThickness 0.9525 cm
+#/NuMI/det/set/duratekShift 4.5 m
+#/NuMI/det/set/thblockShift 4.5 m
+#/NuMI/det/set/baffleInnerRadius 6.5 mm
+
+#The output file will be me000z200i_0003.root, the name format being setNuNtupleFile_setRunID.root
+/NuMI/output/outputNuNtuple true
+/NuMI/output/setNuNtupleFile me000z-200i
+/NuMI/det/update
+/NuMI/rndm/setRndmSeed 13
+/NuMI/run/setRunID 13
+/run/beamOn 500000
