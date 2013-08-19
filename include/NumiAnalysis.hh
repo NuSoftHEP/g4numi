@@ -88,7 +88,7 @@ private:
    G4double noProtons;
    char asciiFileName[50], nuNtupleFileName[50], hadmmNtupleFileName[50], tarNtupleFileName[50];
    char zpNtupleFileName[50], bxdrawFileName[50];
-   map<int, int> code;
+  std::map<int, int> code;
    
    NumiDataInput* NumiData;
    

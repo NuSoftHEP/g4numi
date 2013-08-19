@@ -44,7 +44,7 @@
 #horn current configuration defined by BeamConfig (see next), default is true
 #Note:This must be set BEFORE setting BeamConfig
 #
-/NuMI/det/UseCorrHornCurrent true
+/NuMI/det/UseCorrHornCurrent false
 
 #
 #Configure the neutirno beam. 
@@ -68,8 +68,8 @@
 #Set the energy at which to kill the particle
 #default is 0.05 GeV. Note: This cut is specific for MINOS
 #
-#/NuMI/run/KillTracking true
-#/NuMI/run/KillTrackingThreshold 0.05 GeV
+/NuMI/run/KillTracking true
+/NuMI/run/KillTrackingThreshold 0.01 GeV
 
 #
 #Use importance weighting, default is true

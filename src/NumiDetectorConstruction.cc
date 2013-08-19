@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc,v 1.13.4.6 2011/11/13 22:31:45 ltrung Exp $
+// $Id: NumiDetectorConstruction.cc,v 1.13.4.6.2.1 2013/08/19 21:37:37 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -141,6 +141,8 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   // but horn 2 stays i the same place. If you want to make a 'gnumi-like' horn1 you need to go (in horn1 coordinates)
   // from -3*cm to 2.97m  (the -3 cm probably doesnt matter since not many particles will make it through there anyway)
 
+  if (fBeamType.find("me") != std::string::npos)
+    NumiData->Horn2Z0 = NumiData->Horn2Z0_me;
   G4ThreeVector horn2pos(NumiData->Horn2X0, NumiData->Horn2Y0, NumiData->Horn2Z0);
   G4RotationMatrix horn2rot(0.,0.,0.);
   if (NumiData->jCompare)
@@ -276,6 +278,13 @@ void NumiDetectorConstruction::UpdateGeometry()
 
 void NumiDetectorConstruction::SetBeamType(const G4String& beamType) {
     fBeamType = beamType;
+    if(beamType.find("me") != std::string::npos) {
+      fDuratekShift = 4.5*m;
+      fTHBlockShift = 4.5*m;
+      fDeltaOuterThickness = 0.9525*cm;
+      NumiData->HPBaffleRin = 6.5*mm;
+      fBaffleInnerRadius = 6.5*mm;
+    }
 }
 
 

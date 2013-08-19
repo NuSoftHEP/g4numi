@@ -91,7 +91,7 @@ def main(argv=None):
     if len(seed)==0: 
         seed=run    
     if len(outfile)==0:
-        outfile='g4numi%s_%s'%(os.environ['G4NUMIVER'],beamconfig)
+        outfile='g4numi_%s_%s'%(os.environ['G4NUMIVER'],beamconfig)
         if len(nametag)>0:
             outfile=outfile+'_'+nametag
     

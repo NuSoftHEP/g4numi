@@ -18,12 +18,12 @@
 
 // Interaction Physics Lists
 
-#include "QGSP.hh"
-#include "QGSP_BERT.hh"
+//#include "QGSP.hh"
+//#include "QGSP_BERT.hh"
 //#include "QGSC.hh"
 //#include "QBBC.hh"
 //#include "FTFC.hh"
-//#include "FTFP.hh"
+#include "FTFP_BERT.hh"
 //#include "LHEP.hh"
 
 #include "NumiPrimaryGeneratorAction.hh"
@@ -51,7 +51,8 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new NumiDetectorConstruction);
 
   // Initialize Physics Lists
-  QGSP_BERT* physicsList = new QGSP_BERT;
+  //  QGSP_BERT* physicsList = new QGSP_BERT;
+  FTFP_BERT* physicsList = new FTFP_BERT;
   runManager->SetUserInitialization(physicsList);
 
 #ifdef G4VIS_USE

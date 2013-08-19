@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh,v 1.23.2.7 2011/11/13 22:13:29 ltrung Exp $
+// $Id: NumiDataInput.hh,v 1.23.2.7.2.1 2013/08/19 21:37:37 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -416,6 +416,7 @@ public:
    //these variables are very important (Laura)
    //
    G4double Horn2X0, Horn2Y0, Horn2Z0;
+  G4double Horn2Z0_me;
    //----------------
    
   G4int NPHorn2OCN,NPHorn2ICN,NPHorn2EndN;

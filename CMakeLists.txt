@@ -1,0 +1,114 @@
+#
+# source /nusoft/app/externals/setup
+# setup cmake
+# setup geant4 v4_9_6_p01a -q debug:e2
+# setup root   v5_34_05    -q debug:e2
+#
+# cd /nova/app/users/$USER
+#
+# mkdir cmakebuild
+# cd    cmakebuild
+#
+# cmake -DGeant4_DIR=${GEANT4_FQ_DIR}/lib64/Geant4-9.6.1 \
+#       -DCLHEP_DIR=${CLHEP_DIR}/${CLHEP_FQ}/lib/CLHEP-2.1.3.1 \
+#       /nova/app/users/$USER/g4numi   # or whatever path
+#
+# Required environment variables:
+#    ROOTSYS    e.g. /nusoft/app/externals/root/v5_34_05/Linux64bit+2.6-2.5-e2-debug
+#    XERCESROOT e.g. /nusoft/app/externals/xerces_c/v3_1_1/Linux64bit+2.6-2.5-e2-debug
+#
+#----------------------------------------------------------------------------
+# Setup the project
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+project(g4numi)
+
+#----------------------------------------------------------------------------
+# Find Geant4 package, activating all available UI and Vis drivers by default
+# You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
+# to build a batch mode only executable
+#
+option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
+if(WITH_GEANT4_UIVIS)
+  find_package(Geant4 REQUIRED ui_all vis_all)
+else()
+  find_package(Geant4 REQUIRED)
+endif()
+
+find_package(CLHEP REQUIRED)
+
+#----------------------------------------------------------------------------
+# Setup Geant4 include directories and compile definitions
+# Setup include directory for this project
+#
+include(${Geant4_USE_FILE})
+
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories($ENV{XERCESCROOT}/include)
+include_directories($ENV{ROOTSYS}/include)
+
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
+set(_root_internal_libraries
+    Core.so
+    Cint.so
+    RIO.so
+    Net.so
+    Hist.so
+    Graf.so
+    Graf3d.so
+    Gpad.so
+    Tree.so
+    Rint.so
+    Postscript.so
+    Matrix.so
+    Physics.so
+    MathCore.so
+    Thread.so
+    EG.so
+)
+set(Root_LIBRARIES ${_root_internal_libraries})
+
+link_directories($ENV{ROOTSYS}/lib)
+
+#----------------------------------------------------------------------------
+# Locate sources and headers for this project
+# NB: headers are included so they will show up in IDEs
+#
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+
+#----------------------------------------------------------------------------
+# Add the executable, and link it to the Geant4 libraries
+#
+add_executable(g4numi g4numi.cc ${sources} ${headers})
+target_link_libraries(g4numi ${Geant4_LIBRARIES} ${Root_LIBRARIES})
+
+#----------------------------------------------------------------------------
+# Copy all scripts to the build directory, i.e. the directory in which we
+# build B1. This is so that we can run the executable directly because it
+# relies on these scripts being in the current working directory.
+#
+set(EXAMPLEG4NUMI_SCRIPTS
+ me000z200i3.mac
+  )
+
+foreach(_script ${EXAMPLEG4NUMI_SCRIPTS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_script}
+    ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+    )
+endforeach()
+
+#----------------------------------------------------------------------------
+# For internal Geant4 use - but has no effect if you build this
+# example standalone
+#
+add_custom_target(G4NUMI DEPENDS g4numi)
+
+#----------------------------------------------------------------------------
+# Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
+#
+install(TARGETS g4numi DESTINATION bin)
+
+

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.32.2.7 2011/11/13 22:31:45 ltrung Exp $
+// $Id: NumiDataInput.cc,v 1.32.2.7.2.1 2013/08/19 21:37:37 rhatcher Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -30,6 +30,8 @@ static const G4double fBeamZ0_ref     = -4.0*m; //this is arbitrary right now
 //is at -3.04 then the distance between the DS edge of the
 //baffle and the US edge of the first Vertical target fin is 1.19m. The Documentation,
 //http://www-numi.fnal.gov/numwork/tdh/TDH_V2_4.2.2-baffle.pdf, says it should be 68cm
+static const G4double fTargetZ0_ref_me   = -1.433*m; //me000z position
+static const G4double fHPBaffleZ0_ref_me = -3.8*m; //me000z position
 
 NumiDataInput* NumiDataInput::fNumiDataInput = 0;
 
@@ -80,7 +82,11 @@ NumiDataInput::NumiDataInput()
    if(fPrintInfo > 0 || debugOn) G4cout << "NumiDataInput Constructor Called" << G4endl;
 
    if (fNumiDataInput)
-    { G4Exception("NumiDataInput constructed twice.");}
+     { 
+       G4Exception("NumiDataInput::NumiDataInput()",
+                   "2xNumiDataInput()", FatalException,
+                   "NumiDataInput constructed twice.");
+     }
 //  fNumiDataInput = this;
 
 
@@ -832,7 +838,7 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   Horn2X0 = 0.0*cm;
   Horn2Y0 = 0.0*cm;
   Horn2Z0 = 10.0*m;
-  
+  Horn2Z0_me = 19.0*m;
 
   
 
@@ -968,13 +974,20 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   //Near & Far Detector location
   nNear=11;//was 9 without the different energy for the ND positions.
   nFar=2;
-  G4double xdetNear[]    = {0     , 0.     , 7.     , 11.    , 14.    , 14.    , 14.   , 0.  , 25.84  , 4.8/2.       , -4.8/2.       };
-  G4double ydetNear[]    = {0     , -3.    , -5.    , -5.    , -6.    , -3.    , 0.    , 71. , 78.42  , 3.8/2.       , -3.8/2.       };
-  G4double zdetNear[]    = {1040  , 1010.  , 975.   , 958.   , 940.   , 840.   , 740.  , 940., 745.25 , 1040+16.6/2. , 1040-16.6/2.  };
+  // [0] MINOS ND, [1] NDOS, [2] NOvA ND
+  //G4double xdetNear[]    = {0     , 0.     , 7.     , 11.    , 14.    , 14.    , 14.   , 0.  , 25.84  , 4.8/2.       , -4.8/2.       };
+  //G4double ydetNear[]    = {0     , -3.    , -5.    , -5.    , -6.    , -3.    , 0.    , 71. , 78.42  , 3.8/2.       , -3.8/2.       };
+  //G4double zdetNear[]    = {1040  , 1010.  , 975.   , 958.   , 940.   , 840.   , 740.  , 940., 745.25 , 1040+16.6/2. , 1040-16.6/2.  };
+  G4double xdetNear[]    = {0     , -0.29     , 11.57     , 11.    , 14.    , 14.    , 14.   , 0.  , 25.84  , 4.8/2.       , -4.8/2. }; // NOvA doc 5485 positions
+  G4double ydetNear[]    = {0     , 92.21    , -3.64    , -5.    , -6.    , -3.    , 0.    , 71. , 78.42  , 3.8/2.       , -3.8/2. };
+  G4double zdetNear[]    = {1040  , 841.76  , 993.35   , 958.   , 940.   , 840.   , 740.  , 940., 745.25 , 1040+16.6/2. , 1040-16.6/2. };
   G4String detNameNear[] = {"Near","Nova1a","Nova1b","Nova1c","Nova2a","Nova2b","Nova3","MSB","MiniBooNE","Near +x +y +z","Near -x -y -z"};
-  G4double xdetFar[]     = {0     , 28.81258   };
-  G4double ydetFar[]     = {0     , 81.39258   };
-  G4double zdetFar[]     = {735000, 811400     };
+  //G4double xdetFar[]     = {0     , 28.81258   };
+  //G4double ydetFar[]     = {0     , 81.39258   };
+  //G4double zdetFar[]     = {735000, 811400     };
+  G4double xdetFar[]     = {0     , 11037.46 }; // NOvA doc 5485 positions
+  G4double ydetFar[]     = {0     , -4162.64 };
+  G4double zdetFar[]     = {735000, 810422.32 };
   G4String detNameFar[]  = {"Far" , "Ash River"};
 
   for(G4int ii=0;ii<nNear;ii++){
@@ -1354,8 +1367,14 @@ G4bool NumiDataInput::SetTargetConfig(G4String config)
    std::istringstream tgtzstrm(tgtzstr);
    tgtzstrm >> tgtz;
 
-   NumiDataInput::SetTargetZ0(fTargetZ0_ref   - tgtz*cm);
-   NumiDataInput::SetBaffleZ0(fHPBaffleZ0_ref - tgtz*cm);
+   if(fHornConfig == "me") {
+     NumiDataInput::SetTargetZ0(fTargetZ0_ref_me   - tgtz*cm);
+     NumiDataInput::SetBaffleZ0(fHPBaffleZ0_ref_me - tgtz*cm);
+   }
+   else {
+     NumiDataInput::SetTargetZ0(fTargetZ0_ref   - tgtz*cm);
+     NumiDataInput::SetBaffleZ0(fHPBaffleZ0_ref - tgtz*cm);
+   }
    NumiDataInput::SetBeamZ0  (fBeamZ0_ref     - tgtz*cm);
 
    fTargetConfig = config;
@@ -1450,8 +1469,7 @@ G4bool NumiDataInput::SetHornConfig(G4String config)
    if(config != "le" && config != "me")
    {
       G4cout << "NumiDataInput::SetHornConfig() - PROBLEM. Can't set horn configuration. "
-             << "Valid horn configs are \"LE\" or \"le\"." 
-             << "Note that I don't know how to simulate \"ME\" beam configurations right now." << G4endl;
+             << "Valid horn configs are \"le\" or \"me\"." << G4endl;
       
       return false;
    }
