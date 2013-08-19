@@ -35,7 +35,7 @@ public:
 
    G4TrajectoryContainer* GetTrajectoryContainer();
 
-   const G4int GetDRayTrackID() const;
+   G4int GetDRayTrackID() const;
    void IncrementDRayTrackID();
 
 private:
@@ -57,7 +57,7 @@ private:
    
 };
 
-inline const G4int NumiEventAction::GetDRayTrackID() const {return fSplitDRayIDcounter;}
+inline G4int NumiEventAction::GetDRayTrackID() const {return fSplitDRayIDcounter;}
 inline void NumiEventAction::IncrementDRayTrackID() {++fSplitDRayIDcounter;}
 
 #endif

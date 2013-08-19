@@ -2,7 +2,7 @@
 // Sets the relevant memebers of the data class for storing the
 // MC data for the Hadron and Muon Monitors.
 //
-// $Id: draytupleMIB_t.cc,v 1.1.2.1 2010/08/19 19:50:54 minervacvs Exp $
+// $Id: draytupleMIB_t.cc,v 1.1.2.1.2.1 2013/08/19 22:31:12 rhatcher Exp $
 //----------------------------------------------------------------------
 
 
@@ -121,7 +121,7 @@ void draytupleMIB_t::ClearVectors(IEdepMap &Map)
 }
 
 //------------------------------------------------------------------------------------------
-const double draytupleMIB_t::GetMuEdep(const int mon, const int cell) const
+double draytupleMIB_t::GetMuEdep(const int mon, const int cell) const
 {
 
    if( (cell < 0 || cell > 95) || (mon < 0 || mon > 2) )
@@ -166,7 +166,7 @@ const double draytupleMIB_t::GetMuEdep(const int mon, const int cell) const
 
 
 //------------------------------------------------------------------------------------------
-const double draytupleMIB_t::GetIntEdep(const int mon, const int cell, const std::string &varname) const
+double draytupleMIB_t::GetIntEdep(const int mon, const int cell, const std::string &varname) const
 {
 
    if( (cell < 0 || cell > 95) || (mon < 0 || mon > 2) )
@@ -254,7 +254,7 @@ const double draytupleMIB_t::GetIntEdep(const int mon, const int cell, const std
    
 }
 //------------------------------------------------------------------------------------------
-const double draytupleMIB_t::GetExtEdep(const int mon, const int cell, const std::string &varname) const
+double draytupleMIB_t::GetExtEdep(const int mon, const int cell, const std::string &varname) const
 {
 
    if( (cell < 0 || cell > 95) || (mon < 0 || mon > 2) )

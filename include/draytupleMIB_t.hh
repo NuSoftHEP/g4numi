@@ -5,7 +5,7 @@
 // This is a class that defines the draytupleMIB_t object that is used to store 
 // the g4numi output in a root tree.
 //
-// $Id: draytupleMIB_t.hh,v 1.1.2.1 2010/08/19 19:50:54 minervacvs Exp $
+// $Id: draytupleMIB_t.hh,v 1.1.2.1.2.1 2013/08/19 22:31:12 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #ifndef DRAYTUPLEMIB_T_HH
@@ -33,11 +33,11 @@ public:
    
    void Clear();
 
-   const double GetMuEdep (const int mon, const int cell) const;
-   const double GetIntEdep(const int mon, const int cell,
-                           const std::string &varname = "edep") const;
-   const double GetExtEdep(const int mon, const int cell,
-                           const std::string &varname = "edep") const;
+   double GetMuEdep (const int mon, const int cell) const;
+   double GetIntEdep(const int mon, const int cell,
+                     const std::string &varname = "edep") const;
+   double GetExtEdep(const int mon, const int cell,
+                     const std::string &varname = "edep") const;
    
   
    void SetMuEdep (const int mon, const int cell, const double value);
