@@ -25,6 +25,11 @@
 //#include "FTFC.hh"
 #include "FTFP_BERT.hh"
 //#include "LHEP.hh"
+#ifdef WITH_G4NU
+  // non-official factory version in "g4nu" namespace
+  #include "G4NuPhysicsLists/G4PhysListFactory.hh"   
+#endif
+#include "G4VModularPhysicsList.hh"
 
 #include "NumiPrimaryGeneratorAction.hh"
 #include "NumiEventAction.hh"
@@ -40,7 +45,8 @@
 #include "NumiVisManager.hh"
 #endif
 
-
+#include <cassert>
+#include <stdlib.h>
 
 int main(int argc,char** argv)
 {
@@ -51,8 +57,26 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new NumiDetectorConstruction);
 
   // Initialize Physics Lists
+  G4VModularPhysicsList* physicsList = 0;
+#ifdef WITH_G4NU
+  const char* plname = getenv("PHYSICSLIST");
+  if ( ! plname ) {
+    G4cout << "g4numi::main() - No PHYSICSLIST env variable set" << G4endl; 
+    plname = "FTFP_BERT";  // fall back if user didn't specify
+  }
+  G4cout << "g4numi::main() - using physics list \"" << plname 
+         << "\"" << G4endl;
+  g4nu::G4PhysListFactory* factory = new g4nu::G4PhysListFactory();
+  physicsList = factory->GetReferencePhysList(plname);
+  if ( ! physicsList ) {
+    factory->PrintAvailableLists();
+    assert(physicsList);
+  }
+#else
+  // old style
   //  QGSP_BERT* physicsList = new QGSP_BERT;
-  FTFP_BERT* physicsList = new FTFP_BERT;
+  physicsList = new FTFP_BERT;
+#endif 
   runManager->SetUserInitialization(physicsList);
 
 #ifdef G4VIS_USE

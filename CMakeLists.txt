@@ -9,9 +9,12 @@
 # mkdir cmakebuild
 # cd    cmakebuild
 #
-# cmake -DGeant4_DIR=${GEANT4_FQ_DIR}/lib64/Geant4-9.6.1 \
-#       -DCLHEP_DIR=${CLHEP_DIR}/${CLHEP_FQ}/lib/CLHEP-2.1.3.1 \
-#       /nova/app/users/$USER/g4numi   # or whatever path
+# WHICH_G4=`ls -d ${GEANT4_FQ_DIR}/lib64/Geant4-*`
+# WHICH_CLHEP=`ls -d ${CLHEP_LIB_DIR}/CLHEP-*`
+# 
+# cmake -DGeant4_DIR=${WHICH_G4} -DCLHEP_DIR=${WHICH_CLHEP}  
+#    [ -DWITH_G4NU=ON ] /path/to/source/g4numi
+#
 #
 # Required environment variables:
 #    ROOTSYS    e.g. /nusoft/app/externals/root/v5_34_05/Linux64bit+2.6-2.5-e2-debug
@@ -21,6 +24,8 @@
 # Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(g4numi)
+
+option(WITH_G4NU "build against G4NuPhysicsLists" OFF)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -43,7 +48,12 @@ find_package(CLHEP REQUIRED)
 include(${Geant4_USE_FILE})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories($ENV{XERCESCROOT}/include)
+
+# Geant4_INCLUDE_DIR --->  /path/to/version/include/Geant4 
+#        ... but also want /path/to/version/include
+# INCLUDE_DIRS also includes paths for CLHEP and XERCES_C
+include_directories(${Geant4_INCLUDE_DIR}/..)  # #include "Geant4/file.h"
+include_directories(${Geant4_INCLUDE_DIRS})    # all the standard paths
 include_directories($ENV{ROOTSYS}/include)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -70,6 +80,13 @@ set(Root_LIBRARIES ${_root_internal_libraries})
 
 link_directories($ENV{ROOTSYS}/lib)
 
+if(WITH_G4NU)
+   set(G4NU $ENV{G4NU})
+   include_directories(${G4NU}/include)
+   link_directories(${G4NU}/lib)
+   set(G4NU_LIBRARIES g4nupl)
+endif()
+
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
@@ -81,7 +98,11 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(g4numi g4numi.cc ${sources} ${headers})
-target_link_libraries(g4numi ${Geant4_LIBRARIES} ${Root_LIBRARIES})
+target_link_libraries(g4numi ${Geant4_LIBRARIES} ${Root_LIBRARIES} ${G4NU_LIBRARIES})
+
+if(WITH_G4NU)
+  SET_TARGET_PROPERTIES(g4numi PROPERTIES COMPILE_FLAGS -DWITH_G4NU )
+endif()
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
