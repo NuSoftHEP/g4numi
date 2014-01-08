@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.le_target,v 1.1.2.4 2012/06/19 20:04:34 corwin Exp $
+// $Id: NumiDataInput.cc.le_target,v 1.1.2.4.2.1 2014/01/08 23:17:59 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDataInput.hh"
@@ -11,6 +11,7 @@
 //#include "globals.hh"
 #include <math.h>
 #include <fstream>
+#include <sstream>
 
 static const G4double in=2.54*cm;
 
@@ -29,7 +30,11 @@ NumiDataInput::NumiDataInput()
 {
   G4cout << "NumiDataInput Constructor Called" << G4endl;
   if (fNumiDataInput)
+#ifndef WITH_G4EXCEPT1
+    { G4Exception("NumiDataInput","NumiDataInput",FatalException,"NumiDataInput constructed twice.");}
+#else
     { G4Exception("NumiDataInput constructed twice.");}
+#endif
 //  fNumiDataInput = this;
 
   bool useFile = false;
@@ -886,6 +891,49 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
     ydet_far.push_back(ydetFar[ii]*m);
     zdet_far.push_back(zdetFar[ii]*m);
   }
+
+  // fake volume to make FLUKA FLUSCW happy
+  // default values:
+  FakePosGlobal[0] = 0.;
+  FakePosGlobal[1] = 0.;
+  FakePosGlobal[2] = -600.;
+  FakeR            = 30.;
+  FakeDz           = 0.001;
+  MaxFakeOut       = 10;
+  FakeMaterial     = "DecayPipeVacuum"; // "Vacuum" "DecayPipeVacuum" "Air"
+  const char* fakeinfo = ::getenv("FAKEINFO");
+  if ( fakeinfo ) {
+    if ( G4String(fakeinfo) == "OFF" ) {
+      G4cout << "FAKEVOL turned OFF" << G4endl;
+      FakeDz = FakeR = 0;
+    } else {
+      // parse the info from the environment
+      // assume the format:
+      //     " XPOS YPOS ZPOS R DZ [MAXFAKEOUT [FAKEMATERIAL]] "
+      // ala:
+      //     "0 0 -600 30 0.2 10 Vacuum"
+      std::istringstream ss(fakeinfo);
+      ss >> FakePosGlobal[0] >> FakePosGlobal[1] >> FakePosGlobal[2]
+         >> FakeR >> FakeDz;
+      std::string tmp;
+      ss >> tmp;
+      if ( tmp != "" ) {
+        // optional part is there
+        std::istringstream ss2(tmp);
+        ss2 >> MaxFakeOut;
+        // perhaps next optional part as well;
+        tmp = "";
+        ss >> tmp;
+        if ( tmp != "" ) FakeMaterial = tmp;
+      }
+    }
+  }
+  G4cout << "NumiDataInput: FAKE Volume @{" << FakePosGlobal[0] << ","
+         << FakePosGlobal[1] << "," << FakePosGlobal[2] << "} "
+         << " R=" << FakeR << " Dz=" << FakeDz 
+         << " material=\"" << FakeMaterial << "\""
+         << std::flush << G4endl;
+
 }
 
 NumiDataInput::~NumiDataInput()
