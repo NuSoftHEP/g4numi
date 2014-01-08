@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh.le_target,v 1.1.2.4 2010/03/02 22:49:41 corwin Exp $
+// $Id: NumiDataInput.hh.le_target,v 1.1.2.4.2.1 2014/01/08 22:05:02 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -344,5 +344,14 @@ public:
   G4int NHorn2SpiderSupportPlanesN,NHorn2SpidersPerPlaneN;
   vdouble_t Horn2SpiderSupportZ0;
   vNumiHornSpiderSupport_t Horn2SS;
+
+  // Fake Volume for FLUKA
+  // set FakeDz or FakeR to zero to avoid building fake volume
+  G4double FakePosGlobal[3]; // position of fake volume
+  G4double FakeR;            // radius of cylinder
+  G4double FakeDz;           // half-thickness of cylinder
+  G4int    MaxFakeOut;       // maximum allowable times outside FAKE volume
+  G4String FakeMaterial;     // what to make the fake volume out of
+
 };
 #endif
