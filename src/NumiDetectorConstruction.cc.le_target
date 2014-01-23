@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc.le_target,v 1.1.2.1 2009/09/24 16:39:13 martens Exp $
+// $Id: NumiDetectorConstruction.cc.le_target,v 1.1.2.1.2.1 2014/01/23 17:39:02 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -32,6 +32,18 @@
 #ifndef FLUGG
 #include "G4RunManager.hh"
 #endif
+
+//#ifdef  FLUGG
+// this is what a fortran common block looks like in C++
+// use this to communicate with FLUGG's SOEVSV routine when necessary
+struct {
+  double fakexyz[3];
+  double faker;
+  double fakedz;
+  int    maxfakeout;
+  int    initfake;
+} fakevol_;
+//#endif
 
 NumiDetectorConstruction::NumiDetectorConstruction()
 {
@@ -131,6 +143,46 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
     }
   }
 #endif
+
+  // potentially a fake volume to make FLUSCW happy
+  // assume user has supplied values in "cm"
+  G4double fakeR  = NumiData->FakeR;
+  G4double fakeDz = NumiData->FakeDz;
+  if ( fakeR > 0 && fakeDz > 0 ) {
+    G4ThreeVector fakePosGlobal =
+      G4ThreeVector(NumiData->FakePosGlobal[0]*cm,
+                    NumiData->FakePosGlobal[1]*cm,
+                    NumiData->FakePosGlobal[2]*cm);
+    G4ThreeVector targetHallPosition =
+      G4ThreeVector(0,0,NumiData->TargetAreaLength/2.+NumiData->TargetAreaZ0);
+    G4ThreeVector fakePosRelative = fakePosGlobal - targetHallPosition;
+    G4Tubs* sFAKE = new G4Tubs("sFAKE",0,fakeR*cm,fakeDz*cm,0,360.*deg);
+    // probably sould make it out of something _other_ than Air
+    // but allow some choice
+    G4Material* fakemat = Vacuum;
+    if      ( NumiData->FakeMaterial == "Vacuum"          ) fakemat = Vacuum;
+    else if ( NumiData->FakeMaterial == "DecayPipeVacuum" ) fakemat = DecayPipeVacuum;
+    else if ( NumiData->FakeMaterial == "Air"             ) fakemat = Air;
+    else {
+      G4cout << "RWH: I don't think you want to make the FAKE volume out of \""
+             << NumiData->FakeMaterial << "\" how about \"Vacuum\" instead?"
+             << G4endl;
+    }
+    G4LogicalVolume* lvFAKE = new G4LogicalVolume(sFAKE,fakemat,"lvFAKE",0,0,0);
+    new G4PVPlacement(0,fakePosRelative,"FAKE",lvFAKE,TGAR,false,0);
+    NumiData->ApplyStepLimits(lvFAKE);
+
+//#ifdef  FLUGG
+    // communicate the fake volume information w/ FLUKA's SOEVSV routine
+    fakevol_.fakexyz[0] = NumiData->FakePosGlobal[0];
+    fakevol_.fakexyz[1] = NumiData->FakePosGlobal[1];
+    fakevol_.fakexyz[2] = NumiData->FakePosGlobal[2];
+    fakevol_.faker      = fakeR;
+    fakevol_.fakedz     = fakeDz;
+    fakevol_.maxfakeout = NumiData->MaxFakeOut;
+    fakevol_.initfake   = 1;  // signal that volume *was* constructed
+//#endif
+  }
 
   return ROCK;
 }
