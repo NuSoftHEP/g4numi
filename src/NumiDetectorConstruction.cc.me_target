@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.5.2.1 2014/01/23 17:39:02 rhatcher Exp $
+// $Id: NumiDetectorConstruction.cc.me_target,v 1.1.2.5.2.2 2014/08/18 19:14:24 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -164,7 +164,7 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
 
   //Placing horn at 19m for the NOvA ME configuration - L. Corwin 2009 July 01
 
-  G4double horn2_z = 19.204775*m;
+  G4double horn2_z = 19.1779*m; //changed from 19.204775 - see NuMI-X
 
   G4ThreeVector horn2pos(0.,0.,horn2_z); //New position from e-mail from Bob Zwaska 
   G4RotationMatrix horn2rot(0.,0.,0.);
