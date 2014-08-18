@@ -98,7 +98,30 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
     if (dOut<1.*m&&dIn<1.*m&&(dOut!=0.&&dIn!=0.)) 
       {
 	magBField = current / (5.*radius/cm)/10*tesla; //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
-	magBField=magBField*((radius*radius-(radius-dIn)*(radius-dIn))/((radius+dOut)*(radius+dOut)-(radius-dIn)*(radius-dIn)));// linear distribution of current
+        
+        //Insert long list of potential magnetic field formulae        
+
+#ifdef BFIELD_LINEAR
+        // linear distribution of current - standard fare
+	magBField = magBField*
+          ((radius*radius-(radius-dIn)*(radius-dIn)) / 
+           ((radius+dOut)*(radius+dOut)-(radius-dIn)*(radius-dIn)));
+
+#elif BFIELD_WRONG_EXP
+        // Old INCORRECT exponential distribution - 
+        // should NEVER use except for study
+	magBField = magBField*
+          ((exp(-(radius-dIn)/(0.6*cm))-exp(-(radius/(0.6*cm)))) / 
+           (exp(-(radius-dIn)/(0.6*cm))-exp(-(radius+dOut)/(0.6*cm))));
+
+#else
+        // CORRECT exponential distribution - 
+        // typically used for systematics; however, switch may occur
+	magBField = magBField* 
+          ((exp((radius-dIn)/(0.6*cm))-exp((radius/(0.6*cm)))) / 
+           (exp((radius-dIn)/(0.6*cm))-exp((radius+dOut)/(0.6*cm))));
+#endif
+
       }
   }
   /*
