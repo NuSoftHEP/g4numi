@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.1 2014/01/08 23:18:00 rhatcher Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.2 2014/08/18 19:13:45 rhatcher Exp $
 //----------------------------------------------------------------------
 
 
@@ -317,7 +317,7 @@ if(!vacuumworld && !airhrn){
     + BudalHFVSLength + BudalHFVSPitch;
   TargetX0           = 0.0;
   TargetY0           = 0.0;
-  TargetZ0           = (-20*cm - TotalTargetLength) + TargetConfigZ;//Allows TARGETZ to shift position of the target
+  TargetZ0           = (-20*cm + 0.7*cm - TotalTargetLength) + TargetConfigZ;//Allows TARGETZ to shift position of the target; corrected survey Z0 
 
   G4cout << "TargetZ0 = " << TargetZ0/cm << " cm. (Should be equal to -143.3 cm for the NOvA design.)" << G4endl;;
 
