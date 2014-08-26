@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.2 2014/08/18 19:13:45 rhatcher Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.3 2014/08/26 02:23:41 rhatcher Exp $
 //----------------------------------------------------------------------
 
 
@@ -48,12 +48,11 @@ NumiDataInput::NumiDataInput()
   int runPeriodFile = -999;
   double targetZFile = -999.;
   double hornCurrentFile = -999.;
-  int rhcFile = 0;
   
   std::ifstream datafile("../runConfig.inp");
   if (datafile.is_open()) {
     useFile = true;
-    datafile  >> runPeriodFile >> targetZFile >> hornCurrentFile >> rhcFile;
+    datafile  >> runPeriodFile >> targetZFile >> hornCurrentFile;
     datafile.close();
     G4cout << G4endl << G4endl << G4endl << G4endl
 	   << G4endl << G4endl << G4endl << G4endl 
@@ -726,17 +725,10 @@ if(!vacuumworld && !airhrn){
     HornCurrent = hornCurrentFile*1000*ampere; // Convert to kA
   }
 
-  if (rhcFile) {//Current convention of defining RHC
-    HornCurrent *= -1;
-  } 
-
   G4cout << "Running with: " << G4endl
     // << "  Run Period = " << runPeriod << G4endl
        << "  Target Z = " << TargetConfigZ/cm << " cm" << G4endl
        << "  Horn Current = " << HornCurrent/ampere/1000. << " kA" << G4endl;
-
-
-
 
   //~VXMOD
   NPHorn2EndN=3;
