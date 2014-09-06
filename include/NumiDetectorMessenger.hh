@@ -67,6 +67,8 @@ private:
     G4UIcmdWithADoubleAndUnit* fBaffleLengthCmd;
     
     G4UIcmdWithABool* fForcedOldTargetCmd;
+
+    G4UIcmdWithAString* fGDMLOutputCmd;
 };
 
 #endif

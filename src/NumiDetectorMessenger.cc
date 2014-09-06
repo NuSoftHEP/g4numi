@@ -17,6 +17,9 @@
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UnitsTable.hh"
+#ifndef FLUGG
+#include "G4GDMLParser.hh"
+#endif
 
 NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet):NumiDetector(NumiDet)
 {
@@ -232,6 +235,11 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
 	fForcedOldTargetCmd->SetGuidance("Force to use the old target"); 
 	fForcedOldTargetCmd->SetParameterName("forceOldTarget",true); 
 	fForcedOldTargetCmd->SetDefaultValue(false); 
+
+	fGDMLOutputCmd = new G4UIcmdWithAString("/NuMI/output/writeGDML",this);
+	fGDMLOutputCmd->SetGuidance("Write GDML file");
+	fGDMLOutputCmd->SetParameterName("choice",false);
+	fGDMLOutputCmd->AvailableForStates(G4State_Init,G4State_Idle);
         
 }
 
@@ -272,6 +280,7 @@ NumiDetectorMessenger::~NumiDetectorMessenger() {
         delete fBaffleLengthCmd;
         delete fForcedOldTargetCmd;
         
+	delete fGDMLOutputCmd;
 }
 
 
@@ -412,6 +421,17 @@ void NumiDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
        NumiDetector->SetForcedOldTarget(forced);
    } else {}
       
+   if ( command == fGDMLOutputCmd ) {
+     G4String outgdml = newValue;
+     if ( outgdml != "" ) {
+       G4cout << "%%% write output GDML " << outgdml << G4endl;
+       G4VPhysicalVolume* pvol = 0;
+       G4GDMLParser gdml_parser;
+       G4bool storeReferences = false; // use ptr addresses to make name unique
+       gdml_parser.Write(outgdml,pvol,storeReferences);
+     }
+   }
+
    
    return;
 
