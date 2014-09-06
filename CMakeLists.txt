@@ -59,22 +59,22 @@ include_directories($ENV{ROOTSYS}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(_root_internal_libraries
-    Core.so
-    Cint.so
-    RIO.so
-    Net.so
-    Hist.so
-    Graf.so
-    Graf3d.so
-    Gpad.so
-    Tree.so
-    Rint.so
-    Postscript.so
-    Matrix.so
-    Physics.so
-    MathCore.so
-    Thread.so
-    EG.so
+    Core
+    Cint
+    RIO
+    Net
+    Hist
+    Graf
+    Graf3d
+    Gpad
+    Tree
+    Rint
+    Postscript
+    Matrix
+    Physics
+    MathCore
+    Thread
+    EG
 )
 set(Root_LIBRARIES ${_root_internal_libraries})
 
