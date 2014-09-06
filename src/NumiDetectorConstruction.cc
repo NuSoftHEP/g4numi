@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc,v 1.13.4.6.2.1 2013/08/19 21:37:37 rhatcher Exp $
+// $Id: NumiDetectorConstruction.cc,v 1.13.4.6.2.2 2014/09/06 03:46:26 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -158,9 +158,20 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   
   if (NumiData->constructTarget)
   {
+      G4cout << "BeamType=\"" << fBeamType << "\" "
+             << " ForcedOldTarget=" << (fForcedOldTarget?"true":"false") << G4endl;
       if (fBeamType.find("me") != std::string::npos &&
-          !fForcedOldTarget) ConstructNOvATarget();
-      else ConstructTarget();
+          !fForcedOldTarget) {
+        G4cout << "********************************************************************" << G4endl;
+        G4cout << "*** ConstructNOvATarget()" << G4endl;
+        G4cout << "********************************************************************" << G4endl;
+        ConstructNOvATarget();
+      } else {
+        G4cout << "********************************************************************" << G4endl;
+        G4cout << "*** ConstructTarget() [MINOS-era target]" << G4endl;
+        G4cout << "********************************************************************" << G4endl;
+        ConstructTarget();
+      }
   }
 
   ConstructHadronAbsorber(); 
