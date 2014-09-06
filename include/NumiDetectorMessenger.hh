@@ -69,6 +69,8 @@ private:
     G4UIcmdWithABool* fForcedOldTargetCmd;
 
     G4UIcmdWithAString* fGDMLOutputCmd;
+    G4UIcmdWithABool*   fGDMLStoreRefCmd;
+    G4bool              fGDMLStoreReferences;
 };
 
 #endif
