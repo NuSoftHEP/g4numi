@@ -13,7 +13,7 @@
 # WHICH_CLHEP=`ls -d ${CLHEP_LIB_DIR}/CLHEP-*`
 # 
 # cmake -DGeant4_DIR=${WHICH_G4} -DCLHEP_DIR=${WHICH_CLHEP}  
-#    [ -DWITH_G4NU=ON ] /path/to/source/g4numi
+#    [ -DWITH_G4NU=ON ] [ -DWITH_DK2NU=ON ] /path/to/source/g4numi
 #
 #
 # Required environment variables:
@@ -25,7 +25,9 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(g4numi)
 
-option(WITH_G4NU "build against G4NuPhysicsLists" OFF)
+option(WITH_MODERN_G4 "not building against old G4 w/ 1-arg exception" ON)
+option(WITH_DK2NU     "build against Dk2Nu" OFF)
+option(WITH_G4NU      "build against G4NuPhysicsLists" OFF)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -41,13 +43,22 @@ endif()
 
 find_package(CLHEP REQUIRED)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake
+                      $ENV{ROOTSYS}/cmake/modules
+                      $ENV{ROOTSYS}/../source/root/cmake/modules
+                      $ENV{ROOTSYS}/etc/cmake
+                      ${CMAKE_MODULE_PATH})
+
+find_package(ROOT REQUIRED)
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
 # Setup include directory for this project
 #
 include(${Geant4_USE_FILE})
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include
+                    / ) # add abs path for find_file() in FindROOT.cmake
+                        # to avoid linkFile-NOTFOUND issue
 
 # Geant4_INCLUDE_DIR --->  /path/to/version/include/Geant4 
 #        ... but also want /path/to/version/include
@@ -80,6 +91,14 @@ set(Root_LIBRARIES ${_root_internal_libraries})
 
 link_directories($ENV{ROOTSYS}/lib)
 
+if(WITH_DK2NU)
+  # rwh for Minerva + dk2nu
+  set(DK2NU $ENV{DK2NU})
+  include_directories(${DK2NU}/include/dk2nu/tree)
+  link_directories(${DK2NU}/lib)
+  set(DK2NU_LIBRARIES dk2nuTree)
+endif()
+
 if(WITH_G4NU)
    set(G4NU $ENV{G4NU})
    include_directories(${G4NU}/include)
@@ -93,15 +112,50 @@ endif()
 #
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+file(GLOB cintheaders ${PROJECT_SOURCE_DIR}/include/*_t.hh)
+
+# RWH weed out some stuff that really shouldn't be in this branch
+file(GLOB rmsources1 ${PROJECT_SOURCE_DIR}/src/NA49*)
+file(GLOB rmsources2 ${PROJECT_SOURCE_DIR}/src/dk*)
+file(GLOB rmsources3 ${PROJECT_SOURCE_DIR}/src/g4numiCint*)
+file(GLOB rmheaders1 ${PROJECT_SOURCE_DIR}/include/NA49*)
+file(GLOB rmheaders2 ${PROJECT_SOURCE_DIR}/include/dk*)
+file(GLOB rmheaders3 ${PROJECT_SOURCE_DIR}/include/g4numiCint*)
+
+LIST(REMOVE_ITEM sources ${rmsources1} ${rmsources2} ${rmsources3} )
+LIST(REMOVE_ITEM headers ${rmheaders1} ${rmheaders2} ${rmheaders3} )
+
+#----------------------------------------------------------------------------
+if(EXISTS ${PROJECT_SOURCE_DIR}/LinkdefModern.h)
+  # hack because minerva branch has BadThings in Linkdef.h
+  set(g4numi_LINKDEF ${PROJECT_SOURCE_DIR}/LinkdefModern.h)
+else()
+  set(g4numi_LINKDEF ${PROJECT_SOURCE_DIR}/Linkdef.h)
+endif()
+# MESSAGE("RWH g4numi_LINKDEF ${g4numi_LINKDEF}")
+# MESSAGE("RWH headers ${headers}")
+set(g4numi_DICTIONARY ${CMAKE_CURRENT_BINARY_DIR}/g4numiDict)
+# MESSAGE("RWH g4numi_DICTIONARY ${g4numi_DICTIONARY}")
+ROOT_GENERATE_DICTIONARY(${g4numi_DICTIONARY} ${cintheaders} LINKDEF ${g4numi_LINKDEF})
+# MESSAGE("RWH generated g4numi_DICTIONARY ")
+set(sources ${sources} ${g4numi_DICTIONARY})
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(g4numi g4numi.cc ${sources} ${headers})
-target_link_libraries(g4numi ${Geant4_LIBRARIES} ${Root_LIBRARIES} ${G4NU_LIBRARIES})
+target_link_libraries(g4numi ${Geant4_LIBRARIES} ${Root_LIBRARIES} ${DK2NU_LIBRARIES} ${G4NU_LIBRARIES})
+
+if(WITH_DK2NU)
+  SET_TARGET_PROPERTIES(g4numi PROPERTIES COMPILE_FLAGS -DWITH_DK2NU )
+endif()
 
 if(WITH_G4NU)
   SET_TARGET_PROPERTIES(g4numi PROPERTIES COMPILE_FLAGS -DWITH_G4NU )
+endif()
+
+if(WITH_MODERN_G4)
+  SET_TARGET_PROPERTIES(g4numi PROPERTIES COMPILE_FLAGS -DMODERN_G4 )
 endif()
 
 #----------------------------------------------------------------------------
@@ -131,5 +185,3 @@ add_custom_target(G4NUMI DEPENDS g4numi)
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS g4numi DESTINATION bin)
-
-
