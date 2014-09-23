@@ -223,8 +223,8 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   for (G4int ii=0;ii<G4int(ND->Horn2SS.size());ii++){
     for (G4int jj=0;jj<ND->NHorn2SpidersPerPlaneN;jj++){
       G4double angle=G4double(360.*deg*jj/ND->NHorn2SpidersPerPlaneN);
-      G4double rIn=PHorn2ICRout(ND->Horn2SpiderSupportZ0[ii])+Fgap;//
-      G4double rOut=PHorn2OCRin(ND->Horn2SpiderSupportZ0[ii])-Fgap;//In and out radius of mother vol.
+      G4double rIn=PHorn2ICRout(ND->Horn2SpiderSupportZ0[ii])+Fgap+1.5*mm;// +1.5mm from G. Kafka 2014-09-23
+      G4double rOut=PHorn2OCRin(ND->Horn2SpiderSupportZ0[ii])-Fgap+1.5*mm;//In and out radius of mother vol.
       ConstructSpiderSupport(&(ND->Horn2SS[ii]),angle,ND->Horn2SpiderSupportZ0[ii],rIn,rOut,pvPHorn2F,ii+jj);
     }
   }

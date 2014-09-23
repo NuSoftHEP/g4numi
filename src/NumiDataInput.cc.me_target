@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.3 2014/08/26 02:23:41 rhatcher Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.4 2014/09/23 22:09:43 rhatcher Exp $
 //----------------------------------------------------------------------
 
 
@@ -48,11 +48,15 @@ NumiDataInput::NumiDataInput()
   int runPeriodFile = -999;
   double targetZFile = -999.;
   double hornCurrentFile = -999.;
-  
+
+  BfldSkinDepthCM = 0.77;  // default skin depth in cm
+  BfldSkinModel   = kBfldSkinLinear; // default
+
   std::ifstream datafile("../runConfig.inp");
   if (datafile.is_open()) {
     useFile = true;
     datafile  >> runPeriodFile >> targetZFile >> hornCurrentFile;
+    datafile  >> BfldSkinModel >> BfldSkinDepthCM;
     datafile.close();
     G4cout << G4endl << G4endl << G4endl << G4endl
 	   << G4endl << G4endl << G4endl << G4endl 
@@ -61,7 +65,10 @@ NumiDataInput::NumiDataInput()
 	   << "Using parameters from runConfig.inp: " << G4endl
            << "  Run Period = " << runPeriodFile << G4endl
            << "  Target Z = " << targetZFile << G4endl
-           << "  Horn Current = " << hornCurrentFile << G4endl;
+           << "  Horn Current = " << hornCurrentFile
+           << "  BfldSkinModel = " << BfldSkinModel << " w/ "
+           << "  BfldSkinDepth = " << BfldSkinDepthCM << " cm"
+           << G4endl;
 	
     G4cout << "Several horn currents are translated from nominal values to actual values.  This current is not one of them, so I will just use the nominal value." << G4endl;
   }  
@@ -851,7 +858,7 @@ if(!vacuumworld && !airhrn){
   dummy.topH=.108*in;
   dummy.topL=.4*in;
   dummy.bottomW=1.437*in;
-  dummy.bottomH=.345*in-0.344*in;//Shortened to avoid overlaps (Corwin Feb. 15, 2013)
+  dummy.bottomH=.345*in; // -0.344*in;//Shortened to avoid overlaps (Corwin Feb. 15, 2013), undone by G. Kafka 2014-09-23
   dummy.bottomL=.4*in;
   dummy.bottomThickMid=.3*in;  //Thickness of bottom part in the middle
   dummy.bottomR=5.812*in;

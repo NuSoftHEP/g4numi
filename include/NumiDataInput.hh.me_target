@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh.me_target,v 1.1.2.2.2.1 2014/01/08 22:05:02 rhatcher Exp $
+// $Id: NumiDataInput.hh.me_target,v 1.1.2.2.2.2 2014/09/23 22:09:43 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -390,6 +390,14 @@ public:
   vdouble_t xdet_far,ydet_far,zdet_far;
 
   G4double HornCurrent; //old
+  G4double BfldSkinDepthCM; // skin depth 0.77 (cm) was 0.6
+  G4int    BfldSkinModel;
+  typedef enum EBfldSkinModel {
+    kBfldSkinLinear      = 0, // default model
+    kBfldSkinExp         = 1, // exponential
+    kBfldSkinExpInverted = 2, // wrong exponential
+    kBfldSkinUnknown
+  } BfldSkinModel_t;
 	
  // Horn 1
   G4int NPHorn1OCN,NPHorn1ICN,NPHorn1EndN;

@@ -100,30 +100,41 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
 	magBField = current / (5.*radius/cm)/10*tesla; //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
         
         //Insert long list of potential magnetic field formulae        
+        switch ( NumiData->BfldSkinModel ) {
+        case NumiDataInput::kBfldSkinExp: {
+          // CORRECT exponential distribution - 
+          // typically used for systematics; however, switch may occur
+          
+          double skindepth = NumiData->BfldSkinDepthCM * cm;
+          magBField = magBField* 
+            ((exp((radius-dIn)/(skindepth))-exp((radius/(skindepth)))) / 
+             (exp((radius-dIn)/(skindepth))-exp((radius+dOut)/(skindepth))));
+          break;
+        }
+        case NumiDataInput::kBfldSkinExpInverted: {
+          // Old INCORRECT exponential distribution - 
+          // should NEVER use except for study
 
-#ifdef BFIELD_LINEAR
-        // linear distribution of current - standard fare
-	magBField = magBField*
-          ((radius*radius-(radius-dIn)*(radius-dIn)) / 
-           ((radius+dOut)*(radius+dOut)-(radius-dIn)*(radius-dIn)));
+          double skindepth = NumiData->BfldSkinDepthCM * cm;
+          magBField = magBField*
+            ((exp(-(radius-dIn)/(skindepth))-exp(-(radius/(skindepth)))) / 
+             (exp(-(radius-dIn)/(skindepth))-exp(-(radius+dOut)/(skindepth))));
+          break;
+        }
+        default:
+        case NumiDataInput::kBfldSkinLinear: {
+          // linear distribution of current - standard fare
+          magBField = magBField*
+            ((radius*radius-(radius-dIn)*(radius-dIn)) / 
+             ((radius+dOut)*(radius+dOut)-(radius-dIn)*(radius-dIn)));
+          break;
+        }
 
-#elif BFIELD_WRONG_EXP
-        // Old INCORRECT exponential distribution - 
-        // should NEVER use except for study
-	magBField = magBField*
-          ((exp(-(radius-dIn)/(0.6*cm))-exp(-(radius/(0.6*cm)))) / 
-           (exp(-(radius-dIn)/(0.6*cm))-exp(-(radius+dOut)/(0.6*cm))));
+        } // end of switch ( NumiData->BfldSkinModel )
 
-#else
-        // CORRECT exponential distribution - 
-        // typically used for systematics; however, switch may occur
-	magBField = magBField* 
-          ((exp((radius-dIn)/(0.6*cm))-exp((radius/(0.6*cm)))) / 
-           (exp((radius-dIn)/(0.6*cm))-exp((radius+dOut)/(0.6*cm))));
-#endif
+      } // end of if(dOut<1.*m&&dIn<1.*m&&(dOut!=0.&&dIn!=0.)) 
+  } // end of contains("IC")
 
-      }
-  }
   /*
   if (Point[2]>92*cm&&Point[2]<92.1*cm) {
      G4cout<<"ICMag: "<<myVolume->GetName()<<" "
@@ -144,6 +155,27 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
     Bfield[2] = 0.; 
   }
 
+  if ( first ) {
+    first = false;
+    double skindepth = NumiData->BfldSkinDepthCM * cm;
+    G4String modelName = "unknown (default BfldSkinLinear)";
+    switch ( NumiData->BfldSkinModel ) {
+    case NumiDataInput::kBfldSkinLinear: 
+      { modelName = "BfldSkinLinear"; break; }
+    case NumiDataInput::kBfldSkinExp: 
+      { modelName = "BfldSkinExp"; break; }
+    case NumiDataInput::kBfldSkinExpInverted:
+      { modelName = "BfldSkinExpInverted"; break; }
+    }
+    G4cout << "Using Bfld skin model " << modelName 
+           << " (" << NumiData->BfldSkinModel << ")"
+           << " skin depth " << NumiData->BfldSkinDepthCM 
+           << " ( " << skindepth << " G4units )"
+           << G4endl;
+  }
+
+  /*
+    // this seems outdated and unnecessary RWH 2014-09-23
     if(NumiData->jCompare &&(localPosition.z()>3*m || localPosition.z()<0*m)) // Make gnumi like horns - this is for validation
     {  
       if (first) {
@@ -154,6 +186,7 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
       Bfield[1]=0;
       Bfield[2]=0;
     }
+  */
 
 }
 

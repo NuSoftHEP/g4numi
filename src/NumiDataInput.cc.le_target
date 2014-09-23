@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.le_target,v 1.1.2.4.2.2 2014/08/26 02:05:41 rhatcher Exp $
+// $Id: NumiDataInput.cc.le_target,v 1.1.2.4.2.3 2014/09/23 22:09:43 rhatcher Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDataInput.hh"
@@ -42,20 +42,27 @@ NumiDataInput::NumiDataInput()
   int runPeriodFile = -999;
   double targetZFile = -999.;
   double hornCurrentFile = -999.;
+
+  BfldSkinDepthCM = 0.77;  // default skin depth in cm
+  BfldSkinModel   = kBfldSkinLinear; // default
   
   std::ifstream datafile("../runConfig.inp");
   if (datafile.is_open()) {
     useFile = true;
     datafile  >> runPeriodFile >> targetZFile >> hornCurrentFile;
+    datafile  >> BfldSkinModel >> BfldSkinDepthCM;
     datafile.close();
     G4cout << G4endl << G4endl << G4endl << G4endl
     << G4endl << G4endl << G4endl << G4endl 
     << G4endl << G4endl << G4endl << G4endl 
     << G4endl << G4endl << G4endl << G4endl 
-        << "Using parameters from runConfig.inp: " << G4endl
+           << "Using parameters from runConfig.inp: " << G4endl
            << "  Run Period = " << runPeriodFile << G4endl
            << "  Target Z = " << targetZFile << G4endl
-           << "  Horn Current = " << hornCurrentFile << G4endl;
+           << "  Horn Current = " << hornCurrentFile 
+           << "  BfldSkinModel = " << BfldSkinModel << " w/ "
+           << "  BfldSkinDepth = " << BfldSkinDepthCM << " cm"
+           << G4endl;
     bool isReverse = false;
     if (hornCurrentFile < 0) {
       isReverse = true;
