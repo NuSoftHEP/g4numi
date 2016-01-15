@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh.me_target,v 1.1.2.2.2.2 2014/09/23 22:09:43 rhatcher Exp $
+// $Id: NumiDataInput.hh.me_target,v 1.1.2.2.2.2.2.1 2016/01/15 17:51:47 lcremone Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -142,6 +142,15 @@ public:
    G4double GetKillTrackingThreshold(){
     return KillTrackingThreshold;
    }
+   // Adding water layer, Linda Cremonesi
+   G4double GetHornWaterLayerThick() const    
+   { return fHornWaterLayerThick;
+    }
+
+   void SetHornWaterLayerThick(G4double d){
+   fHornWaterLayerThick = d;
+   }
+
    void  SetMacroBeam(G4bool val){
     useMacro=val;
    }
@@ -372,7 +381,12 @@ public:
   //Hadron Absorber Box
   G4double HadrBox_width, HadrBox_height, HadrBox_length;
 
-  // Horn 1 & 2
+  //Horn 1 & 2
+   //////////////////////////////
+   // January 2016: Adding the layer of water, Linda Cremonesi
+
+  G4double fHornWaterLayerThick;
+
   G4int PhornNphorn;
 
   vdouble_t PhornZ1, PhornZ2;  

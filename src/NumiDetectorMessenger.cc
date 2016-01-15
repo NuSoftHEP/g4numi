@@ -57,6 +57,16 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
 	UpdateCmd->SetGuidance("if you changed geometrical value(s).");
 	UpdateCmd->AvailableForStates(G4State_Idle);
 
+	//
+        // Horn Water layer on the inner Conductor, Linda Cremonesi
+        //
+	fHornWaterLayerThick = new G4UIcmdWithADoubleAndUnit("/NuMI/det/HornWaterLayerThickness",this);
+        fHornWaterLayerThick->SetGuidance("Set the Water Layer thicknes on Horn inner conductors");
+        fHornWaterLayerThick->SetParameterName("Water Layer thicknes on Horn inner conductors",true);
+        fHornWaterLayerThick->SetUnitCategory("Length");
+        fHornWaterLayerThick->SetDefaultValue(ND->GetHornWaterLayerThick());
+	fHornWaterLayerThick->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 }
 
 NumiDetectorMessenger::~NumiDetectorMessenger() {
@@ -68,6 +78,7 @@ NumiDetectorMessenger::~NumiDetectorMessenger() {
 
 	delete detDir;
 	delete NumiDir;
+	delete fHornWaterLayerThick;
 }
 
 
@@ -85,6 +96,10 @@ void NumiDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
 	        NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
 		NumiData->constructTarget=ConstructTarget->GetNewBoolValue(newValue);
 	}
+	if (command == fHornWaterLayerThick) {
+	  NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
+	  NumiData->SetHornWaterLayerThick(fHornWaterLayerThick->GetNewDoubleValue(newValue));
+	} 
 	if ( command == UpdateCmd ) {
 #ifndef FLUGG
           NumiDetector->UpdateGeometry();

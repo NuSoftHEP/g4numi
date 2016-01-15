@@ -32,6 +32,7 @@ private:
         G4UIcmdWithABool*           ConstructTarget;
         //G4UIcmdWithAnInteger*     NbLayersCmd;    
         G4UIcmdWithoutParameter*    UpdateCmd;
+        G4UIcmdWithADoubleAndUnit* fHornWaterLayerThick;
 };
 
 #endif

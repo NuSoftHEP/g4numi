@@ -24,6 +24,18 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   G4ThreeVector translation;
   G4RotationMatrix rotation;
   NumiDataInput* ND=NumiDataInput::GetNumiDataInput();
+  const double hornWaterLayerThick = ND->GetHornWaterLayerThick(); // July 16-19 2014, P.L.                                                             
+  if ( hornWaterLayerThick > 10.) {
+    std::ostringstream messageOStr; messageOStr << " Unreasonable amount of water " << hornWaterLayerThick;
+    std::string message(messageOStr.str());
+#ifndef MODERN_G4
+    G4Exception("NumiDetectorConstruction::ConstructLHorn2");
+#else
+    G4Exception("numiHorn1","NumiHorn1",FatalException,"NumiDetectorConstruction::ConstructHorn2");
+#endif
+    exit(2); // only under 4.9.2 .. not reachable under 4.9.5                                                                                          
+  }
+  const bool placeWaterLayer = (hornWaterLayerThick > 0.001*mm);
   // subtract TargetHallPosition to get origin at the face of Horn2
   G4ThreeVector TargetHallPosition=G4ThreeVector(0,0,NumiData->TargetAreaLength/2.+NumiData->TargetAreaZ0);
   //G4double MHorn2Length=133.966*2.54*cm+3.938*in+1.75*in+2.5*in;
@@ -51,7 +63,8 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   G4double zPos(0);
   vdouble_t OCzPos,OCRout,OCRin, ICzPos,ICRout,ICRin;
   vdouble_t FzPos, FRin, FRout, MVzPos,MVRout,MVRin;
-  
+  vdouble_t FRinW, FRoutW;
+
   OCzPos.push_back(OCZ0); OCRin.push_back(PHorn2OCRin(OCzPos[0])); OCRout.push_back(PHorn2OCRout(OCzPos[0]));
   ICzPos.push_back(ICZ0); ICRin.push_back(PHorn2ICRin(ICzPos[0])); ICRout.push_back(PHorn2ICRout(ICzPos[0]));
   FzPos.push_back(ICZ0) ; FRin.push_back(PHorn2ICRout(FzPos[0])+Fgap) ; FRout.push_back(PHorn2OCRin(FzPos[0])-Fgap);
@@ -133,6 +146,17 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   if (minR<=PHorn2ICRin(zPos)) MVRin.push_back(minR-MVgap);
   else MVRin.push_back(PHorn2ICRin(zPos)-MVgap);
     
+  if (placeWaterLayer) { // 2016 January LC
+    FRinW.clear(); FRoutW.clear();
+    for (size_t i=0; i!= ICRin.size(); i++) {
+      FRinW.push_back(ICRout[i] + epsilon); // Not quite enough.. Suspecting precision round off..??
+      FRoutW.push_back(ICRout[i] + hornWaterLayerThick + epsilon);
+    }
+    //    std::cerr << " check size of inner radii array ... IC " << ICRin.size() << " and FRIn " << FRin.size() << std::endl;
+    for (size_t i=0; i!= std::min(ICRin.size(), FRin.size()); i++) {
+      FRin[i] = FRoutW[i] + epsilon;
+    }
+  }
   // Create Mother Volume
   G4VSolid* sMHorn2;
   G4Material* material=Vacuum; 
@@ -200,6 +224,32 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2IC",lvPHorn2IC,pvMHorn2,false,0,NumiData->pSurfChk);
       
   //Field Part
+  // January 2016 Split this in 2, water and air, LC
+  G4LogicalVolume* lvPHorn2ICW = 0;
+  if (placeWaterLayer) {
+    if ((ICzPos.size()  != FRinW.size()) || (ICzPos.size()  != FRoutW.size()) || ((nIn) != static_cast<int>(FRoutW.size()))) {
+      std::cerr << " Inconsistent of number of section fors PHorn2ICWater , Z /R size  " << ICzPos.size()
+		<< " / " <<  FRinW.size() << " / " << FRoutW.size() << " (nIn) " << (nIn) << std::endl;
+      std::cerr << " Probably O.K., take the minimum of these " << std::endl;
+    }
+    int numSectW = std::min(static_cast<int>(FRinW.size()), std::min(static_cast<int>(ICzPos.size()), (nIn+1)));
+    numSectW--; // take one out, volume overlap at the end.  
+    // Dump the mother volume info to locate the overlap.
+    //    std::cerr << " Horn2 Polycone IC volume with " << nMV+1 << " sections " << std::endl;
+    //    for (size_t iSect = 0; iSect != numSectW; iSect++) {
+    //       std::cerr << " Section " << iSect << " Zl " << ICzPos[iSect]
+    //             << " Rin " << ICRin[iSect] << " R Out " << ICRout[iSect] << " Rin Water "
+    //             << FRinW[iSect] << " ROutW " << FRoutW[iSect] <<  std::endl;
+    //    }
+    G4Polycone* sPHorn2ICW=new G4Polycone("sPHorn2ICWater",0.,360.*deg, numSectW, &ICzPos[0],&FRinW[0],&FRoutW[0]);
+    lvPHorn2ICW=new G4LogicalVolume(sPHorn2ICW, Water,"lvPHorn2ICWater",0,0,0);
+    ND->ApplyStepLimits(lvPHorn2ICW); // Limit Step Size                                                                                                
+    lvPHorn2ICW->SetFieldManager(FieldMgr,true); //attach the local field to logical volume                                                             
+    rotation=G4RotationMatrix(0.,0.,0.);
+    translation=G4ThreeVector(0.,0.,0)-MHorn2Origin;
+    new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2ICWater",lvPHorn2ICW,pvMHorn2,false,0, true);
+  }
+
   G4Polycone* sPConeF=new G4Polycone("sPCone2F",0.,360.*deg,nF+1,&FzPos[0],&FRin[0],&FRout[0]);
   G4Torus* sTorusF=new G4Torus("sTorusF",0.,frontRmin-Fgap,frontRtor,0,360.*deg);
   rotation=G4RotationMatrix(0.,0.,0.); translation =G4ThreeVector(0.,0.,Horn2Z0+frontRmax);
@@ -215,6 +265,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   FieldMgr3->SetDetectorField(numiMagField); //set the field 
   FieldMgr3->CreateChordFinder(numiMagField); //create the objects which calculate the trajectory 
   lvPHorn2F->SetFieldManager(FieldMgr3,true); //attach the local field to logical volume
+  if (placeWaterLayer) lvPHorn2ICW->SetFieldManager(FieldMgr3,true); //attach the local field to logical volume
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=G4ThreeVector(0.,0.,0)-MHorn2Origin;
   G4VPhysicalVolume *pvPHorn2F=new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2F",lvPHorn2F,pvMHorn2,false,0,NumiData->pSurfChk);
@@ -225,7 +276,14 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
       G4double angle=G4double(360.*deg*jj/ND->NHorn2SpidersPerPlaneN);
       G4double rIn=PHorn2ICRout(ND->Horn2SpiderSupportZ0[ii])+Fgap+1.5*mm;// +1.5mm from G. Kafka 2014-09-23
       G4double rOut=PHorn2OCRin(ND->Horn2SpiderSupportZ0[ii])-Fgap+1.5*mm;//In and out radius of mother vol.
+      // Avoid a volume overlap
+      if (placeWaterLayer) {
+	rIn += 4.0*epsilon + hornWaterLayerThick + 1.25*Fgap; //                                                                                       
+      } else {
+	rIn += 1.25*Fgap; // Fix small overlap..                                                                                                      
+      }
       ConstructSpiderSupport(&(ND->Horn2SS[ii]),angle,ND->Horn2SpiderSupportZ0[ii],rIn,rOut,pvPHorn2F,ii+jj);
+
     }
   }
   
