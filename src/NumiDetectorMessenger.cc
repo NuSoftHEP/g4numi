@@ -67,6 +67,28 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
         fHornWaterLayerThick->SetDefaultValue(ND->GetHornWaterLayerThick());
 	fHornWaterLayerThick->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+	//
+	// Alternate horn geometry, Linda Cremonesi
+	// Allow for the option of replacing the existing impementation of Horn1 with the one used for LBNE 700 kW systematics 
+	// studies. 
+	// 
+	fHorn1IsAlternate = new G4UIcmdWithABool("/NuMI/det/Horn1IsAlternate",this);
+        fHorn1IsAlternate->SetGuidance("Build the Horn 1 inner conductors following set of drawings from AD ");
+	fHorn1IsAlternate->SetParameterName("Horn1IsAlternate", true);
+        fHorn1IsAlternate->SetDefaultValue(ND->GetHorn1IsAlternate()); 
+	fHorn1IsAlternate->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+        // 
+	// Allow for the option of making small changes to the existing Numi Horn1 code to test the accuracy of the geometry. 
+	// LC March 2016
+	// 
+	fHorn1IsRefined = new G4UIcmdWithABool("/NuMI/det/Horn1IsRefined",this);
+        fHorn1IsRefined->SetGuidance("Build the Horn 1 inner conductors making some asjustment in the geometry ");
+	fHorn1IsRefined->SetParameterName("Horn1IsRefined", true);
+        fHorn1IsRefined->SetDefaultValue(ND->GetHorn1IsRefined()); 
+	fHorn1IsRefined->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+
 }
 
 NumiDetectorMessenger::~NumiDetectorMessenger() {
@@ -79,28 +101,39 @@ NumiDetectorMessenger::~NumiDetectorMessenger() {
 	delete detDir;
 	delete NumiDir;
 	delete fHornWaterLayerThick;
+	delete fHorn1IsAlternate;
+	delete fHorn1IsRefined;
 }
 
 
 void NumiDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
 	if ( command == TargetGasCmd ) {
 		//NumiDetector->SetTargetGas(newValue);
-	}
-	if ( command == TargetZ0Cmd ) {
-		NumiDetector->SetTargetZ0(TargetZ0Cmd->GetNewDoubleValue(newValue));
-	}
-	if ( command == HornCurrentCmd ) {
-		NumiDetector->SetHornCurrent(HornCurrentCmd->GetNewDoubleValue(newValue));
-	}
-	if ( command == ConstructTarget ) {
-	        NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
-		NumiData->constructTarget=ConstructTarget->GetNewBoolValue(newValue);
-	}
+	} 
+ 	if ( command == TargetZ0Cmd ) {
+	  NumiDetector->SetTargetZ0(TargetZ0Cmd->GetNewDoubleValue(newValue));
+	} 
+ 	if ( command == HornCurrentCmd ) {
+	  NumiDetector->SetHornCurrent(HornCurrentCmd->GetNewDoubleValue(newValue));
+	} 
+ 	if ( command == ConstructTarget ) {
+	  NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
+	  NumiData->constructTarget=ConstructTarget->GetNewBoolValue(newValue);
+	} 
 	if (command == fHornWaterLayerThick) {
 	  NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
 	  NumiData->SetHornWaterLayerThick(fHornWaterLayerThick->GetNewDoubleValue(newValue));
 	} 
-	if ( command == UpdateCmd ) {
+	if (command == fHorn1IsAlternate) {
+	  NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
+	  NumiData->SetHorn1IsAlternate(fHorn1IsAlternate->GetNewBoolValue(newValue));
+	  std::cerr << " Setting Alternate Horn1 " << std::endl;
+	}  else if (command == fHorn1IsRefined) {
+	  NumiDataInput *NumiData=NumiDataInput::GetNumiDataInput();
+	  NumiData->SetHorn1IsRefined(fHorn1IsAlternate->GetNewBoolValue(newValue));
+	  std::cerr << " Using refined precision for  Horn1 " << std::endl;
+	} 
+	else if ( command == UpdateCmd ) {
 #ifndef FLUGG
           NumiDetector->UpdateGeometry();
 #endif

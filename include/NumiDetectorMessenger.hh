@@ -33,6 +33,8 @@ private:
         //G4UIcmdWithAnInteger*     NbLayersCmd;    
         G4UIcmdWithoutParameter*    UpdateCmd;
         G4UIcmdWithADoubleAndUnit* fHornWaterLayerThick;
+        G4UIcmdWithABool* fHorn1IsAlternate;
+        G4UIcmdWithABool* fHorn1IsRefined;
 };
 
 #endif

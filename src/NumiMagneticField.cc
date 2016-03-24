@@ -8,12 +8,12 @@
 #include "G4TransportationManager.hh"
 #include "NumiDataInput.hh" 
 #include "G4VPhysicalVolume.hh"
+#include "NumiDetectorConstruction.hh"
 
 //magnetic field between conductors ====================================================
 NumiMagneticField::NumiMagneticField()
 {
   NumiData=NumiDataInput::GetNumiDataInput();
-
 }
 
 NumiMagneticField::~NumiMagneticField(){;}
@@ -23,8 +23,30 @@ void NumiMagneticField::GetFieldValue(const double Point[3],double *Bfield) cons
   static bool first = true;
   
   G4double current = NumiData->HornCurrent/ampere/1000.;
+  //G4cout << "NumiData->HornCurrent = " << NumiData->HornCurrent/ampere << " A" << G4endl; 
+  //G4cout << "current = " << current << G4endl;  
+
   G4double radius = sqrt(Point[0]*Point[0]+Point[1]*Point[1]);    
   G4double B = current / (5.*radius/cm)/10*tesla;  //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
+  // //
+  // // Check that we are indeed in the field region..
+  // //
+  // if (Point[2] < 4500.) {
+  //   const G4RunManager* pRunMgr = G4RunManager::GetRunManager();
+  //   const NumiDetectorConstruction* pDet = reinterpret_cast<const NumiDetectorConstruction*>(pRunMgr->GetUserDetectorConstruction());
+  //   const double ric = pDet->PHorn1ICRin((Point[2] - 30.)); // in Drawing coordinate system, MCZero = 30 mm
+  //   if (radius < ric) B=0.;
+  // }
+  // Should do the same for Horn2, if need be!!!
+  // 
+  //  Avoid leakage downstream the end.., for Horn1.  Paul November 23 2014 (Minerva branch).
+  //
+  if ((Point[2] > 3277.) && (Point[2] < 4500.)) B = 0.;
+  //
+  //  Unknown field fpr Z < 0.  Paul November 24 2014 (Minerva branch).
+  //
+
+  if (Point[2] < 0. ) B = 0.;
   Bfield[0] = -B*Point[1]/radius;
   Bfield[1] = B*Point[0]/radius;
   Bfield[2] = 0.;
@@ -43,7 +65,7 @@ void NumiMagneticField::GetFieldValue(const double Point[3],double *Bfield) cons
     G4Navigator* theNavigator=G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
     numinavigator->SetWorldVolume(theNavigator->GetWorldVolume());
     G4ThreeVector Position=G4ThreeVector(Point[0],Point[1],Point[2]);
-    G4VPhysicalVolume* myVolume = numinavigator->LocateGlobalPointAndSetup(Position);
+    //   G4VPhysicalVolume* myVolume = numinavigator->LocateGlobalPointAndSetup(Position);
     G4TouchableHistoryHandle aTouchable = numinavigator->CreateTouchableHistoryHandle();
     G4ThreeVector localPosition = aTouchable->GetHistory()->GetTopTransform().TransformPoint(Position);
     
@@ -60,6 +82,13 @@ void NumiMagneticField::GetFieldValue(const double Point[3],double *Bfield) cons
       Bfield[2]=0;
     }     
   }
+  // if (fSteppingStream.is_open()) {
+  //   const G4RunManager * pRunManager = G4RunManager::GetRunManager();
+  //   fSteppingStream << " " << pRunManager->GetCurrentEvent()->GetEventID();
+  //   fSteppingStream << " " << Point[0] << " " << Point[1] << " " << Point[2];
+  //   fSteppingStream << " " << Bfield[0] << " " << Bfield[1] << " " << Bfield[2] << std::endl;;
+  // }
+
 }
 
 //magnetic field in inner conductor ====================================================
@@ -82,6 +111,8 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
   G4VPhysicalVolume* myVolume = numinavigator->LocateGlobalPointAndSetup(Position);
   G4TouchableHistoryHandle aTouchable = numinavigator->CreateTouchableHistoryHandle();
   G4ThreeVector localPosition = aTouchable->GetHistory()->GetTopTransform().TransformPoint(Position);
+  //  std::cerr << " Evaluating magnetic field in volume " << myVolume->GetName()
+  //              << " R " << std::sqrt(Point[0]*Point[0] + Point[1]*Point[1]) << " z " << Point[2] << std::endl;
 
   delete numinavigator;
 
@@ -97,14 +128,14 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
     dIn=solid->DistanceToOut(localPosition,G4ThreeVector(-Point[0]/radius,-Point[1]/radius,0));//distance to inner boundary
     if (dOut<1.*m&&dIn<1.*m&&(dOut!=0.&&dIn!=0.)) 
       {
-	magBField = current / (5.*radius/cm)/10*tesla; //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
-        
+  	magBField = current / (5.*radius/cm)/10*tesla; //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
+     
         //Insert long list of potential magnetic field formulae        
         switch ( NumiData->BfldSkinModel ) {
         case NumiDataInput::kBfldSkinExp: {
           // CORRECT exponential distribution - 
           // typically used for systematics; however, switch may occur
-          
+       
           double skindepth = NumiData->BfldSkinDepthCM * cm;
           magBField = magBField* 
             ((exp((radius-dIn)/(skindepth))-exp((radius/(skindepth)))) / 
@@ -138,11 +169,11 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
   /*
   if (Point[2]>92*cm&&Point[2]<92.1*cm) {
      G4cout<<"ICMag: "<<myVolume->GetName()<<" "
-	<<Point[0]<<" "
-	<<Point[1]<<" "
-	<<Point[2]<<" "
-	<<sqrt(Point[0]*Point[0]+Point[1]*Point[1])<<" "
-	<<magBField<<G4endl;
+  	<<Point[0]<<" "
+  	<<Point[1]<<" "
+  	<<Point[2]<<" "
+  	<<sqrt(Point[0]*Point[0]+Point[1]*Point[1])<<" "
+  	<<magBField<<G4endl;
   }
   */
   if (radius!=0){
@@ -174,7 +205,7 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
            << G4endl;
   }
 
-  /*
+  
     // this seems outdated and unnecessary RWH 2014-09-23
     if(NumiData->jCompare &&(localPosition.z()>3*m || localPosition.z()<0*m)) // Make gnumi like horns - this is for validation
     {  
@@ -186,7 +217,12 @@ void NumiMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
       Bfield[1]=0;
       Bfield[2]=0;
     }
-  */
+    // if (fSteppingStream.is_open()) {
+    //   const G4RunManager * pRunManager = G4RunManager::GetRunManager();
+    //   fSteppingStream << " " << pRunManager->GetCurrentEvent()->GetEventID();
+    //   fSteppingStream << " " << Point[0] << " " << Point[1] << " " << Point[2];
+    //   fSteppingStream << " " << Bfield[0] << " " << Bfield[1] << " " << Bfield[2] << std::endl;;
+    // }
 
 }
 
@@ -254,5 +290,10 @@ void NumiMagneticFieldOC::GetFieldValue(const double Point[3],double *Bfield) co
       Bfield[1]=0;
       Bfield[2]=0;
     }
-
+  // if (fSteppingStream.is_open()) {
+  //   const G4RunManager * pRunManager = G4RunManager::GetRunManager();
+  //   fSteppingStream << " " << pRunManager->GetCurrentEvent()->GetEventID();
+  //   fSteppingStream << " " << Point[0] << " " << Point[1] << " " << Point[2];
+  //   fSteppingStream << " " << Bfield[0] << " " << Bfield[1] << " " << Bfield[2] << std::endl;;
+  // }
 }

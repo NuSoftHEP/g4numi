@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh.me_target,v 1.1.2.2.2.2.2.1 2016/01/15 17:51:47 lcremone Exp $
+// $Id: NumiDataInput.hh.me_target,v 1.1.2.2.2.2.2.2 2016/03/24 16:13:01 lcremone Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -37,6 +37,9 @@ public:
    void SetHornCurrent(G4double val) {
       HornCurrent = val;
    }
+   void SetHorn1X0(G4double val)          {Horn1X0=val;}
+   void SetHorn2X0(G4double val)          {Horn2X0=val;}
+
   void SetDebugOn(G4bool val) {
      debugOn = val;
   }
@@ -135,7 +138,8 @@ public:
       StepLimit = l;
    }
    void ApplyStepLimits(G4LogicalVolume *);
-   
+   void ApplyTimeLimits(G4LogicalVolume *);
+
    G4bool GetKillTracking(){
       return KillTracking;
    }
@@ -148,7 +152,24 @@ public:
     }
 
    void SetHornWaterLayerThick(G4double d){
-   fHornWaterLayerThick = d;
+   	fHornWaterLayerThick = d;
+   }
+
+    // Adding alternate geometry for horn1, Linda Cremonesi
+   G4bool GetHorn1IsAlternate()  const 
+   { return fHorn1IsAlternate;
+    }
+
+   void SetHorn1IsAlternate(G4bool t){
+   fHorn1IsAlternate = t;
+   }
+
+   G4bool GetHorn1IsRefined() const
+   { return fHorn1IsRefined;
+    }
+
+   void SetHorn1IsRefined(G4bool t) {
+   fHorn1IsRefined = t;
    }
 
    void  SetMacroBeam(G4bool val){
@@ -186,12 +207,17 @@ public:
    G4bool pSurfChk;
    G4bool NImpWeightOn, createNuNtuple,createHadmmNtuple, createASCII;
    G4bool useFlukaInput, useMarsInput, useMuonBeam, useMuonInput, solidMuMons;
+
+   G4bool fHorn1IsAlternate; // An different way of coding up Horn1 (LC, March 2016) 
+   G4bool fHorn1IsRefined; // An improved version of Horn1, using Numi existing code (LC, March 2016) 
+
    G4int fNEvents;
    G4bool KillTracking;
    G4String nuNtupleName, hadmmNtupleName, hadmmNtupleDir, asciiName, RunNumber, geometry;
    
    G4double StepLimit;
-   
+   G4double TimeLimit;
+
    G4bool createBXDRAW;
    G4bool useTestBeam, useDecayPipeSelect;
    G4String bxdrawName;
@@ -386,6 +412,9 @@ public:
    // January 2016: Adding the layer of water, Linda Cremonesi
 
   G4double fHornWaterLayerThick;
+
+  G4double Horn1X0, Horn1Y0, Horn1Z0;
+  G4double Horn2X0, Horn2Y0, Horn2Z0;
 
   G4int PhornNphorn;
 

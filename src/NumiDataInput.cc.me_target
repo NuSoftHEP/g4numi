@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.4.2.1 2016/01/15 17:51:47 lcremone Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.4.2.2 2016/03/24 16:13:01 lcremone Exp $
 //----------------------------------------------------------------------
 
 
@@ -93,6 +93,7 @@ NumiDataInput::NumiDataInput()
   testTheta = M_PI/6.;
   
   StepLimit = 0.0; 
+  TimeLimit = 60.0*s;	
 
   extNtupleFileName=""; //fluka or mars or muon ntuple with particles coming of the target
   //Set the energy threshold for 'killing' particles
@@ -112,6 +113,10 @@ NumiDataInput::NumiDataInput()
    bxdrawName      = "bxdrawOut";
    RunNumber       = "0000";
    geometry        = "";
+
+
+  fHorn1IsAlternate = true;
+  fHorn1IsRefined = false;
 
    //
    // Denotes the change in sigma to the
@@ -133,7 +138,7 @@ NumiDataInput::NumiDataInput()
   airhrn =false; // airhrn must be changed before compilation
   vacuumworld=false;
   jCompare = false; // make horns have the same B field;
-  g3Chase = true;
+  g3Chase = true; // LC Minerva switched this flag to false
   
 if(!vacuumworld && !airhrn){
   hrnmat = 9;   // Al
@@ -737,8 +742,18 @@ if(!vacuumworld && !airhrn){
        << "  Target Z = " << TargetConfigZ/cm << " cm" << G4endl
        << "  Horn Current = " << HornCurrent/ampere/1000. << " kA" << G4endl;
 
+  //
+  //Horns
+  //
+  Horn1X0 = 0.0*cm;
+  Horn1Y0 = 0.0*cm;
+  Horn1Z0 = 3.0*cm;
 
-  fHornWaterLayerThick = 1.0*mm; // Linda Cremonesi Based on studies done by Minerva 
+  Horn2X0 = 0.0*cm;
+  Horn2Y0 = 0.0*cm;
+  Horn2Z0 = 10.0*m;
+
+  fHornWaterLayerThick = 1.0*mm; // Linda Cremonesi, based on study by Minerva 
 
   //~VXMOD
   NPHorn2EndN=3;
@@ -944,4 +959,10 @@ NumiDataInput::~NumiDataInput()
 void NumiDataInput::ApplyStepLimits(G4LogicalVolume *vol) {
   if (StepLimit == 0.0) return;
   vol->SetUserLimits(new G4UserLimits(StepLimit));
+}
+
+void NumiDataInput::ApplyTimeLimits(G4LogicalVolume *vol)
+{
+  if (TimeLimit == 0.0) return;
+  vol->SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,TimeLimit));
 }

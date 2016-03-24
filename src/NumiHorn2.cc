@@ -16,6 +16,7 @@
 #include "G4RotationMatrix.hh"
 #include "NumiMagneticField.hh"
 #include "G4FieldManager.hh"
+#include "G4UserLimits.hh"
 
 static const G4double in=2.54*cm;
 
@@ -69,6 +70,11 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   ICzPos.push_back(ICZ0); ICRin.push_back(PHorn2ICRin(ICzPos[0])); ICRout.push_back(PHorn2ICRout(ICzPos[0]));
   FzPos.push_back(ICZ0) ; FRin.push_back(PHorn2ICRout(FzPos[0])+Fgap) ; FRout.push_back(PHorn2OCRin(FzPos[0])-Fgap);
   MVzPos.push_back(Horn2Z0-MVgap); MVRin.push_back(PHorn2ICRin(MVzPos[0])-MVgap); MVRout.push_back(PHorn2OCRout(MVzPos[0])+MVgap);
+
+  G4UserLimits *MyLimits = new G4UserLimits();
+  if(ND->raytracing){
+    MyLimits->SetMaxAllowedStep(1*cm);
+  }
 
   G4double lastICzPos=ICzPos[0];
   G4double maxR,minR,endZ;
@@ -165,15 +171,18 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   ND->ApplyStepLimits(lvMHorn2); // Limit Step Size
   G4VisAttributes* invisible=new G4VisAttributes(false);
   lvMHorn2->SetVisAttributes(invisible);
+  if(ND->raytracing){
+    lvMHorn2->SetUserLimits(MyLimits);
+  } 
   rotation=hornrot;
   translation=hornpos-TargetHallPosition;
   G4VPhysicalVolume* pvMHorn2 = new G4PVPlacement(G4Transform3D(rotation,translation),"MHorn2",lvMHorn2,TGAR,false,0,NumiData->pSurfChk);
-      
-#if(0) //Martens -- removed Horn 2 box
+  pvMHorn2 -> CheckOverlaps();
+  
   /**
    * FLUGG - Volume added to follow particles by Alex Himmel 3-21-07
    */
-  G4double boxX = NumiData->TargetAreaWidth/2.;
+  /* G4double boxX = NumiData->TargetAreaWidth/2.;
   G4double boxY = NumiData->TargetAreaHeight/2.;
   G4double boxZ = 1*cm;
 	
@@ -183,7 +192,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   ND->ApplyStepLimits(lvHorn2Box); // Limit Step Size
   translation += G4ThreeVector(0.,0.,(MVzPos[nMV] - MVzPos[0])/2.+.5*cm);
   new G4PVPlacement(G4Transform3D(rotation,translation),"Horn2Box",lvHorn2Box,TGAR,false,0,NumiData->pSurfChk);
-#endif
+*/
 
   //Front part
   G4VSolid* sHorn2Front;
@@ -194,7 +203,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   sHorn2Front=new G4SubtractionSolid("sHorn2Front",sFrontTorus,sBox,G4Transform3D(rotation,translation)); //need only half of torus
   material=Al;
   G4LogicalVolume* lvHorn2Front=new G4LogicalVolume(sHorn2Front,material,"lvHorn2Front",0,0,0);
-  ND->ApplyStepLimits(lvHorn2Front); // Limit Step Size
+  //  ND->ApplyStepLimits(lvHorn2Front); // Limit Step Size
   rotation=G4RotationMatrix(0.,0.,0.);
   translation=-MHorn2Origin+G4ThreeVector(0.,0.,OCZ0);
   new G4PVPlacement(G4Transform3D(rotation,translation),"PHorn2Front",lvHorn2Front,pvMHorn2,false,0,NumiData->pSurfChk);
@@ -202,7 +211,7 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   //Outer Conductor
   G4Polycone* sPHorn2OC=new G4Polycone("sPHorn2OC",0.,360.*deg,nOut+1,&OCzPos[0],&OCRin[0],&OCRout[0]);
   G4LogicalVolume* lvPHorn2OC=new G4LogicalVolume(sPHorn2OC,Al,"lvPHorn2OC",0,0,0);
-  ND->ApplyStepLimits(lvPHorn2OC); // Limit Step Size
+  //  ND->ApplyStepLimits(lvPHorn2OC); // Limit Step Size
   G4FieldManager* FieldMgr2 = new G4FieldManager(numiMagFieldOC); //create a local field
   FieldMgr2->SetDetectorField(numiMagFieldOC); //set the field 
   FieldMgr2->CreateChordFinder(numiMagFieldOC); //create the objects which calculate the trajectory
@@ -255,10 +264,10 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   rotation=G4RotationMatrix(0.,0.,0.); translation =G4ThreeVector(0.,0.,Horn2Z0+frontRmax);
   G4UnionSolid *sPHorn2F=new G4UnionSolid("sPHorn2F",sPConeF,sTorusF,G4Transform3D(rotation,translation));
   G4LogicalVolume* lvPHorn2F=new G4LogicalVolume(sPHorn2F,Ar,"lvPHorn2F",0,0,0);
-  ND->ApplyStepLimits(lvPHorn2F); // Limit Step Size
+  //  ND->ApplyStepLimits(lvPHorn2F); // Limit Step Size
   lvPHorn2F->SetVisAttributes(invisible);
   //------ Modification by Alex Himmel 3-19-07----------
-  lvPHorn2F->SetOptimisation(false);
+  //  lvPHorn2F->SetOptimisation(false);
   //------ End of Modification -------------------------
   
   G4FieldManager* FieldMgr3 = new G4FieldManager(numiMagField); //create a local field      
@@ -274,14 +283,17 @@ void NumiDetectorConstruction::ConstructHorn2(G4ThreeVector hornpos, G4RotationM
   for (G4int ii=0;ii<G4int(ND->Horn2SS.size());ii++){
     for (G4int jj=0;jj<ND->NHorn2SpidersPerPlaneN;jj++){
       G4double angle=G4double(360.*deg*jj/ND->NHorn2SpidersPerPlaneN);
-      G4double rIn=PHorn2ICRout(ND->Horn2SpiderSupportZ0[ii])+Fgap+1.5*mm;// +1.5mm from G. Kafka 2014-09-23
-      G4double rOut=PHorn2OCRin(ND->Horn2SpiderSupportZ0[ii])-Fgap+1.5*mm;//In and out radius of mother vol.
+      // G4double rIn=PHorn2ICRout(ND->Horn2SpiderSupportZ0[ii])+Fgap+1.5*mm;// +1.5mm from G. Kafka 2014-09-23
+      // G4double rOut=PHorn2OCRin(ND->Horn2SpiderSupportZ0[ii])-Fgap+1.5*mm;//In and out radius of mother vol.
+      G4double rIn=PHorn2ICRout(ND->Horn2SpiderSupportZ0[ii])+Fgap;// +1.5mm from G. Kafka 2014-09-23
+      G4double rOut=PHorn2OCRin(ND->Horn2SpiderSupportZ0[ii])-Fgap;//In and out radius of mother vol.
       // Avoid a volume overlap
       if (placeWaterLayer) {
 	rIn += 4.0*epsilon + hornWaterLayerThick + 1.25*Fgap; //                                                                                       
       } else {
 	rIn += 1.25*Fgap; // Fix small overlap..                                                                                                      
       }
+      std::cerr << " Constructing Spider Support " << jj << " Rin " << rIn << " Fgap " << Fgap << std::endl;
       ConstructSpiderSupport(&(ND->Horn2SS[ii]),angle,ND->Horn2SpiderSupportZ0[ii],rIn,rOut,pvPHorn2F,ii+jj);
 
     }
