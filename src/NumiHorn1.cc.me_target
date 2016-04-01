@@ -307,7 +307,7 @@ void NumiDetectorConstruction::ConstructHorn1(G4ThreeVector hornpos, G4RotationM
   G4Torus* sTorusF=new G4Torus("sTorusF",0.,frontRmin-Fgap,frontRtor,0,360.*deg);
   rotation=G4RotationMatrix(0.,0.,0.); translation =G4ThreeVector(0.,0.,Horn1Z0+frontRmax);
   G4UnionSolid *sPHorn1F=new G4UnionSolid("sPHorn1F",sPConeF,sTorusF,G4Transform3D(rotation,translation));
-  G4LogicalVolume* lvPHorn1F=new G4LogicalVolume(sPHorn1F,Air,"lvPHorn1F",0,0,0);
+  G4LogicalVolume* lvPHorn1F=new G4LogicalVolume(sPHorn1F,Ar,"lvPHorn1F",0,0,0);
   ND->ApplyStepLimits(lvPHorn1F); // Limit Step Size
   lvPHorn1F->SetVisAttributes(invisible);
   //------ Modification by Alex Himmel 3-19-07----------
