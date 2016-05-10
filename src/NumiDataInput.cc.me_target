@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.4.2.2 2016/03/24 16:13:01 lcremone Exp $
+// $Id: NumiDataInput.cc.me_target,v 1.1.2.9.2.4.2.3 2016/05/10 07:47:29 lcremone Exp $
 //----------------------------------------------------------------------
 
 
@@ -114,6 +114,13 @@ NumiDataInput::NumiDataInput()
    RunNumber       = "0000";
    geometry        = "";
 
+
+   // Default values for the proto2-numix-water branch are: 
+   //  fHorn1IsAlternate = true;
+   //  fHorn1IsRefined = false;
+   // When changing these values to test the new geometry one also needs to update:
+   //  - g4numi_flukaMat_nova.inp in g4numi_flugg
+   //  - the region numbers that define the target in g4numi_flugg/for/fluscw.f
 
   fHorn1IsAlternate = true;
   fHorn1IsRefined = false;
