@@ -1,7 +1,7 @@
  //----------------------------------------------------------------------
 // NumiAnalysis.cc
 //
-// $Id: NumiAnalysis.cc,v 1.26.4.21 2015/11/28 05:08:58 laliaga Exp $
+// $Id: NumiAnalysis.cc,v 1.26.4.21.2.1 2016/09/02 21:14:23 rschroet Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -19,6 +19,7 @@
 //GEANT4 
 #include "globals.hh"
 #include "G4ios.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4Track.hh"
 #include "G4SteppingManager.hh"
 #include "G4ThreeVector.hh"
@@ -53,7 +54,7 @@
 #include <sstream>
 #include <iostream>
 
-#define USEMODGEANT4
+//#define USEMODGEANT4
 #ifdef USEMODGEANT4 
 
 #include "MinervaElementInter.hh"
@@ -469,7 +470,7 @@ void NumiAnalysis::FillMeta(){
   this_meta->beamsim = "g4numi_v6";   
 #endif
 
-  this_meta->physics = "geant4_9_2_p03_FTFP_BERT1.0"; 
+  this_meta->physics = "geant4_10_1_p03b_FTFP_BERT2.0"; 
   this_meta->physcuts = "nofillyet";
 
   G4String hornC = NumiData->GetBeamConfig();
