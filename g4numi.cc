@@ -18,7 +18,7 @@
 
 // Interaction Physics Lists
 
-#include "QGSP.hh"
+//#include "QGSP.hh"
 #include "FTFP_BERT.hh"
 //#include "QGSC.hh"
 //#include "QBBC.hh"
