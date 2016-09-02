@@ -706,8 +706,14 @@ void NumiDetectorConstruction::ConstructHorn1Alternate(G4ThreeVector hornpos, G4
    if ( hornWaterLayerThick > 10.) {
      std::ostringstream messageOStr; messageOStr << " Unreasonable amount of water " << hornWaterLayerThick;
      std::string message(messageOStr.str());
+     
+#ifndef MODERN_G4
      G4Exception("NumiDetectorConstruction::ConstructHorn1");
+#else
+     G4Exception("numiHorn1","NumiHorn1",FatalException,"NumiDetectorConstruction::ConstructHorn1");
+#endif
      exit(2); // only under 4.9.2 .. not reachable under 4.9.5 
+     
    }
    //
    // Place the Mother volume, a G4 Polycone. Define first the boundary of Horn1. 
