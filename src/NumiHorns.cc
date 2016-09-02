@@ -10,7 +10,10 @@
 #include "globals.hh"
 #include "G4Transform3D.hh"
 #include "G4RotationMatrix.hh"
-#include "G4BREPSolidPCone.hh"
+
+//#include "G4BREPSolidPCone.hh"
+#include "G4Polycone.hh"
+
 #include "NumiMagneticField.hh"
 #include "G4FieldManager.hh"
 
@@ -34,8 +37,12 @@ void NumiDetectorConstruction::ConstructHorns()
       sprintf(no,"%d",jj+1);
       G4String vol_name="PM0";
       vol_name.append(no);
-      vol_name.append("_solid"); 
-      Horn_PM[jj]=new G4BREPSolidPCone(vol_name,0.,360.*deg,NumiData->PhornNpoint[jj]+1,0.,z,rmin,rmax);
+      vol_name.append("_solid");
+      //polycone
+      //Horn_PM[jj]=new G4BREPSolidPCone(vol_name,0.,360.*deg,NumiData->PhornNpoint[jj]+1,0.,z,rmin,rmax);
+      Horn_PM[jj]=new G4Polycone(vol_name, 0., 360.*deg, NumiData->PhornNpoint[jj]+1, z, rmin, rmax);                     
+      
+
       Horn_PM_lv[jj]=new G4LogicalVolume(Horn_PM[jj],Air,"Horn_PM_lv",0,0,0);
       vol_name="PM0";
       vol_name.append(no);
@@ -49,7 +56,10 @@ void NumiDetectorConstruction::ConstructHorns()
 	rmax[ii]=phornRgivenZ(NumiData->PhornAout[jj],NumiData->PhornBout[jj],NumiData->PhornCout[jj],z[ii]+NumiData->PhornZ1[jj]);
       }
 
-      G4BREPSolidPCone* Horn_in=new G4BREPSolidPCone("Horn_in",0.,360.*deg,NumiData->PhornNpoint[jj]+1,0.,z,rmin,rmax);
+      //polycone
+      //G4BREPSolidPCone* Horn_in=new G4BREPSolidPCone("Horn_in",0.,360.*deg,NumiData->PhornNpoint[jj]+1,0.,z,rmin,rmax);
+      G4Polycone* Horn_in=new G4Polycone("Horn_in", 0., 360.*deg, NumiData->PhornNpoint[jj]+1, z, rmin, rmax);
+      
       material=GetMaterial(NumiData->PhornGEANTmat[jj]);
       G4LogicalVolume* Horn_in_lv=new G4LogicalVolume(Horn_in,material,"Horn_in_lv",0,0,0);
       // Magnetic field
@@ -82,7 +92,10 @@ void NumiDetectorConstruction::ConstructHorns()
 	rmin[kk]=phornRgivenZ(NumiData->PhornAout[jj],NumiData->PhornBout[jj],NumiData->PhornCout[jj], z[kk]+NumiData->PhornZ1[jj]);
 	rmax[kk]=NumiData->PhornROCin[jj];
       }
-      G4BREPSolidPCone* Horn_inside=new G4BREPSolidPCone("Horn_inside",0.,360.*deg,NumiData->PhornNpoint[jj]+1,0.,z,rmin,rmax);
+      //polycone
+      //G4BREPSolidPCone* Horn_inside=new G4BREPSolidPCone("Horn_inside",0.,360.*deg,NumiData->PhornNpoint[jj]+1,0.,z,rmin,rmax);
+      G4Polycone* Horn_inside=new G4Polycone("Horn_inside", 0., 360.*deg, NumiData->PhornNpoint[jj]+1, z, rmin, rmax);
+      
       G4LogicalVolume* Horn_inside_lv=new G4LogicalVolume(Horn_inside,Vacuum,"Horn_inside_lv",0,0,0);
       // Magnetic field  
       G4FieldManager* FieldMgr3 = new G4FieldManager(numiMagField); //create a local field      
