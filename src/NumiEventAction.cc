@@ -17,7 +17,7 @@
 #include "G4Trajectory.hh"
 #include "G4ios.hh"
 
-#define USEMODGEANT4
+//#define USEMODGEANT4
 #ifdef USEMODGEANT4 
 
 #include "MinervaElementInter.hh"
