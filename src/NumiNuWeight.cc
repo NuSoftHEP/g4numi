@@ -1,4 +1,4 @@
-// $Id: NumiNuWeight.cc,v 1.1.4.2 2014/01/22 22:31:07 kordosky Exp $
+// $Id: NumiNuWeight.cc,v 1.1.4.2.2.1 2016/09/02 21:17:53 rschroet Exp $
 
 #include <iostream>
 #include <cmath>
@@ -9,6 +9,7 @@
 #include "data_t.hh"
 #include "NumiNuWeight.hh"
 #include "NumiParticleCode.hh"
+#include "G4SystemOfUnits.hh"
 
 const double rdet = 100.; //in cm
 
