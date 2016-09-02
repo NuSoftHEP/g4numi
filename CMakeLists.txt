@@ -23,6 +23,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+set(CMAKE_C_COMPILER $ENV{GCC_FQ_DIR}/bin/gcc)
 project(g4numi)
 
 option(WITH_MODERN_G4 "not building against old G4 w/ 1-arg exception" ON)
@@ -49,6 +50,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake
                       $ENV{ROOTSYS}/etc/cmake
                       ${CMAKE_MODULE_PATH})
 
+
 find_package(ROOT REQUIRED)
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
@@ -71,7 +73,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(_root_internal_libraries
     Core
-    Cint
     RIO
     Net
     Hist
@@ -105,6 +106,7 @@ if(WITH_G4NU)
    link_directories(${G4NU}/lib)
    set(G4NU_LIBRARIES g4nupl)
 endif()
+
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
