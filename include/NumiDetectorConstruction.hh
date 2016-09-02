@@ -14,6 +14,8 @@
 #include "G4PVPlacement.hh"
 #include <vector>
 
+#include "G4SystemOfUnits.hh"
+
 class G4VSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
