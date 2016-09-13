@@ -1,7 +1,7 @@
 #!/bin/bash
 #-*-Shell-Script-*- #
 
-# $Header: /cvs/projects/numi-beam-sim/numi-beam-sim/g4numi/Attic/setup_beamsim.sh,v 1.1.2.15.2.1 2016/09/13 18:35:29 rschroet Exp $
+# $Header: /cvs/projects/numi-beam-sim/numi-beam-sim/g4numi/Attic/setup_beamsim.sh,v 1.1.2.15.2.2 2016/09/13 18:46:16 rschroet Exp $
 
 # This only works on a NOvA virtual machine for now
 
@@ -21,12 +21,13 @@ setup_beamsim(){
 
     local TOP=${PWD}
 
+    #job submission and file transfer
     source /grid/fermiapp/products/common/etc/setups.sh
     setup jobsub_client
     setup ifdhc
 
     export BEAMSIM="${TOP}"
-    export G4NUMIVER="v6"
+    export G4NUMIVER="v6-proto3"
 
     setup g4photon v3_1
 
