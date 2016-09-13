@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh,v 1.23.2.15.2.2 2016/09/13 20:31:22 laliaga Exp $
+// $Id: NumiDataInput.hh,v 1.23.2.15.2.3 2016/09/13 20:38:16 laliaga Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -11,6 +11,7 @@
 #include <vector>
 #include "NumiHornSpiderSupport.hh"
 #include "G4LogicalVolume.hh"
+#include "G4SystemOfUnits.hh"
 
 class G4Material;
 
