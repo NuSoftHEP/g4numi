@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.32.2.19 2015/02/20 09:56:51 laliaga Exp $
+// $Id: NumiDataInput.cc,v 1.32.2.19.2.1 2016/09/13 20:32:24 laliaga Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -77,7 +77,6 @@ NumiDataInput::NumiDataInput()
     fLengthOfWaterInTgt(4.0*cm),
 
     fPrintInfo(1)
-    
 
 {
 
@@ -187,6 +186,8 @@ NumiDataInput::NumiDataInput()
    KillTrackingThreshold = 0.05*GeV; //for defaut neutrino MC g4numi 
    //KillTrackingThreshold = 0.001*GeV; //for muon beam MC
 
+   //Use dk2nu:
+   UseDk2nu = true;
 
    //base name for output files:
    nuNtupleName    = "nuNtuple";

@@ -184,9 +184,11 @@ void NumiRunAction::EndOfRunAction(const G4Run* aRun)
   CLHEP::HepRandom::saveEngineStatus(randomFile);
   G4cout << "  Random engine status at the end of the run saved in "<<randomFile<<G4endl;
   NumiAnalysis* analysis = NumiAnalysis::getInstance();
-  analysis->FillMeta();
+  if(fNDI->GetDk2nuFormat()){
+    analysis->FillMeta();
+  } 
   analysis->finish();
-
+  
   G4cout << "********************************************************************" << G4endl;
   G4cout << "NumiRunAction::EndOfRunAction - Completed." << G4endl;
   G4cout << "********************************************************************" << G4endl;

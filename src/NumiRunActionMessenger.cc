@@ -404,6 +404,13 @@ NumiRunActionMessenger::NumiRunActionMessenger(NumiRunAction* RA)
   KeyVolumeNameTo->SetDefaultValue ("blank");
   KeyVolumeNameTo->AvailableForStates(G4State_Idle);
   
+  //Use Dk2nu format:
+  UseDk2nu=new G4UIcmdWithABool("/NuMI/run/UseDk2nuFormat",this);
+  UseDk2nu->SetGuidance("Sets dk2nu ntuple format on or off");
+  UseDk2nu->SetParameterName("UseDk2nuFormat",true);
+  UseDk2nu->SetDefaultValue(NumiData->UseDk2nu);
+  UseDk2nu->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
 }
 
 NumiRunActionMessenger::~NumiRunActionMessenger()
@@ -477,6 +484,9 @@ NumiRunActionMessenger::~NumiRunActionMessenger()
  delete OutputASCIIFileNameCmd;
  delete KeyVolumeNameFrom;
  delete KeyVolumeNameTo;
+ 
+ //Dk2nu formats:
+ delete UseDk2nu;
  
 }
 
@@ -687,5 +697,8 @@ void NumiRunActionMessenger::SetNewValue(G4UIcommand* command,G4String newValues
      const NumiSteppingAction *NSA = dynamic_cast<const NumiSteppingAction *>(grM->GetUserSteppingAction());
      NSA->SetKeyVolumeNameTo(newValues);
    }
+   if (command== UseDk2nu){
+     NumiData->SetDk2nuFormat(UseDk2nu->GetNewBoolValue(newValues));
+  }
 }
 

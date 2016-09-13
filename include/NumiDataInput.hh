@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh,v 1.23.2.15.2.1 2016/09/02 21:09:29 rschroet Exp $
+// $Id: NumiDataInput.hh,v 1.23.2.15.2.2 2016/09/13 20:31:22 laliaga Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -11,7 +11,6 @@
 #include <vector>
 #include "NumiHornSpiderSupport.hh"
 #include "G4LogicalVolume.hh"
-#include "G4SystemOfUnits.hh"
 
 class G4Material;
 
@@ -106,7 +105,8 @@ public:
    void Setg3Chase(G4bool _gc);
    void SetHornMisalign(G4bool val)		{fUseHornMisalign=val;}
    void SetTgtDensity(G4bool val)		{fUseTgtDensity=val;}
-
+  //to use dk2nu:  
+   void SetDk2nuFormat(G4bool val)             { UseDk2nu = val;}
 
    G4int    GetRunPeriod()                    { return fRunPeriod;}
    G4int    GetDebugLevel()                   { return fDebugLevel;}
@@ -143,6 +143,9 @@ public:
    G4double GetHorn1ExtraLayerAlum() const    { return fHorn1ExtraLayerAlum; }
    G4bool GetDumpBFieldPlease() const    { return fDumpBFieldPlease; }
    
+  //dk2nu:
+  G4bool   GetDk2nuFormat()                 { return UseDk2nu;}
+  
    //--------------------------------------------------------------
    //Specifically for Muon Monitor simulation and Absorber background simulation
    //
@@ -282,6 +285,9 @@ public:
    G4String bxdrawName;
    G4float testTheta;   // TestBeam Angle
    
+  //use dk2nu:
+  G4bool UseDk2nu;
+
   //=================================
   //  for Raytracing=================
   //----------------------------------

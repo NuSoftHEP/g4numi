@@ -110,7 +110,9 @@ private:
    G4UIcmdWithAString*         KeyVolumeNameFrom;
    G4UIcmdWithAString*         KeyVolumeNameTo;
 
-   
+  //Use nudata or dk2nu formats:
+  G4UIcmdWithABool*            UseDk2nu;
+  
 };
 
 #endif

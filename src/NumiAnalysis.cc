@@ -1,7 +1,7 @@
  //----------------------------------------------------------------------
 // NumiAnalysis.cc
 //
-// $Id: NumiAnalysis.cc,v 1.26.4.21.2.1 2016/09/02 21:14:23 rschroet Exp $
+// $Id: NumiAnalysis.cc,v 1.26.4.21.2.2 2016/09/13 20:32:24 laliaga Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -90,9 +90,10 @@ NumiAnalysis::NumiAnalysis()
   g4tardata = new target_exit_t();
   
   //New for DK2NU:
-  this_meta  = new bsim::DkMeta();
-  this_dk2nu = new bsim::Dk2Nu();
-
+  if(NumiData->GetDk2nuFormat()){
+    this_meta  = new bsim::DkMeta();
+    this_dk2nu = new bsim::Dk2Nu();
+  }
   fcount = 0;
   fentry = 0;
   for(int i = 0; i < 3; ++i)
@@ -146,21 +147,23 @@ void NumiAnalysis::book()
     sprintf(nuNtupleFileName,"%s_%04d%s.root",(NumiData->nuNtupleName).c_str(),pRunManager->GetCurrentRun()->GetRunID(), (NumiData->geometry).c_str());
     nuNtuple = new TFile(nuNtupleFileName,"RECREATE","root ntuple");
     G4cout << "Creating neutrino ntuple: "<<nuNtupleFileName<<G4endl;
-    /*
-    tree = new TTree("nudata","g4numi Neutrino ntuple");
-    tree->Branch("data","data_t",&g4data,32000,1);
-    */
-    //NEW DK2NU:
-    tree = new TTree("dk2nuTree","g4numi Neutrino ntuple");
-    tree->Branch("dk2nu","bsim::Dk2Nu",&this_dk2nu,32000,99);
-    meta = new TTree("dkmetaTree","Meta info for neutrino run");
-    meta->Branch("dkmeta","bsim::DkMeta",&this_meta,32000,99);
+
+    if(NumiData->GetDk2nuFormat()){
+      tree = new TTree("dk2nuTree","g4numi Neutrino ntuple");
+      tree->Branch("dk2nu","bsim::Dk2Nu",&this_dk2nu,32000,99);
+      meta = new TTree("dkmetaTree","Meta info for neutrino run");
+      meta->Branch("dkmeta","bsim::DkMeta",&this_meta,32000,99);
+    }
+    else{
+      tree = new TTree("nudata","g4numi Neutrino ntuple");
+      tree->Branch("data","data_t",&g4data,32000,1);
+    }
 
   }
-
+  
   if (NumiData->createTarNtuple){
-      sprintf(tarNtupleFileName,"%s_%04d%s.root",(NumiData->tarNtupleName).c_str(),pRunManager->GetCurrentRun()->GetRunID(), (NumiData->geometry).c_str());
-      tarNtuple = new TFile(tarNtupleFileName,"RECREATE","root ntuple");
+    sprintf(tarNtupleFileName,"%s_%04d%s.root",(NumiData->tarNtupleName).c_str(),pRunManager->GetCurrentRun()->GetRunID(), (NumiData->geometry).c_str());
+    tarNtuple = new TFile(tarNtupleFileName,"RECREATE","root ntuple");
     if(tarNtuple){
       G4cout << "Creating target ntuple: "<<tarNtupleFileName<<G4endl;
       tarNtuple->cd();
@@ -404,7 +407,9 @@ void NumiAnalysis::finish()
    
   if (NumiData->createNuNtuple){
     nuNtuple->cd();
-    meta->Write(); //write dkmeta
+    if(NumiData->GetDk2nuFormat()){
+      meta->Write(); //write dkmeta
+    }
     tree->Write();
     nuNtuple->Close();
     delete nuNtuple;
@@ -440,7 +445,6 @@ void NumiAnalysis::finish()
 }
 
 void NumiAnalysis::FillMeta(){
-
 
   //This class fills dk2meta:
   G4RunManager* pRunManager = G4RunManager::GetRunManager();
@@ -1397,6 +1401,8 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
   //and looking at parent(0), grand-parent(1), great-gran-parent(2)
   // (Leo Aliaga. Feb18, 2015)
 
+if(NumiData->GetDk2nuFormat()){
+
   const int Nanc = NumiData->nGenAbs;
 
   G4double fact_Al = (26.98) / (2.7); 
@@ -1680,7 +1686,7 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
   this_dk2nu->vdbl = vec_dbl; //Storing the vdbl
 
   /////////////////////////////////////////////////////////////////////////
-
+ }
   
   tree->Fill();  
   
