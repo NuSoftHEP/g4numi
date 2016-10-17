@@ -34,7 +34,7 @@
 /NuMI/det/UseCorrHornCurrent true
 
 #
-#Configure the neutirno beam. 
+#Configure the neutrino beam. 
 #This sets the TargetZ0 and Baffle Z0 and HornCurrent.
 #Must be in the form \"LE#z#i\" or \"le#z#i\", where # is any number. 
 #Examples are le010z185i, LE025.3z-200i, LE250z185.6i....etc.
@@ -84,6 +84,10 @@
 #Whether or not to create output ntuple with data_t
 #default is false
 /NuMI/output/outputNuNtuple true
+
+#For testing, we can select dk2nu format or nu_data.
+#default is dk2nu:
+#/NuMI/run/UseDk2nuFormat false
 
 #
 #Directory and filename (with out the .root) to write output ntuple

@@ -34,10 +34,11 @@
 
 /NuMI/output/outputNuNtuple true
 
+#For testing, we can select dk2nu format or nu_data.
+#default is dk2nu:
+#/NuMI/run/UseDk2nuFormat false
+
 /NuMI/output/setNuNtupleFile numi-ntuple-newtarget
-
-
-
 
 
 /NuMI/det/update
