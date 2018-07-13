@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc,v 1.13.4.11 2017/11/02 21:49:03 lebrun Exp $
+// $Id: NumiDetectorConstruction.cc,v 1.13.4.11.2.1 2018/07/13 20:06:07 laliaga Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -56,7 +56,9 @@ NumiDetectorConstruction::NumiDetectorConstruction()
       fNovaTargetXOffset(0.),
       fNovaTargetYOffset(0.),
       fNovaTargetExtraFlangeThick(0.),
-      fHorn1StripLinesThick(0.)
+      fHorn1StripLinesThick(0.),
+      this_NumberOfMEFins(48),
+      this_DistanceBetweenMEFins(0.5)
       
 {
   //Scan the input file     
@@ -387,4 +389,12 @@ void NumiDetectorConstruction::SetBaffleLength(G4double length) {
 
 void NumiDetectorConstruction::SetForcedOldTarget(G4bool forced) {
     fForcedOldTarget = forced;
+}
+
+void NumiDetectorConstruction::SetNumberOfMEFins(G4double n_fins_me) {
+    this_NumberOfMEFins = n_fins_me;
+}
+
+void NumiDetectorConstruction::SetDistanceBetweenMEFins(G4double dist_fins_me) {
+    this_DistanceBetweenMEFins = dist_fins_me;
 }

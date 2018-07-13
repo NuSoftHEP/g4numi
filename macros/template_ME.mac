@@ -33,6 +33,9 @@
 # 10/2016 default 0 0 -143.3 cm
 /NuMI/det/set/targetPosition ${target_position_X} ${target_position_Y} ${target_position_Z} cm
 
+#Fins:
+/NuMI/det/NumberOfFins ${number_of_fins}
+/NuMI/det/DistanceBetweenFins ${distance_between_fins} mm
 
 #Switch to the alternate horn1
 /NuMI/det/Horn1IsAlternate ${do_horn1_new_geometry}

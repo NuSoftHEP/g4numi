@@ -32,6 +32,10 @@
 
 void NumiDetectorConstruction::ConstructNOvATarget()
 {
+  
+  std::cout<<"==>> this_NumberOfMEFins       : "<<NumiDetectorConstruction::this_NumberOfMEFins<<std::endl;
+  std::cout<<"==>> this_DistanceBetweenMEFins: "<<NumiDetectorConstruction::this_DistanceBetweenMEFins<<std::endl;
+
   G4RotationMatrix rotation;
   G4ThreeVector translation;
 
@@ -224,14 +228,18 @@ void NumiDetectorConstruction::ConstructNOvATarget()
   // MAK: There is no reason to make the number of target segments a variable
   // that appears in another header and is shared with the LE target
   // this just leads to bugs
-  const int NumberOfNonBudalFinsInMETarget=48;
+  //const int NumberOfNonBudalFinsInMETarget=48;
+  int NumberOfNonBudalFinsInMETarget = NumiDetectorConstruction::this_NumberOfMEFins;
   for (G4int ii=0; ii< NumberOfNonBudalFinsInMETarget; ii++){
     
     TGT_x = 0.0;
     TGT_y = -NumiData->TargetSegHeight/2.0 + NumiData->TargetSegWidth/2.0;
-    TGT_z = NumiData->BudalHFVSLength + NumiData->BudalHFVSPitch + NumiData->BudalVFHSLength + NumiData->BudalVFHSPitch
+    /*TGT_z = NumiData->BudalHFVSLength + NumiData->BudalHFVSPitch + NumiData->BudalVFHSLength + NumiData->BudalVFHSPitch
             + ii*(NumiData->TargetSegLength + NumiData->TargetSegPitch)+NumiData->TargetSegLength/2.0;
-    rotation=G4RotationMatrix(0,0,0);
+	    rotation=G4RotationMatrix(0,0,0);*/
+    TGT_z = NumiData->BudalHFVSLength + NumiData->BudalHFVSPitch + NumiData->BudalVFHSLength + NumiData->BudalVFHSPitch
+            + ii*(NumiData->TargetSegLength + NumiDetectorConstruction::this_DistanceBetweenMEFins)+NumiData->TargetSegLength/2.0;
+	    rotation=G4RotationMatrix(0,0,0);
     translation=G4ThreeVector(TGT_x, TGT_y, TGT_z) - TargetMVOrigin;
 	
     new G4PVPlacement(G4Transform3D(rotation, translation), "TGT1", LVTargetFin, pvTargetMotherVol, false, ii, NumiData->pSurfChk);

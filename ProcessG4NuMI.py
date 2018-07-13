@@ -55,6 +55,12 @@ DO_TARGET_WATER            = False
 TARGET_WATER_CM            = 3 #cm
 
 ##################################################
+# Target optimnization work
+##################################################
+NUMBER_OF_FINS = 48   #default ME
+DISTANCE_BETWEEN_FINS=0.5  #mm
+
+##################################################
 # beamconfig/playlist/targetZpos lookup
 ##################################################
 LEbeamconfig_dict = { "le010z185i"  : {"minerva1"   : "-44.50",    #tgt2H1 = 9.50
@@ -79,13 +85,13 @@ def main():
 
   g4_macro = make_macro(options)
 
-  # scratch /pnfs area from which to send tarfile to grid
+# scratch /pnfs area from which to send tarfile to grid
   cache_folder = CACHE_PNFS_AREA + str(random.randint(10000,99999)) + "/"
   os.mkdir(cache_folder)
 
   print "\nTarring up local area..."
   make_tarfile(TARFILE_NAME, ".")
-
+  
   shutil.move(TARFILE_NAME,    cache_folder) # temp file -> remove it from pwd
   shutil.move(g4_macro,        cache_folder) # temp file -> remove it form pwd
   shutil.copy("g4numi_job.sh", cache_folder)
@@ -122,7 +128,7 @@ def main():
 
   #Ship it
   print "\nSubmitting to grid:\n"+submit_command+"\n"
-  status = subprocess.call(submit_command, shell=True)
+  status = subprocess.call(submit_command, shell=True)  
 
 def get_options():
   parser       = optparse.OptionParser(usage="usage: %prog [options]")
@@ -180,6 +186,10 @@ def get_options():
           help="target vertical position. Default = %defaultcm.")
   target_group.add_option('--target_position_Z', default = TARGET_POSITION_Z,
           help="target longitudinal position. Default = %defaultcm.")
+  target_group.add_option('--number_of_fins', default = NUMBER_OF_FINS,
+          help="number of fins for ME tgt target. Default = 48.")
+  target_group.add_option('--distance_between_fins', default = DISTANCE_BETWEEN_FINS,
+          help="distance between fins for ME tgt target. Default = %defaultmm.")
 
   beam_group   = optparse.OptionGroup(parser, "Beam Options")
 
@@ -266,6 +276,10 @@ def make_macro(options):
        'target_position_Y':          options.target_position_Y,
        'target_position_Z':          options.target_position_Z,
        'target_water_cm':            options.target_water_cm,
+       
+       'number_of_fins':            options.number_of_fins,
+       'distance_between_fins':     options.distance_between_fins,
+
        'do_target_water':            str(options.do_target_water).lower(),
        'pot':                        options.pot,
        'run':                        options.run_number,

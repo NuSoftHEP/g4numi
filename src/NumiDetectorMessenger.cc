@@ -459,7 +459,21 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
         fUseRotLocalCoordInMagField->SetDefaultValue(true); 
 	fUseRotLocalCoordInMagField->AvailableForStates(G4State_PreInit, G4State_Idle);
         
-	
+	//New cards for beam optimization (Leo, July 13, 2018)
+	fNumberOfMEFins = new G4UIcmdWithAnInteger("/NuMI/det/NumberOfFins",this);
+	fNumberOfMEFins-> SetGuidance("Set the Number of find for the ME target.");
+        fNumberOfMEFins-> SetParameterName("NumberOfFins",false);
+        fNumberOfMEFins->SetDefaultValue(48); 
+        fNumberOfMEFins->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fDistanceBetweenMEFins = new G4UIcmdWithADoubleAndUnit("/NuMI/det/DistanceBetweenFins",this);
+	fDistanceBetweenMEFins->SetGuidance("Set the distance between");
+        fDistanceBetweenMEFins->SetParameterName("DistanceBetweenFins",true); // in Detector data 
+        fDistanceBetweenMEFins->SetUnitCategory("Length");
+	fDistanceBetweenMEFins->SetDefaultValue(0.5);  // in mm 
+        fDistanceBetweenMEFins->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+
 #ifdef MODERN_G4
         fGDMLOutputCmd = new G4UIcmdWithAString("/NuMI/output/writeGDML",this);
         fGDMLOutputCmd->SetGuidance("Write GDML file");
@@ -539,6 +553,10 @@ NumiDetectorMessenger::~NumiDetectorMessenger() {
 
         delete fUsePosLocalCoordInMagField;
         delete fUseRotLocalCoordInMagField;
+
+	 //New cards for beam optimization (Leo, July 13, 2018)
+	delete fNumberOfMEFins;
+	delete fDistanceBetweenMEFins;
 
 #ifdef MODERN_G4
         delete fGDMLOutputCmd;
@@ -765,7 +783,14 @@ void NumiDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
        if (NumiData->useRotLocalCoordInMagField) 
          std::cerr << " Bug in coord. transform field rotations, fixed" << std::endl;
        else std::cerr << " Bug in coord. transform field rotations, NOT fixed" << std::endl;
-   } else {
+   } else if (command == fNumberOfMEFins) {
+     //New cards for beam optimization (Leo, July 13, 2018)
+     NumiDetector->SetNumberOfMEFins(fNumberOfMEFins->GetNewIntValue(newValue));
+   } else if( command == fDistanceBetweenMEFins)  { 
+     //New cards for beam optimization (Leo, July 13, 2018)
+     NumiDetector->SetDistanceBetweenMEFins(fDistanceBetweenMEFins->GetNewDoubleValue(newValue));
+   }
+   else {
    
 //       std::cerr << " In messenger, Unknown Cmd " << (void *) (command) << " and I will quit " << std::endl;
 //      exit(2);

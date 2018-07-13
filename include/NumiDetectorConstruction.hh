@@ -75,6 +75,10 @@ public:
     //
    G4double PHorn1ICRin(G4double z) const ;
     
+  //New cards for beam optimization (Leo, July 13, 2018)
+  void SetNumberOfMEFins(G4double n_fins_me);
+  void SetDistanceBetweenMEFins(G4double dist_fins_me);
+  
 private:
    NumiDataInput* NumiData;
    NumiMagneticField* numiMagField;
@@ -259,6 +263,11 @@ private:
     std::vector<double> fEffectiveRadiiForFieldMapH2; 
     
     G4RotationMatrix fRotationMotherNovaTarget;
+
+  //New cards for beam optimization (Leo, July 13, 2018)
+  G4int this_NumberOfMEFins;
+  G4double this_DistanceBetweenMEFins;
+  
     public:
     
     inline void SetIgnoreCEQBr(bool t) { fIgnoreCEQBr= t; }
