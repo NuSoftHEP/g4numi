@@ -33,8 +33,17 @@
 void NumiDetectorConstruction::ConstructNOvATarget()
 {
   
-  std::cout<<"==>> this_NumberOfMEFins       : "<<NumiDetectorConstruction::this_NumberOfMEFins<<std::endl;
-  std::cout<<"==>> this_DistanceBetweenMEFins: "<<NumiDetectorConstruction::this_DistanceBetweenMEFins<<std::endl;
+  std::cout<<"=============================================="<<std::endl;
+  std::cout<<"Quick new inputs debug check:"<<std::endl;
+  std::cout<<"==>> this_NumberOfMEFins         : "<<NumiDetectorConstruction::this_NumberOfMEFins<<std::endl;
+  std::cout<<"==>> this_DistanceBetweenMEFins  : "<<NumiDetectorConstruction::this_DistanceBetweenMEFins<<std::endl;
+  std::cout<<"==>> this_BudalMonitorMEPosition : "<<NumiDetectorConstruction::this_BudalMonitorMEPosition<<std::endl;
+  std::cout<<"==>> this_WidthMEFin             : "<<NumiDetectorConstruction::this_WidthMEFin<<std::endl;
+  std::cout<<"==>> this_WingedFin1             : "<<NumiDetectorConstruction::this_WingedFin1<<std::endl;
+  std::cout<<"==>> this_WingedFin2             : "<<NumiDetectorConstruction::this_WingedFin2<<std::endl;
+  std::cout<<"==>> this_WingedFin3             : "<<NumiDetectorConstruction::this_WingedFin3<<std::endl;
+  std::cout<<"==>> this_WingedFin4             : "<<NumiDetectorConstruction::this_WingedFin4<<std::endl;
+  std::cout<<"=============================================="<<std::endl;
 
   G4RotationMatrix rotation;
   G4ThreeVector translation;

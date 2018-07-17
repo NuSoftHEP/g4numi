@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc,v 1.13.4.11.2.1 2018/07/13 20:06:07 laliaga Exp $
+// $Id: NumiDetectorConstruction.cc,v 1.13.4.11.2.2 2018/07/17 21:29:41 laliaga Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -58,8 +58,13 @@ NumiDetectorConstruction::NumiDetectorConstruction()
       fNovaTargetExtraFlangeThick(0.),
       fHorn1StripLinesThick(0.),
       this_NumberOfMEFins(48),
-      this_DistanceBetweenMEFins(0.5)
-      
+      this_DistanceBetweenMEFins(0.5),
+      this_BudalMonitorMEPosition(0),
+      this_WidthMEFin(7.4),
+      this_WingedFin1(0),
+      this_WingedFin2(0),
+      this_WingedFin3(0),
+      this_WingedFin4(0)
 {
   //Scan the input file     
   NumiData = NumiDataInput::GetNumiDataInput();
@@ -391,10 +396,34 @@ void NumiDetectorConstruction::SetForcedOldTarget(G4bool forced) {
     fForcedOldTarget = forced;
 }
 
-void NumiDetectorConstruction::SetNumberOfMEFins(G4double n_fins_me) {
+void NumiDetectorConstruction::SetNumberOfMEFins(G4int n_fins_me) {
     this_NumberOfMEFins = n_fins_me;
 }
 
 void NumiDetectorConstruction::SetDistanceBetweenMEFins(G4double dist_fins_me) {
     this_DistanceBetweenMEFins = dist_fins_me;
+}
+
+void NumiDetectorConstruction::SetBudalMonitorMEPosition(G4double pos_bm_me) {
+    this_BudalMonitorMEPosition = pos_bm_me;
+}
+
+void NumiDetectorConstruction::SetWidthMEFin(G4double width_fins_me) {
+    this_WidthMEFin = width_fins_me;
+}
+
+void NumiDetectorConstruction::SetWingedFin1(G4int winged_fin_id1) {
+    this_WingedFin1 = winged_fin_id1;
+}
+
+void NumiDetectorConstruction::SetWingedFin2(G4int winged_fin_id2) {
+    this_WingedFin2 = winged_fin_id2;
+}
+
+void NumiDetectorConstruction::SetWingedFin3(G4int winged_fin_id3) {
+    this_WingedFin3 = winged_fin_id3;
+}
+
+void NumiDetectorConstruction::SetWingedFin4(G4int winged_fin_id4) {
+    this_WingedFin4 = winged_fin_id4;
 }

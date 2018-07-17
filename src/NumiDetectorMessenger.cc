@@ -191,10 +191,7 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
 	UpdateCmd->SetGuidance("Update NuMi geometry.");
 	UpdateCmd->SetGuidance("This command MUST be applied before \"beamOn\" ");
 	UpdateCmd->SetGuidance("if you changed geometrical value(s).");
-	UpdateCmd->AvailableForStates(G4State_Idle);
-
-
-        
+	UpdateCmd->AvailableForStates(G4State_Idle);     
         
         fBeamConfigDirectory = new G4UIdirectory("/NuMI/det/set/");
         fBeamConfigDirectory->SetGuidance("UI commands for changing geometry for the Nova/ME target");
@@ -472,6 +469,44 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
         fDistanceBetweenMEFins->SetUnitCategory("Length");
 	fDistanceBetweenMEFins->SetDefaultValue(0.5);  // in mm 
         fDistanceBetweenMEFins->AvailableForStates(G4State_PreInit, G4State_Idle);
+	
+	fBudalMonitorMEPosition = new G4UIcmdWithADoubleAndUnit("/NuMI/det/BudalMonitorMEPosition",this);
+	fBudalMonitorMEPosition->SetGuidance("Set position of the front of the first BM");
+        fBudalMonitorMEPosition->SetParameterName("BudalMonitorMEPosition",true); 
+        fBudalMonitorMEPosition->SetUnitCategory("Length");
+	fBudalMonitorMEPosition->SetDefaultValue(0.);    //check this!!
+        fBudalMonitorMEPosition->AvailableForStates(G4State_PreInit, G4State_Idle);
+	
+	fWidthMEFin = new G4UIcmdWithADoubleAndUnit("/NuMI/det/WidthMEFin",this);
+	fWidthMEFin->SetGuidance("Set fin width");
+        fWidthMEFin->SetParameterName("WidthMEFin",true); 
+        fWidthMEFin->SetUnitCategory("Length");
+	fWidthMEFin->SetDefaultValue(7.4);    //mm
+        fWidthMEFin->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+	fWingedFin1 = new G4UIcmdWithAnInteger("/NuMI/det/WingedFin1",this);
+	fWingedFin1-> SetGuidance("Set the first fin as winged.");
+        fWingedFin1-> SetParameterName("WingedFin1",false);
+        fWingedFin1->SetDefaultValue(0); 
+        fWingedFin1->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fWingedFin2 = new G4UIcmdWithAnInteger("/NuMI/det/WingedFin2",this);
+	fWingedFin2-> SetGuidance("Set the second fin as winged.");
+        fWingedFin2-> SetParameterName("WingedFin2",false);
+        fWingedFin2->SetDefaultValue(1); 
+        fWingedFin2->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fWingedFin3 = new G4UIcmdWithAnInteger("/NuMI/det/WingedFin3",this);
+	fWingedFin3-> SetGuidance("Set the third fin as winged.");
+        fWingedFin3-> SetParameterName("WingedFin3",false);
+        fWingedFin3->SetDefaultValue(2); 
+        fWingedFin3->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fWingedFin4 = new G4UIcmdWithAnInteger("/NuMI/det/WingedFin4",this);
+	fWingedFin4-> SetGuidance("Set the forth fin as winged.");
+        fWingedFin4-> SetParameterName("WingedFin4",false);
+        fWingedFin4->SetDefaultValue(3); 
+        fWingedFin4->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 
 #ifdef MODERN_G4
@@ -557,7 +592,13 @@ NumiDetectorMessenger::~NumiDetectorMessenger() {
 	 //New cards for beam optimization (Leo, July 13, 2018)
 	delete fNumberOfMEFins;
 	delete fDistanceBetweenMEFins;
-
+	delete fBudalMonitorMEPosition;
+	delete fWidthMEFin;    
+	delete fWingedFin1;
+        delete fWingedFin2;  
+	delete fWingedFin3;
+	delete fWingedFin4;
+	
 #ifdef MODERN_G4
         delete fGDMLOutputCmd;
         delete fGDMLStoreRefCmd;
@@ -787,8 +828,19 @@ void NumiDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      //New cards for beam optimization (Leo, July 13, 2018)
      NumiDetector->SetNumberOfMEFins(fNumberOfMEFins->GetNewIntValue(newValue));
    } else if( command == fDistanceBetweenMEFins)  { 
-     //New cards for beam optimization (Leo, July 13, 2018)
      NumiDetector->SetDistanceBetweenMEFins(fDistanceBetweenMEFins->GetNewDoubleValue(newValue));
+   }else if( command == fBudalMonitorMEPosition)  { 
+     NumiDetector->SetBudalMonitorMEPosition(fBudalMonitorMEPosition->GetNewDoubleValue(newValue));
+   }else if( command == fWidthMEFin)  { 
+     NumiDetector->SetWidthMEFin(fWidthMEFin->GetNewDoubleValue(newValue));
+   }else if (command == fWingedFin1) {
+     NumiDetector->SetWingedFin1(fWingedFin1->GetNewIntValue(newValue));
+   }else if (command == fWingedFin2) {
+     NumiDetector->SetWingedFin2(fWingedFin2->GetNewIntValue(newValue));
+   }else if (command == fWingedFin3) {
+     NumiDetector->SetWingedFin3(fWingedFin3->GetNewIntValue(newValue));
+   }else if (command == fWingedFin4) {
+     NumiDetector->SetWingedFin4(fWingedFin4->GetNewIntValue(newValue));
    }
    else {
    
