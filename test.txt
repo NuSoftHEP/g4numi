@@ -1,2 +1,3 @@
 this is only a test for cvs.
-test for beam optimization. 
+test for beam optimization.
+second test. 
