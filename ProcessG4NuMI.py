@@ -57,8 +57,14 @@ TARGET_WATER_CM            = 3 #cm
 ##################################################
 # Target optimnization work
 ##################################################
-NUMBER_OF_FINS = 48   #default ME
-DISTANCE_BETWEEN_FINS=0.5  #mm
+NUMBER_OF_FINS            = 48   #default ME
+DISTANCE_BETWEEN_FINS     = 0.5  #mm
+BUDAL_MONITOR_ME_POSITION = 0    #mm
+WIDTH_ME_FIN              = 7.4  #mm
+WINGED_FIN_ID1            = 0
+WINGED_FIN_ID2            = 1
+WINGED_FIN_ID3            = 2
+WINGED_FIN_ID4            = 3
 
 ##################################################
 # beamconfig/playlist/targetZpos lookup
@@ -86,7 +92,8 @@ def main():
   g4_macro = make_macro(options)
 
 # scratch /pnfs area from which to send tarfile to grid
-  cache_folder = CACHE_PNFS_AREA + str(random.randint(10000,99999)) + "/"
+
+cache_folder = CACHE_PNFS_AREA + str(random.randint(10000,99999)) + "/"
   os.mkdir(cache_folder)
 
   print "\nTarring up local area..."
@@ -124,9 +131,9 @@ def main():
       TARFILE    = cache_folder + TARFILE_NAME,
       LOGFILE    = logfile,
       CACHE      = cache_folder)
-  )
-
-  #Ship it
+)
+  
+ #Ship it
   print "\nSubmitting to grid:\n"+submit_command+"\n"
   status = subprocess.call(submit_command, shell=True)  
 
@@ -190,7 +197,19 @@ def get_options():
           help="number of fins for ME tgt target. Default = 48.")
   target_group.add_option('--distance_between_fins', default = DISTANCE_BETWEEN_FINS,
           help="distance between fins for ME tgt target. Default = %defaultmm.")
-
+  target_group.add_option('--position_budal_monitor', default = BUDAL_MONITOR_ME_POSITION,
+          help="position of the front of the first BM. Default = %defaultmm.")
+  target_group.add_option('--width_fin', default = WIDTH_ME_FIN,
+          help="fin width. Default = %defaultmm.")
+  target_group.add_option('--winged_fin1', default = WINGED_FIN_ID1,
+          help="Set the first fin as winged. Default = WINGED_FIN_ID1.")
+  target_group.add_option('--winged_fin2', default = WINGED_FIN_ID2,
+          help="Set the second fin as winged. Default = WINGED_FIN_ID2.")
+  target_group.add_option('--winged_fin3', default = WINGED_FIN_ID3,
+          help="Set the third fin as winged. Default = WINGED_FIN_ID3.")
+  target_group.add_option('--winged_fin4', default = WINGED_FIN_ID4,
+          help="Set the forth fin as winged. Default = WINGED_FIN_ID4.")
+  
   beam_group   = optparse.OptionGroup(parser, "Beam Options")
 
   beam_group.add_option('--beam_position_X', default = BEAM_POSITION_X,
@@ -279,6 +298,12 @@ def make_macro(options):
        
        'number_of_fins':            options.number_of_fins,
        'distance_between_fins':     options.distance_between_fins,
+       'position_bm':               options.position_budal_monitor,
+       'width_fin':                 options.width_fin,
+       'winged_fin_id1':            options.winged_fin1,
+       'winged_fin_id2':            options.winged_fin2,
+       'winged_fin_id3':            options.winged_fin3,
+       'winged_fin_id4':            options.winged_fin4,
 
        'do_target_water':            str(options.do_target_water).lower(),
        'pot':                        options.pot,

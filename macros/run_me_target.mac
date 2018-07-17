@@ -13,6 +13,16 @@
 
 /NuMI/run/useWaterInTgt false
 
+#Fins:
+/NuMI/det/NumberOfFins 34
+/NuMI/det/DistanceBetweenFins 0.2 mm
+/NuMI/det/BudalMonitorMEPosition 22 mm
+/NuMI/det/WidthMEFin 14 mm
+/NuMI/det/WingedFin1 45
+/NuMI/det/WingedFin2 3
+/NuMI/det/WingedFin3 67
+/NuMI/det/WingedFin4 90
+
 #Switch to the alternate horn1
 /NuMI/det/Horn1IsAlternate true
 
@@ -29,7 +39,8 @@
 #-------------------------------------------------------------
 # For ME simulation, don't change 000z. It will not do anything, please
 # change the target position explicitly by using the 'targetPosition' command
-/NuMI/det/BeamConfig ME000z200i
+#/NuMI/det/BeamConfig ME000z200i
+/NuMI/det/BeamConfig ME000z-200i
 /NuMI/run/useNImpWeight true
 
 #commands to study the tilted Horn (Set according to numix-139, slide 3).  
@@ -55,7 +66,7 @@
 
 /NuMI/output/outputNuNtuple true
 
-/NuMI/output/setNuNtupleFile numi-ntuple-newtarget
+/NuMI/output/setNuNtupleFile numi-ntuple-newtarget_rhc
 
 
 /NuMI/det/update
