@@ -14,14 +14,15 @@
 /NuMI/run/useWaterInTgt false
 
 #Fins:
-/NuMI/det/NumberOfFins 34
-/NuMI/det/DistanceBetweenFins 0.2 mm
+/NuMI/det/NumberOfFins 48
+/NuMI/det/DistanceBetweenFins 0.5 mm
 /NuMI/det/BudalMonitorMEPosition 22 mm
-/NuMI/det/WidthMEFin 14 mm
-/NuMI/det/WingedFin1 45
-/NuMI/det/WingedFin2 3
-/NuMI/det/WingedFin3 67
-/NuMI/det/WingedFin4 90
+/NuMI/det/WidthMEFin 9 mm
+/NuMI/det/WingedFin1 0
+/NuMI/det/WingedFin2 1
+/NuMI/det/WingedFin3 2
+/NuMI/det/WingedFin4 3
+/NuMI/det/WingedFinRadius 4.0 mm
 
 #Switch to the alternate horn1
 /NuMI/det/Horn1IsAlternate true
@@ -66,17 +67,17 @@
 
 /NuMI/output/outputNuNtuple true
 
-/NuMI/output/setNuNtupleFile numi-ntuple-newtarget_rhc
-
+/NuMI/output/setNuNtupleFile test_winged
 
 /NuMI/det/update
 
+/NuMI/rndm/setRndmSeed 1
 
-/NuMI/rndm/setRndmSeed 1234567
+#/NuMI/rndm/setRndmSeed 1234567
 
 /NuMI/run/setRunID 8000
 
-/run/beamOn 100
+/run/beamOn 1000
 
 
 

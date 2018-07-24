@@ -76,14 +76,7 @@ public:
    G4double PHorn1ICRin(G4double z) const ;
     
   //New cards for beam optimization (Leo, July 13, 2018)
-  void SetNumberOfMEFins(G4int n_fins_me);
-  void SetDistanceBetweenMEFins(G4double dist_fins_me);
-  void SetBudalMonitorMEPosition(G4double pos_bm_me);
-  void SetWidthMEFin(G4double width_fins_me);
-  void SetWingedFin1(G4int winged_fin_id1);
-  void SetWingedFin2(G4int winged_fin_id2);
-  void SetWingedFin3(G4int winged_fin_id3);
-  void SetWingedFin4(G4int winged_fin_id4);
+ 
   
 private:
    NumiDataInput* NumiData;
@@ -267,16 +260,6 @@ private:
     std::vector<double> fEffectiveRadiiForFieldMapH2; 
     
     G4RotationMatrix fRotationMotherNovaTarget;
-
-  //New cards for beam optimization (Leo, July 13, 2018)
-    G4int this_NumberOfMEFins;
-    G4double this_DistanceBetweenMEFins;
-    G4double this_BudalMonitorMEPosition;
-    G4double this_WidthMEFin;
-    G4int this_WingedFin1;
-    G4int this_WingedFin2;
-    G4int this_WingedFin3;
-    G4int this_WingedFin4;
   
     public:
     

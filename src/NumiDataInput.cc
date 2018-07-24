@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.32.2.25 2018/03/01 03:37:05 kordosky Exp $
+// $Id: NumiDataInput.cc,v 1.32.2.25.2.1 2018/07/24 20:26:28 laliaga Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -20,8 +20,6 @@
 //#include "globals.hh"
 #include "G4Material.hh"
 #include "G4UnitsTable.hh"
-
-
 
 static const G4double in = 2.54*cm;
 static const G4double fTargetZ0_ref   = -0.35*m; //LE000 position
@@ -406,6 +404,15 @@ if(!vacuumworld && !airhrn){
   BudalDxdz = 0.0;
   BudalDydz = 0.0;
 
+  //(Leo, Juyly24, 2018): Functions for target optmization studies:
+  WingedFin1      = 1000;
+  WingedFin2      = 1001;
+  WingedFin3      = 1002;
+  WingedFin4      = 1003;
+  WingedFinRadius = 1.0*mm;
+  NumberOfMEFins  = 48;
+  BudalMonitorMEPosition = -100000.0*mm;
+  
   /*
 
   this is flugg stuff. Note if the target moves 1.1cm so does the baffle!
@@ -1971,4 +1978,42 @@ void NumiDataInput::SetBeamSigmaY(G4double val)
   beamSigmaY = val;
 }
 
+//(Leo, Juyly24, 2018): Functions for target optmization studies:
 
+//---------------------------------------------------------------------------------
+void NumiDataInput::SetTargetSegPitch(G4double val)
+{
+  TargetSegPitch = val;
+}
+
+//---------------------------------------------------------------------------------
+void NumiDataInput::SetTargetSegWidth(G4double val)
+{
+  TargetSegWidth = val;
+}
+
+void NumiDataInput::SetWingedFin1(G4int winged_fin_id1) {
+    WingedFin1 = winged_fin_id1;
+}
+void NumiDataInput::SetWingedFin2(G4int winged_fin_id2) {
+    WingedFin2 = winged_fin_id2;
+}
+
+void NumiDataInput::SetWingedFin3(G4int winged_fin_id3) {
+    WingedFin3 = winged_fin_id3;
+}
+
+void NumiDataInput::SetWingedFin4(G4int winged_fin_id4) {
+    WingedFin4 = winged_fin_id4;
+}
+
+void NumiDataInput::SetWingedFinRadius(G4double winged_fin_radius) {
+    WingedFinRadius = winged_fin_radius;
+}
+void NumiDataInput::SetNumberOfMEFins(G4int n_fins_me) {
+    NumberOfMEFins = n_fins_me;
+}
+
+void NumiDataInput::SetBudalMonitorMEPosition(G4double pos_bm_me) {
+    BudalMonitorMEPosition = pos_bm_me;
+}

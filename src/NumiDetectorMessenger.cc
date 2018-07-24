@@ -508,6 +508,11 @@ NumiDetectorMessenger::NumiDetectorMessenger( NumiDetectorConstruction* NumiDet)
         fWingedFin4->SetDefaultValue(3); 
         fWingedFin4->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+	fWingedFinRadius = new G4UIcmdWithADoubleAndUnit("/NuMI/det/WingedFinRadius",this);
+	fWingedFinRadius-> SetGuidance("Set the winged radius.");
+        fWingedFinRadius-> SetParameterName("WingedFinRadius",false);
+        fWingedFinRadius->SetDefaultValue(1); 
+        fWingedFinRadius->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 #ifdef MODERN_G4
         fGDMLOutputCmd = new G4UIcmdWithAString("/NuMI/output/writeGDML",this);
@@ -597,7 +602,8 @@ NumiDetectorMessenger::~NumiDetectorMessenger() {
 	delete fWingedFin1;
         delete fWingedFin2;  
 	delete fWingedFin3;
-	delete fWingedFin4;
+	delete fWingedFin4;	
+	delete fWingedFinRadius;
 	
 #ifdef MODERN_G4
         delete fGDMLOutputCmd;
@@ -826,21 +832,23 @@ void NumiDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
        else std::cerr << " Bug in coord. transform field rotations, NOT fixed" << std::endl;
    } else if (command == fNumberOfMEFins) {
      //New cards for beam optimization (Leo, July 13, 2018)
-     NumiDetector->SetNumberOfMEFins(fNumberOfMEFins->GetNewIntValue(newValue));
+     NumiData->SetNumberOfMEFins(fNumberOfMEFins->GetNewIntValue(newValue));
    } else if( command == fDistanceBetweenMEFins)  { 
-     NumiDetector->SetDistanceBetweenMEFins(fDistanceBetweenMEFins->GetNewDoubleValue(newValue));
+     NumiData->SetTargetSegPitch(fDistanceBetweenMEFins->GetNewDoubleValue(newValue));
    }else if( command == fBudalMonitorMEPosition)  { 
-     NumiDetector->SetBudalMonitorMEPosition(fBudalMonitorMEPosition->GetNewDoubleValue(newValue));
+     NumiData->SetBudalMonitorMEPosition(fBudalMonitorMEPosition->GetNewDoubleValue(newValue));
    }else if( command == fWidthMEFin)  { 
-     NumiDetector->SetWidthMEFin(fWidthMEFin->GetNewDoubleValue(newValue));
+     NumiData->SetTargetSegWidth(fWidthMEFin->GetNewDoubleValue(newValue));
    }else if (command == fWingedFin1) {
-     NumiDetector->SetWingedFin1(fWingedFin1->GetNewIntValue(newValue));
+     NumiData->SetWingedFin1(fWingedFin1->GetNewIntValue(newValue));
    }else if (command == fWingedFin2) {
-     NumiDetector->SetWingedFin2(fWingedFin2->GetNewIntValue(newValue));
+     NumiData->SetWingedFin2(fWingedFin2->GetNewIntValue(newValue));
    }else if (command == fWingedFin3) {
-     NumiDetector->SetWingedFin3(fWingedFin3->GetNewIntValue(newValue));
+     NumiData->SetWingedFin3(fWingedFin3->GetNewIntValue(newValue));
    }else if (command == fWingedFin4) {
-     NumiDetector->SetWingedFin4(fWingedFin4->GetNewIntValue(newValue));
+     NumiData->SetWingedFin4(fWingedFin4->GetNewIntValue(newValue));
+   }else if (command == fWingedFinRadius) {
+     NumiData->SetWingedFinRadius(fWingedFinRadius->GetNewDoubleValue(newValue));
    }
    else {
    

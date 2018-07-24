@@ -113,6 +113,7 @@ private:
     G4UIcmdWithAnInteger*         fWingedFin2;  
     G4UIcmdWithAnInteger*         fWingedFin3;
     G4UIcmdWithAnInteger*         fWingedFin4;
+    G4UIcmdWithADoubleAndUnit*    fWingedFinRadius;    
 
   ////
 
