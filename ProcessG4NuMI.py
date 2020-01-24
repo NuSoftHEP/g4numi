@@ -15,8 +15,8 @@ PWD = os.getenv("PWD")
 ##################################################
 # Job Defaults
 ##################################################
-POT                   = 400000
-N_JOBS                = 1
+POT                   = 500000
+N_JOBS                = 1000
 RUN_NUMBER            = 1
 OUTDIR                = "/pnfs/{EXPERIMENT}/persistent/users/{USER}/flux/test/".format(EXPERIMENT = os.getenv("EXPERIMENT"),
                                                                                        USER = os.getenv("USER"))
@@ -39,8 +39,8 @@ DO_HORN1_NEW_GEOMETRY = True
 
 BEAM_POSITION_X       = 0      #m
 BEAM_POSITION_Y       = 0      #m
-BEAM_SPOTSIZE_X       = 1.4    #mm (ME!)
-BEAM_SPOTSIZE_Y       = 1.4    #mm (ME!)
+BEAM_SPOTSIZE_X       = 1.5    #mm (ME!)
+BEAM_SPOTSIZE_Y       = 1.5    #mm (ME!)
 
 TARGET_POSITION_X     = 0.0    #cm
 TARGET_POSITION_Y     = 0.0    #cm
@@ -60,11 +60,11 @@ TARGET_WATER_CM            = 3 #cm
 NUMBER_OF_FINS            = 48   #default ME
 DISTANCE_BETWEEN_FINS     = 0.5  #mm
 BUDAL_MONITOR_ME_POSITION = 0    #mm
-WIDTH_ME_FIN              = 7.4  #mm
-WINGED_FIN_ID1            = 0
-WINGED_FIN_ID2            = 1
-WINGED_FIN_ID3            = 2
-WINGED_FIN_ID4            = 3
+WIDTH_ME_FIN              = 9.0  #mm
+WINGED_FIN_ID1            = 1
+WINGED_FIN_ID2            = 2
+WINGED_FIN_ID3            = 3
+WINGED_FIN_ID4            = 4
 
 ##################################################
 # beamconfig/playlist/targetZpos lookup
@@ -93,7 +93,7 @@ def main():
 
 # scratch /pnfs area from which to send tarfile to grid
 
-cache_folder = CACHE_PNFS_AREA + str(random.randint(10000,99999)) + "/"
+  cache_folder = CACHE_PNFS_AREA + str(random.randint(10000,99999)) + "/"
   os.mkdir(cache_folder)
 
   print "\nTarring up local area..."
@@ -110,7 +110,7 @@ cache_folder = CACHE_PNFS_AREA + str(random.randint(10000,99999)) + "/"
 
   print "\nOutput logfile(s):",logfile
 
-  submit_command = ("jobsub_submit {GRID} {MEMORY} -N {NJOBS} -dG4NUMI {OUTDIR} "
+  submit_command = ("jobsub_submit {GRID} {MEMORY} -N {NJOBS} -d G4NUMI {OUTDIR} "
       "-G {EXPERIMENT} "
       "-e BEAMCONFIG={BEAMCONFIG} " 
       "-e PLAYLIST={PLAYLIST} "
