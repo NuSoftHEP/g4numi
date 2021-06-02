@@ -37,6 +37,11 @@ class NumiTrackInformation : public G4VUserTrackInformation
     {return Nimpwt;}
     inline void SetNImpWt(G4double nimpweight)
     {Nimpwt=nimpweight;}
+
+    inline G4double GetSumNImpWt2() const 
+    {return Sumnimpwt2;}
+    inline void SetSumNImpWt2(G4double sumnimpweight2)
+    {Sumnimpwt2=sumnimpweight2;}
     
     void Print() const;
 
@@ -54,6 +59,7 @@ private:
     G4int              decay_code;
     G4int              tgen;
     G4double           Nimpwt;
+    G4double           Sumnimpwt2;
     G4ThreeVector      fParentMomentumAtThisProduction;
 
 };
