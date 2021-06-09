@@ -105,5 +105,43 @@ G4double NumiImpWeight::CalculateImpWeight(const G4Track *aTrack)
       return 0.;
     }
   }
-}  
+}
+
+G4double NumiImpWeight::CalculateImpWeight2(const G4Track *aTrack)
+{
+  G4double sumimpwt2 = 0;
+  G4double parimpwt  = 0;
+
+  NumiTrackInformation* trackInfo=(NumiTrackInformation*)(aTrack->GetUserInformation());
+  G4double currentimpwt = trackInfo->GetNImpWt();
+
+  if(aTrack->GetTrackID()==1){
+    sumimpwt2 = currentimpwt*currentimpwt;
+  }
+  else {
+    G4RunManager* pRunManager=(NumiRunManager*)NumiRunManager::GetRunManager();
+    G4TrajectoryContainer* container = pRunManager->GetCurrentEvent()->GetTrajectoryContainer();
+
+    if(container!=0){
+      TrajectoryVector* vect = container->GetVector();
+      G4VTrajectory* tr;
+      G4int ii=0;
+      while (ii<G4int(vect->size())){
+	tr=(*vect)[ii];
+	NumiTrajectory* tr1=dynamic_cast<NumiTrajectory*>(tr);
+	if(tr1->GetTrackID() == aTrack->GetParentID())
+	  parimpwt=tr1->GetNImpWt();
+	ii++;
+      }
+    } else {
+      G4cout << "NumiImpWeight::Not a primary and no particle info" << G4endl;
+    }
+
+    sumimpwt2 = trackInfo->GetSumNImpWt2();
+    currentimpwt = currentimpwt/parimpwt;
+    sumimpwt2 += currentimpwt*currentimpwt;
+  }
+
+  return sumimpwt2;
+}
 

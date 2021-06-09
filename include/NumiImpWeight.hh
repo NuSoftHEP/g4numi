@@ -17,6 +17,8 @@ class NumiImpWeight
     virtual ~NumiImpWeight();
 
   static G4double CalculateImpWeight(const G4Track * aTrack);
+
+  static G4double CalculateSumImpWeight2(const G4Track * aTrack);
   
 
 };
