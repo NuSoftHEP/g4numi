@@ -1731,6 +1731,7 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
   this_decay.mupare   = g4data->mupare;
   this_decay.necm     = g4data->Necm;
   this_decay.nimpwt   = g4data->Nimpwt;
+  this_decay.sumnimpwt2 = info->GetSumNImpWt2();
   //////
 
   //5) NuRay:
