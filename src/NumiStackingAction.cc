@@ -131,6 +131,8 @@ G4ClassificationOfNewTrack NumiStackingAction::ClassifyNewTrack(const G4Track * 
        else
        {
 	  trackInfo->SetNImpWt(Nimpweight);
+	  G4double Sumnimpwt2 = NumiImpWeight::CalculateSumImpWeight2(aTrack);
+	  trackInfo->SetSumNImpWt2(Sumnimpwt2);
        }
     }
   }
