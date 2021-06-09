@@ -107,7 +107,7 @@ G4double NumiImpWeight::CalculateImpWeight(const G4Track *aTrack)
   }
 }
 
-G4double NumiImpWeight::CalculateImpWeight2(const G4Track *aTrack)
+G4double NumiImpWeight::CalculateSumImpWeight2(const G4Track *aTrack)
 {
   G4double sumimpwt2 = 0;
   G4double parimpwt  = 0;
