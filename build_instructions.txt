@@ -4,9 +4,9 @@ This document lists very simple instruction how to switch and run this branch:
 
 1.  Checkout the g4numi package and witch to the right branch:
 
-% git clone ssh://p-numi-beam-sim@cdcvs.fnal.gov/cvs/projects/numi-beam-sim-g4numi g4numi
-% cd g4numi
-% git checkout main_h1TRackingPlane
+% git clone ssh://p-numi-beam-sim@cdcvs.fnal.gov/cvs/projects/numi-beam-sim-g4numi g4numi_h1TrackingPlane
+% cd g4numi_h1TrackingPlane
+% git checkout main_h1TrackingPlane
 
 2. Building the code
  
