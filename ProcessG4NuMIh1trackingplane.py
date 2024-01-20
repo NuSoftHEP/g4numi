@@ -15,12 +15,10 @@ PWD = os.getenv("PWD")
 ##################################################
 # Job Defaults
 ##################################################
-POT                   = 50000
-N_JOBS                = 200
+POT                   = 100
+N_JOBS                = 1
 RUN_NUMBER            = 1
-#OUTDIR                = "/pnfs/{EXPERIMENT}/persistent/users/{USER}/different_distances_from_horn_5k_200jobs/g4numi_h1trackingplane_impwt_off_e-_e+_gamma_5k_200jobs_2mev_ppvx_532cm_200cm_from_horn1end/".format(EXPERIMENT = os.getenv("EXPERIMENT"), USER = os.getenv("USER"))
-
-OUTDIR                = "/pnfs/{EXPERIMENT}/persistent/users/{USER}/PRODUCTION_10M_POT/horn_off/g4numi_h1trackingplane_egamma_50k_200jobs_10MPoT_2MeV_ppvx_532_2m_from_horn1end/".format(EXPERIMENT = os.getenv("EXPERIMENT"), USER = os.getenv("USER"))
+OUTDIR                = "/pnfs/{EXPERIMENT}/persistent/users/{USER}/flux_h1TrackingPlane/".format(EXPERIMENT = os.getenv("EXPERIMENT"), USER = os.getenv("USER"))
 TEMPLATE_MUON         = "{0}/macros/template_muon.mac".format(PWD)
 TEMPLATE_NUMI         = "{0}/macros/template_ME_h1trackingplane.mac".format(PWD)
 FILETAG               = ""

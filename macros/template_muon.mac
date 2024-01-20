@@ -1,0 +1,58 @@
+/control/suppressAbortion 2
+
+#debugging commands
+#/NuMI/run/DebugLevel 10
+#/NuMI/run/debugOn true
+
+#To use the muon beam useMuonBeam 
+#must be set to true here
+/NuMI/run/useMuonBeam true
+
+#When using muon beam tracking threshold
+#must be low. Value must be set here.
+/NuMI/run/KillTrackingThreshold 0.5 GeV
+
+#To use input from "muon_XXXXX" files
+#useMuonInput must be set to true here
+/NuMI/run/useMuonInput true
+
+#When useMuonInput = true set the path
+#to the input file here.
+/NuMI/run/extNtupleFileName ${infilename}
+
+#Whether or not to create output hadmmNtuple
+#when using MuonBeam.
+/NuMI/output/outputHadmmNtuple true
+
+#Directory to write the hadmmtuple root file
+/NuMI/output/setHadmmNtupleDir .
+
+#Set the name of the output hadmmtuple root file
+#if this is not set then the file name will be 
+#the input file name with "muon" replaced with "hadmmNtuple"
+#/NuMI/output/setHadmmNtupleFile hadmmNtuple_test.root
+
+#if using Muon Beam these don't need to be set or they 
+#can be set to anything
+#/NuMI/det/setHornCurrent 182.1 kA
+#/NuMI/det/setTargetZ0 -45 cm
+/NuMI/det/constructTarget false
+#/NuMI/det/applyDecayPipeMagneticField ture
+/NuMI/det/update
+
+# Sets the sigma shift of the rock density
+# and muon alcove walls
+# I don't think this is working right now.
+#/material/materialSigma 0
+#/NuMI/det/update false
+
+#if this is set only this number of events
+#will be processed. If this is not set or
+#it is < 1 all events
+#in the input ntuple will be processed
+#/NuMI/run/NEvents 1000
+
+/NuMI/run/setRunID ${run}
+/NuMI/rndm/setRndmSeed ${seed}
+/run/beamOn
+
