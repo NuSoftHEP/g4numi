@@ -231,11 +231,11 @@ void NumiDetectorConstruction::ConstructNumiHorn1TrackingPlane(G4VPhysicalVolume
     double widthTop = 1.0*m;
     double heightTop = 1.0*m;
     double trackingPlanesHalfThickness = 0.5*mm;
-    //double z = -1600*CLHEP::cm;  //calculated as the distance 0 gives virtual detector at z=1950, so for getting the virtual detector at 350 cm I had to do like 350-1950=1600; 350cm, 18cm from h1 end
+    double z = -1600*CLHEP::cm;  //calculated as the distance 0 gives virtual detector at z=1950, so for getting the virtual detector at 350 cm I had to do like 350-1950=1600; 350cm, 18cm from h1 end
     // double z = -1568*CLHEP::cm;//382cm, 50cm from h1 end
     //double z = -1518*CLHEP::cm; //432 cm, 100cm from h1 end
     //double z = -1468*CLHEP::cm;//482cm , 150cm from h1 end
-    double z = -1418*CLHEP::cm; //532 cm, 200cm from h1 end 
+    //double z = -1418*CLHEP::cm; //532 cm, 200cm from h1 end 
     
     // Create a box representing the tracking plane
     G4Box* topBox = new G4Box("Horn1TrackingPlane", widthTop / 2., heightTop / 2., trackingPlanesHalfThickness);
