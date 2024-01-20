@@ -1,6 +1,6 @@
  //----------------------------------------------------------------------
 //
-// $Id: NumiDataInput.hh,v 1.23.2.20 2017/11/02 21:41:56 lebrun Exp $
+// $Id: NumiDataInput.hh,v 1.23.2.20.2.1 2018/07/24 20:26:28 laliaga Exp $
 //----------------------------------------------------------------------
 
 #ifndef NumiDataInput_h
@@ -94,14 +94,14 @@ public:
    void SetASCIIName(G4String fileName)         { asciiName=fileName; }
    void SetBXDRAWName(G4String fileName)        { bxdrawName=fileName; }
    void OutputNuNtuple(G4bool output)           { createNuNtuple=output;}
-   void OutputTarNtuple(G4bool output)           { createTarNtuple=output;}
+   void OutputTarNtuple(G4bool output)           { createH1TrackingPlane=output;}
    void OutputASCII(G4bool output)              { createASCII=output; }
    void OutputBXDRAW(G4bool output)             { createBXDRAW = output; }
    void SetDecayPipeSelect(G4bool val)          { useDecayPipeSelect = val;}
    void SetStepLimit(G4double l)                { StepLimit = l; }
    void SetMacroBeam(G4bool val)                { useMacro=val;}
    void SetZpNtupleName(G4String fileName)      { zpNtupleName=fileName; }
-   void SetTarNtupleName(G4String fileName)      { tarNtupleName=fileName; }
+   void SetTarNtupleName(G4String fileName)      { h1trackingNtupleName=fileName; }
    void OutputZpNtuple(G4bool val)              { createZpNtuple=val;}
    void SetKillTracking(G4bool val)             { KillTracking = val;}
    void SetKillTrackingThreshold(G4double th )  { KillTrackingThreshold=th;}
@@ -148,6 +148,17 @@ public:
    
   void SetBeamSigmaX(G4double val);
   void SetBeamSigmaY(G4double val);
+
+  //(Leo, Juyly24, 2018): Functions for target optmization studies:
+  void SetTargetSegPitch(G4double val);
+  void SetTargetSegWidth(G4double val);
+  void SetWingedFin1(G4int winged_fin_id1);
+  void SetWingedFin2(G4int winged_fin_id2);
+  void SetWingedFin3(G4int winged_fin_id3);
+  void SetWingedFin4(G4int winged_fin_id4);
+  void SetWingedFinRadius(G4double winged_fin_radius);
+  void SetNumberOfMEFins(G4int n_fins_me);
+  void SetBudalMonitorMEPosition(G4double pos_bm_me);
 
    //--------------------------------------------------------------
    //Specifically for Muon Monitor simulation and Absorber background simulation
@@ -258,7 +269,7 @@ public:
 
    //////////////////////////////
    
-   G4bool NImpWeightOn, createNuNtuple, createTarNtuple, createHadmmNtuple, createASCII;
+   G4bool NImpWeightOn, createNuNtuple, createH1TrackingPlane, createHadmmNtuple, createASCII;
    G4bool useFlukaInput, useMarsInput;
 
    G4bool useMuonBeam, useMuonInput, solidMuMons, simAbsBkg, reWeightDeltas;
@@ -272,7 +283,7 @@ public:
    G4String hadmmNtupleName, hadmmNtupleDir, absbkgNtupleName, absbkgNtupleDir;
    G4int fNEvents;
    G4bool KillTracking;
-   G4String nuNtupleName, tarNtupleName, asciiName, RunNumber, geometry;
+   G4String nuNtupleName, h1trackingNtupleName, asciiName, RunNumber, geometry;
    G4Material* DefaultMaterial;
    G4Material* Mon1AbsorberMaterial;
    G4Material* Mon2AbsorberMaterial;
@@ -582,6 +593,17 @@ public:
 
    G4double CoolingPlateCutoutWidth;
    G4double CoolingPlateCutoutHeight;
+
+  //Leo (July 24, 2018): new variables to add winged fins
+  // for the target optimization studies:
+   G4int WingedFin1;
+   G4int WingedFin2;
+   G4int WingedFin3;
+   G4int WingedFin4;
+   G4double WingedFinRadius;
+   G4int NumberOfMEFins;
+   G4double BudalMonitorMEPosition;
+ 
 //
 // To be use to fill the Ntuple, info about the particle 6D phase space exiting the target. 
 //

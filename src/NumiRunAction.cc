@@ -183,12 +183,17 @@ void NumiRunAction::EndOfRunAction(const G4Run* aRun)
   randomFile.append(".rndm");
   CLHEP::HepRandom::saveEngineStatus(randomFile);
   G4cout << "  Random engine status at the end of the run saved in "<<randomFile<<G4endl;
+  std::cout<<"finish step 1"<<std::endl;
   NumiAnalysis* analysis = NumiAnalysis::getInstance();
+  std::cout<<"finish step 2"<<std::endl;
   analysis->finishPL();
-  // We don't care about closing root correctly.. Sometimes, it gets corrupted..Well, study this.. 
-  analysis->FillMeta();
+  // We don't care about closing root correctly.. Sometimes, it gets corrupted..Well, study this..  
+  std::cout<<"finish step 3"<<std::endl;
+  //analysis->FillMeta();
+  std::cout<<"finish step 4"<<std::endl;
   analysis->finish();
 
+  
   G4cout << "********************************************************************" << G4endl;
   G4cout << "NumiRunAction::EndOfRunAction - Completed." << G4endl;
   G4cout << "********************************************************************" << G4endl;

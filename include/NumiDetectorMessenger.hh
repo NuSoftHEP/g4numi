@@ -104,6 +104,19 @@ private:
     G4UIcmdWithABool* fUsePosLocalCoordInMagField;
     G4UIcmdWithABool* fUseRotLocalCoordInMagField;
 
+  //New cards for beam optimization (Leo, July 13, 2018)
+    G4UIcmdWithAnInteger*         fNumberOfMEFins;
+    G4UIcmdWithADoubleAndUnit*    fDistanceBetweenMEFins;
+    G4UIcmdWithADoubleAndUnit*    fBudalMonitorMEPosition;
+    G4UIcmdWithADoubleAndUnit*    fWidthMEFin;    
+    G4UIcmdWithAnInteger*         fWingedFin1;
+    G4UIcmdWithAnInteger*         fWingedFin2;  
+    G4UIcmdWithAnInteger*         fWingedFin3;
+    G4UIcmdWithAnInteger*         fWingedFin4;
+    G4UIcmdWithADoubleAndUnit*    fWingedFinRadius;    
+
+  ////
+
 #ifdef MODERN_G4
     G4UIcmdWithAString* fGDMLOutputCmd;
     G4UIcmdWithABool*   fGDMLStoreRefCmd;

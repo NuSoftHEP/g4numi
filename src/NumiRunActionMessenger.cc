@@ -247,17 +247,17 @@ NumiRunActionMessenger::NumiRunActionMessenger(NumiRunAction* RA)
   outputNuNtuple->SetDefaultValue (NumiData->createNuNtuple);
   outputNuNtuple->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  setTarNtupleFile = new G4UIcmdWithAString("/NuMI/output/setTarNtupleFile",this);
-  setTarNtupleFile->SetGuidance("set target ntuple file name");
-  setTarNtupleFile->SetParameterName("fileName",true);
-  setTarNtupleFile->SetDefaultValue (NumiData->tarNtupleName);
-  setTarNtupleFile->AvailableForStates(G4State_PreInit,G4State_Idle);
+  seth1NtupleFile = new G4UIcmdWithAString("/NuMI/output/seth1NtupleFile",this);
+  seth1NtupleFile->SetGuidance("set target ntuple file name");
+  seth1NtupleFile->SetParameterName("fileName",true);
+  seth1NtupleFile->SetDefaultValue (NumiData->h1trackingNtupleName);
+  seth1NtupleFile->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  outputTarNtuple = new G4UIcmdWithABool("/NuMI/output/outputTarNtuple",this);
-  outputTarNtuple->SetGuidance("output target ntuple (true/false)");
-  outputTarNtuple->SetParameterName("outputTarNtuple",true);
-  outputTarNtuple->SetDefaultValue (NumiData->createTarNtuple);
-  outputTarNtuple->AvailableForStates(G4State_PreInit,G4State_Idle);
+  outputh1Ntuple = new G4UIcmdWithABool("/NuMI/output/outputh1Ntuple",this);
+  outputh1Ntuple->SetGuidance("output target ntuple (true/false)");
+  outputh1Ntuple->SetParameterName("outputh1Ntuple",true);
+  outputh1Ntuple->SetDefaultValue (NumiData->createH1TrackingPlane);
+  outputh1Ntuple->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   setHadmmNtupleDir = new G4UIcmdWithAString("/NuMI/output/setHadmmNtupleDir",this);
   setHadmmNtupleDir->SetGuidance("set hadron and muon monitor ntuple file directory");
@@ -447,8 +447,8 @@ NumiRunActionMessenger::~NumiRunActionMessenger()
   delete outputAbsBkgNtuple;
   delete setNuNtupleFile;
   delete outputNuNtuple;
-  delete setTarNtupleFile;
-  delete outputTarNtuple;
+  delete seth1NtupleFile;
+  delete outputh1Ntuple;
   delete setHadmmNtupleFile;
   delete outputHadmmNtuple;
   delete setNEvents;
@@ -591,11 +591,11 @@ void NumiRunActionMessenger::SetNewValue(G4UIcommand* command,G4String newValues
   if (command == outputNuNtuple){
       NumiData->OutputNuNtuple(outputNuNtuple->GetNewBoolValue(newValues));
   }
-  if (command == setTarNtupleFile){
+  if (command == seth1NtupleFile){
       NumiData->SetTarNtupleName(newValues);
   }
-  if (command == outputTarNtuple){
-      NumiData->OutputTarNtuple(outputTarNtuple->GetNewBoolValue(newValues));
+  if (command == outputh1Ntuple){
+      NumiData->OutputTarNtuple(outputh1Ntuple->GetNewBoolValue(newValues));
   }
   if (command == setHadmmNtupleDir){
       NumiData->SetHadmmNtupleDir(newValues);

@@ -1,5 +1,9 @@
 /control/suppressAbortion 2
 
+#debugging commands
+#/NuMI/run/DebugLevel 10
+#/NuMI/run/debugOn true
+
 #To use the muon beam useMuonBeam 
 #must be set to true here
 /NuMI/run/useMuonBeam true
@@ -14,7 +18,7 @@
 
 #When useMuonInput = true set the path
 #to the input file here.
-/NuMI/run/extNtupleFileName /minos/scratch/loiacono/le010d20050610/le010i000/muon_le010i000_20050610_1.root
+/NuMI/run/extNtupleFileName /nova/app/users/yyu/old_target_v6r3/g4numi/dk2nu_local/muon_me000z200i_90_0001.root
 
 #Whether or not to create output hadmmNtuple
 #when using MuonBeam.
@@ -26,12 +30,12 @@
 #Set the name of the output hadmmtuple root file
 #if this is not set then the file name will be 
 #the input file name with "muon" replaced with "hadmmNtuple"
-/NuMI/output/setHadmmNtupleFile hadmmNtuple_test.root
+/NuMI/output/setHadmmNtupleFile hadmmNtuple_approach_2_90_0001.root
 
 #if using Muon Beam these don't need to be set or they 
 #can be set to anything
-/NuMI/det/setHornCurrent 182.1 kA
-/NuMI/det/setTargetZ0 -45 cm
+#/NuMI/det/setHornCurrent 182.1 kA
+#/NuMI/det/setTargetZ0 -45 cm
 /NuMI/det/constructTarget false
 /NuMI/det/update
 
@@ -45,9 +49,9 @@
 #will be processed. If this is not set or
 #it is < 1 all events
 #in the input ntuple will be processed
-/NuMI/run/NEvents 1000
+#/NuMI/run/NEvents 1000
 
 /NuMI/run/setRunID 1
-/NuMI/rndm/setRndmSeed 1
+/NuMI/rndm/setRndmSeed 12345678
 /run/beamOn
 

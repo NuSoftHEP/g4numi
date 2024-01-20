@@ -78,6 +78,8 @@ void NumiPrimaryGeneratorAction::SetProtonBeam()
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
  
   fParticleGun->SetParticleDefinition(particleTable->FindParticle("proton"));
+ // fParticleGun->SetParticleDefinition(particleTable->FindParticle("electron"));
+
   fParticleGun->SetParticleEnergy(fND->protonKineticEnergy);
   fParticleGun->SetParticlePosition(fND->beamPosition);
   fParticleGun->SetParticleMomentumDirection(fND->beamDirection);
@@ -428,6 +430,19 @@ void NumiPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fpptype = fMuon->ptype;
     fppmedium = fMuon->ppmedium;
     fpgen = fMuon->pgen;
+        
+    for(G4int loc = 0;loc<13;loc++){
+
+    fnuray_px[loc] = fMuon->nuray_px[loc];
+    fnuray_py[loc] = fMuon->nuray_py[loc];
+    fnuray_pz[loc] = fMuon->nuray_pz[loc];
+    fnuray_E[loc] = fMuon->nuray_E[loc];
+    fnuray_wgt[loc] = fMuon->nuray_wgt[loc];
+
+    }
+    fprotonx = fMuon->protonx;
+    fprotony = fMuon->protony;
+    fprotonz = fMuon->protonz;
 
     G4String muon_type;
     G4String muplus = "mu+";
@@ -661,10 +676,15 @@ void NumiPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
        G4double sigmax=fND->beamSigmaX;
        G4double sigmay=fND->beamSigmaY;
-       
-       x0 = G4RandGauss::shoot(fND->beamPosition[0],sigmax);
-       y0 = G4RandGauss::shoot(fND->beamPosition[1],sigmay);
-    }
+
+       x0 = G4RandGauss::shoot(fND->beamPosition[0],sigmax); // for gaussian beam x
+      // x0 = 10*(G4UniformRand() - 0.5)*mm; // for uniform beam x
+       y0 = G4RandGauss::shoot(fND->beamPosition[1],sigmay); //for gaussian beam y
+       //y0 = 10*(0.35 - G4UniformRand())*mm;// for uniform beam y
+       //y0 = 10*(G4UniformRand() - 0.5)*mm;//for uniform beam y
+      
+ 
+     }
     
     if (spread > 0)
     {
@@ -705,7 +725,9 @@ void NumiPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
      G4double z0;
      G4double sigmax=fND->beamSigmaX;
      G4double sigmay=fND->beamSigmaY;
-     
+    
+     //x0 = 10*(G4UniformRand() - 0.5)*mm;//for uniform x
+     //y0 = 10*(G4UniformRand() - 0.5)*mm;//for uniform y 
      x0 = G4RandGauss::shoot(fND->beamPosition[0],sigmax);
      y0 = G4RandGauss::shoot(fND->beamPosition[1],sigmay);
      z0 = fND->beamPosition[2];

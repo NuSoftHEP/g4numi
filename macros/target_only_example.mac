@@ -40,11 +40,11 @@
 /NuMI/det/BeamConfig LE010z185i
 
 #Set filename
-/NuMI/output/setTarNtupleFile /your_directory/g4numi_vacuum_le010z000i
+/NuMI/output/seth1NtupleFile /your_directory/g4numi_vacuum_le010z000i
 
 # Indicate that you want to create an ntuple for output (default is false)
 # NOTE: When this is true, tracking is killed after the particle exits the target.
-/NuMI/output/outputTarNtuple true
+/NuMI/output/outputh1Ntuple true
 
 #
 #Use the Detailed Proton beam, true/false, default is false

@@ -39,10 +39,10 @@
 #Set filename
 #NuNtuple is standard; TarNtuple is for info on hadrons leaving target
 /NuMI/output/setNuNtupleFile /minerva/app/users/condor-tmp/mjerkins/g4numi_vacuum_le010z000i
-#/NuMI/output/setTarNtupleFile /minerva/app/users/condor-tmp/mjerkins/kill_after_target/g4numi_vacuum_le010z000i
+#/NuMI/output/seth1NtupleFile /minerva/app/users/condor-tmp/mjerkins/kill_after_target/g4numi_vacuum_le010z000i
 
 /NuMI/output/outputNuNtuple true
-#/NuMI/output/outputTarNtuple true
+#/NuMI/output/outputh1Ntuple true
 
 #
 #Use the Detailed Proton beam, true/false, default is false

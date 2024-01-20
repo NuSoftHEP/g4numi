@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: NumiDataInput.cc,v 1.32.2.25 2018/03/01 03:37:05 kordosky Exp $
+// $Id: NumiDataInput.cc,v 1.32.2.25.2.1 2018/07/24 20:26:28 laliaga Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -20,8 +20,6 @@
 //#include "globals.hh"
 #include "G4Material.hh"
 #include "G4UnitsTable.hh"
-
-
 
 static const G4double in = 2.54*cm;
 static const G4double fTargetZ0_ref   = -0.35*m; //LE000 position
@@ -144,7 +142,7 @@ NumiDataInput::NumiDataInput()
   createNuNtuple=false;  createHadmmNtuple=false;
   createASCII=false;     createBXDRAW = false;
   useFlukaInput = false; useMarsInput=false;
-  createTarNtuple=false;
+  createH1TrackingPlane=true; //prachi
 
   //
   //can set useMuonInupt and useMuonBeam from macro
@@ -184,13 +182,14 @@ NumiDataInput::NumiDataInput()
 
   extNtupleFileName=""; //fluka or mars or muon ntuple with particles coming of the target
   //Set the energy threshold for 'killing' particles
-   KillTrackingThreshold = 0.05*GeV; //for defaut neutrino MC g4numi 
+   KillTrackingThreshold = 0.002*GeV; //for defaut neutrino MC g4numi
+   //KillTrackingThreshold = 0.050*GeV;//by prachi 
    //KillTrackingThreshold = 0.001*GeV; //for muon beam MC
 
 
    //base name for output files:
    nuNtupleName    = "nuNtuple";
-   tarNtupleName    = "tarNtuple";
+   h1trackingNtupleName    = "h1trackingNtuple"; //prachi
    //
    //can set hadmmNtupleDir and hadmmNtupleName from macro
    //
@@ -343,8 +342,8 @@ if(!vacuumworld && !airhrn){
   //  beamSigmaY     = 1.1*mm;//1.25*mm;
   //  beamSigmaX     = 1.1*mm;//1.1*mm;
   // MAK 10/14/16 - hack in a wider ME beam
-  beamSigmaY     = 1.4*mm;//1.25*mm;
-  beamSigmaX     = 1.4*mm;//1.1*mm;
+  beamSigmaY     = 1.5*mm;//1.25*mm;
+  beamSigmaX     = 1.5*mm;//1.1*mm;
 
   beamDirection  = G4ThreeVector(beam_x_dir,beam_y_dir,beam_z_dir);
   beamPosition  = G4ThreeVector(beam_x_pos,beam_y_pos,beam_z_pos);
@@ -406,6 +405,15 @@ if(!vacuumworld && !airhrn){
   BudalDxdz = 0.0;
   BudalDydz = 0.0;
 
+  //(Leo, Juyly24, 2018): Functions for target optmization studies:
+  WingedFin1      = 1000;
+  WingedFin2      = 1001;
+  WingedFin3      = 1002;
+  WingedFin4      = 1003;
+  WingedFinRadius = 1.0*mm;
+  NumberOfMEFins  = 48;
+  BudalMonitorMEPosition = -100000.0*mm;
+  
   /*
 
   this is flugg stuff. Note if the target moves 1.1cm so does the baffle!
@@ -568,7 +576,7 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   DecayPipeFWinmat   = 9;
   DecayPipeEWinmat   = 10;
   HeInDecayPipe      = true;
-  applyDecayPipeMagneticField = false;
+  applyDecayPipeMagneticField = true;
   // New Target Hall by Zach Barnett 
   
   //==========================================================================
@@ -1084,8 +1092,8 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   // TargetDxdz           = 0.0; // doesn't
   // TargetDydz           = 0.0; // work properly yet
   TargetSegLength      = 24.0*mm;
-  TargetSegWidth       = 7.4*mm;
-  TargetSegHeight      = 63.0*mm;
+  TargetSegWidth       = 9.0*mm;
+  TargetSegHeight      = 9.0*mm;
   TargetSegPitch       = 0.5*mm;
   TargetGraphiteHeight = 150.0*mm;
   // TargetEndRounded     = true;
@@ -1284,7 +1292,7 @@ void NumiDataInput::Print()
          G4cout << " Using Detailed Proton Beam with parameters..." << G4endl
                 << "    Proton Beam Mean Momentum = " << protonMomentum/GeV << " GeV/c" << G4endl
                 << "    Proton out_R              = " << fProton_outR << " probably mm " << G4endl
-                << "    Proton in_R               = " << fProton_inR << " probably mm " << G4endl
+                << "    Proto5 in_R               = " << fProton_inR << " probably mm " << G4endl
                 << "    Proton Divergence         = " << fProtonDiv << " probably rad " << G4endl
                 << "    Proton Spread             = " << fProtonSpread  << " probably GeV/c " << G4endl
                 << "    Proton cosx               = " << fProton_cosx  << G4endl
@@ -1791,7 +1799,7 @@ void NumiDataInput::SetLengthOfWaterInTgt(G4double val)
    {
       G4cout << " NumiDataInput::SetLengthOfWaterInTgt() - PROBLEM: Can't have less than "
              << "3 cm of water filling the end of the target. Setting water length to 3 cm" << G4endl;
-      fLengthOfWaterInTgt = 3.0*cm;
+      fLengthOfWaterInTgt = 3.5555;
    }
    else
       fLengthOfWaterInTgt = val;
@@ -1971,4 +1979,42 @@ void NumiDataInput::SetBeamSigmaY(G4double val)
   beamSigmaY = val;
 }
 
+//(Leo, Juyly24, 2018): Functions for target optmization studies:
 
+//---------------------------------------------------------------------------------
+void NumiDataInput::SetTargetSegPitch(G4double val)
+{
+  TargetSegPitch = val;
+}
+
+//---------------------------------------------------------------------------------
+void NumiDataInput::SetTargetSegWidth(G4double val)
+{
+  TargetSegWidth = val;
+}
+
+void NumiDataInput::SetWingedFin1(G4int winged_fin_id1) {
+    WingedFin1 = winged_fin_id1;
+}
+void NumiDataInput::SetWingedFin2(G4int winged_fin_id2) {
+    WingedFin2 = winged_fin_id2;
+}
+
+void NumiDataInput::SetWingedFin3(G4int winged_fin_id3) {
+    WingedFin3 = winged_fin_id3;
+}
+
+void NumiDataInput::SetWingedFin4(G4int winged_fin_id4) {
+    WingedFin4 = winged_fin_id4;
+}
+
+void NumiDataInput::SetWingedFinRadius(G4double winged_fin_radius) {
+    WingedFinRadius = winged_fin_radius;
+}
+void NumiDataInput::SetNumberOfMEFins(G4int n_fins_me) {
+    NumberOfMEFins = n_fins_me;
+}
+
+void NumiDataInput::SetBudalMonitorMEPosition(G4double pos_bm_me) {
+    BudalMonitorMEPosition = pos_bm_me;
+}

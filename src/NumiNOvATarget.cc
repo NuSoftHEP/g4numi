@@ -32,6 +32,20 @@
 
 void NumiDetectorConstruction::ConstructNOvATarget()
 {
+  
+  std::cout<<"=============================================="<<std::endl;
+  std::cout<<"Quick new inputs debug check:"<<std::endl;
+  std::cout<<"==>> NumberOfMEFins         : "<< (NumiData->NumberOfMEFins) <<std::endl;
+  std::cout<<"==>> DistanceBetweenMEFins  : "<< (NumiData->TargetSegPitch) <<std::endl;
+  std::cout<<"==>> BudalMonitorMEPosition : "<< (NumiData->BudalMonitorMEPosition)<<std::endl;
+  std::cout<<"==>> WidthMEFin             : "<< (NumiData->TargetSegWidth) <<std::endl;
+  std::cout<<"==>> WingedFin1             : "<< (NumiData->WingedFin1) <<std::endl;
+  std::cout<<"==>> WingedFin2             : "<< (NumiData->WingedFin2) <<std::endl;
+  std::cout<<"==>> WingedFin3             : "<< (NumiData->WingedFin3) <<std::endl;
+  std::cout<<"==>> WingedFin4             : "<< (NumiData->WingedFin4) <<std::endl;
+  std::cout<<"==>> WingedFinRadius        : "<< (NumiData->WingedFinRadius) <<std::endl;
+  std::cout<<"=============================================="<<std::endl;
+
   G4RotationMatrix rotation;
   G4ThreeVector translation;
 
@@ -166,15 +180,20 @@ void NumiDetectorConstruction::ConstructNOvATarget()
   //------------------------------------------------------------------------------------------------
 
   //First create one segment
-  G4double TGT_w = NumiData->TargetSegWidth/2.;
-  G4double TGT_h = NumiData->TargetSegHeight/2.;
+  G4double TGT_w = NumiData->TargetSegWidth/2.; 
+  G4double TGT_h = NumiData->TargetSegHeight/2.; 
   G4double TGT_l = NumiData->TargetSegLength/2.;
-
+  std::cout<<"==>>Fin segment dimensions (w,h,l) : "<<TGT_w<<" "<<TGT_h<<" "<<TGT_l<<std::endl;
+  
   std::cerr << " TGT dims " << TGT_w << " / " << TGT_h << " / " <<  TGT_l << std::endl; 
-//  exit(2);
+  //  exit(2);
   
+  ////////
   G4VSolid* TGT1_solid;
-  
+  G4VSolid* TGT1_solid_winged;
+  G4double wing_rad = NumiData->WingedFinRadius;
+  ////////////
+
   //  assert(NumiData->TargetEndRounded);
   if (NumiData->TargetEndRounded){
     //    G4cout<<"Rounded TGT1"<<G4endl;
@@ -186,6 +205,13 @@ void NumiDetectorConstruction::ConstructNOvATarget()
     TGT1_solid  =new G4UnionSolid("TGT1_solid",TGT2_solid,TGTRE_solid,G4Transform3D(rotation,translation));
     translation =G4ThreeVector(0,0,TGT_l);
     TGT1_solid  =new G4UnionSolid("TGT1_solid",TGT1_solid,TGTRE_solid,G4Transform3D(rotation,translation));
+    
+    //Winged:
+    rotation = G4RotationMatrix(0,0,0); 
+    rotation.rotateY(90.*deg);
+    translation =G4ThreeVector(0,TGT_h + wing_rad,0);
+    G4Tubs* TGTWing_solid = new G4Tubs("TGTWing_solid",0.,wing_rad,TGT_l,0.,360.*deg);
+    TGT1_solid_winged     = new G4UnionSolid("TGT1_solid_winged",TGT1_solid,TGTWing_solid,G4Transform3D(rotation,translation));
   }
     else
   {
@@ -193,7 +219,8 @@ void NumiDetectorConstruction::ConstructNOvATarget()
   }
   
   // The material "Target" is defined in NumiMaterials.cc
-  G4LogicalVolume* LVTargetFin = new G4LogicalVolume(TGT1_solid,Target,"LVTargetFin",0,0,0);
+  G4LogicalVolume* LVTargetFin       = new G4LogicalVolume(TGT1_solid,Target       ,"LVWingedTargetFin",0,0,0);
+  G4LogicalVolume* LVWingedTargetFin = new G4LogicalVolume(TGT1_solid_winged,Target,"LVTargetFin"      ,0,0,0);
 
 
   //Now create TargetSegmentNo of target fins and place them
@@ -223,19 +250,37 @@ void NumiDetectorConstruction::ConstructNOvATarget()
   // The target segments
   // MAK: There is no reason to make the number of target segments a variable
   // that appears in another header and is shared with the LE target
-  // this just leads to bugs
-  const int NumberOfNonBudalFinsInMETarget=48;
+  // this just leads to bugs 
+  //const int NumberOfNonBudalFinsInMETarget=48;
+
+  ///Leo: making the number of target segments variable for 
+  //optimization studies:
+  int NumberOfNonBudalFinsInMETarget = NumiData->NumberOfMEFins;
+
+  ////////
+  G4int wfin1 = NumiData->WingedFin1;
+  G4int wfin2 = NumiData->WingedFin2;
+  G4int wfin3 = NumiData->WingedFin3;
+  G4int wfin4 = NumiData->WingedFin4;
+  /////////
+
   for (G4int ii=0; ii< NumberOfNonBudalFinsInMETarget; ii++){
     
     TGT_x = 0.0;
     TGT_y = -NumiData->TargetSegHeight/2.0 + NumiData->TargetSegWidth/2.0;
     TGT_z = NumiData->BudalHFVSLength + NumiData->BudalHFVSPitch + NumiData->BudalVFHSLength + NumiData->BudalVFHSPitch
             + ii*(NumiData->TargetSegLength + NumiData->TargetSegPitch)+NumiData->TargetSegLength/2.0;
-    rotation=G4RotationMatrix(0,0,0);
+	    rotation=G4RotationMatrix(0,0,0);	    
     translation=G4ThreeVector(TGT_x, TGT_y, TGT_z) - TargetMVOrigin;
-	
-    new G4PVPlacement(G4Transform3D(rotation, translation), "TGT1", LVTargetFin, pvTargetMotherVol, false, ii, NumiData->pSurfChk);
-// Temporarily define a different name for each copy... debugging overlaps. 
+    if(ii == wfin1 || ii == wfin2 || ii == wfin3 || ii == wfin4){
+      std::cout<<"==>> Creating a winged fin: "<<ii<<std::endl;
+      new G4PVPlacement(G4Transform3D(rotation, translation), "TGT1", LVWingedTargetFin, pvTargetMotherVol, false, ii, NumiData->pSurfChk);
+    }
+    else{
+      std::cout<<"==>> Creating a standard fin: "<<ii<<std::endl;
+      new G4PVPlacement(G4Transform3D(rotation, translation), "TGT1", LVTargetFin, pvTargetMotherVol, false, ii, NumiData->pSurfChk);
+    }
+      // Temporarily define a different name for each copy... debugging overlaps. 
 //
 //    std::ostringstream aNameTmpStrStr; aNameTmpStrStr << "TGT1-" << ii;
 //    std::string aNameTmpStr(aNameTmpStrStr.str());

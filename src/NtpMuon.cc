@@ -20,6 +20,9 @@ NtpMuon::NtpMuon()
    muvx(-999.0),
    muvy(-999.0),
    muvz(-999.0),
+   protonx(-999.0),
+   protony(-999.0),
+   protonz(-999.0),
    mupx(-999.0),
    mupy(-999.0),
    mupz(-999.0),
@@ -48,6 +51,9 @@ NtpMuon::NtpMuon()
    muvxF(-999.0),
    muvyF(-999.0),
    muvzF(-999.0),
+   protonxF(-999.0),
+   protonyF(-999.0),
+   protonzF(-999.0),
    mupxF(-999.0),
    mupyF(-999.0),
    mupzF(-999.0),
@@ -74,7 +80,13 @@ NtpMuon::NtpMuon()
    pgenS(-999),
    ftree(0)
 {
-
+  for(Int_t loc = 0;loc<13;++loc){
+    nuray_px[loc] = -9999.;
+    nuray_py[loc] = -9999.;
+    nuray_pz[loc] = -9999.;
+    nuray_E[loc] = -9999.0;
+    nuray_wgt[loc] = -9999.0;
+  }
 }
 
 //------------------------------------------------------------------------------------------
@@ -125,6 +137,11 @@ void NtpMuon::SetBranchesStatus()
    ftree -> SetBranchStatus("ptype", 1, 0);
    ftree -> SetBranchStatus("ppmedium", 1, 0);
    ftree -> SetBranchStatus("pgen", 1, 0);
+   ftree -> SetBranchStatus("nuray_px", 1, 0);
+   ftree -> SetBranchStatus("nuray_py", 1, 0);
+   ftree -> SetBranchStatus("nuray_pz", 1, 0);
+   ftree -> SetBranchStatus("nuray_E", 1, 0);
+   ftree -> SetBranchStatus("nuray_wgt", 1, 0);
    
 
 }
@@ -140,6 +157,9 @@ bool NtpMuon::SetBranches()
    SetBranch(&muvxF, "muvx");
    SetBranch(&muvyF, "muvy");
    SetBranch(&muvzF, "muvz");
+   SetBranch(&protonxF, "protonx");
+   SetBranch(&protonyF, "protony");
+   SetBranch(&protonzF, "protonz");
    SetBranch(&mupxF, "mupx");
    SetBranch(&mupyF, "mupy");
    SetBranch(&mupzF, "mupz");
@@ -164,7 +184,11 @@ bool NtpMuon::SetBranches()
    SetBranch(&ptypeS, "ptype");
    SetBranch(&ppmediumS, "ppmedium");
    SetBranch(&pgenS, "pgen");
-
+   SetBranch(&nuray_pxF,"nuray_px");
+   SetBranch(&nuray_pyF,"nuray_py");
+   SetBranch(&nuray_pzF,"nuray_pz");
+   SetBranch(&nuray_EF,"nuray_E");
+   SetBranch(&nuray_wgtF,"nuray_wgt");
  
    return true;
 }
@@ -242,6 +266,9 @@ void NtpMuon::GetEntry(unsigned int entry)
    muvx = (Double_t)muvxF;
    muvy = (Double_t)muvyF;
    muvz = (Double_t)muvzF;
+   protonx = (Double_t)protonxF;
+   protony = (Double_t)protonyF;
+   protonz = (Double_t)protonzF;
    mupx = (Double_t)mupxF;
    mupy = (Double_t)mupyF;
    mupz = (Double_t)mupzF;
@@ -266,7 +293,14 @@ void NtpMuon::GetEntry(unsigned int entry)
    ptype = (Int_t)ptypeS;
    ppmedium = (Int_t)ppmediumS;
    pgen = (Int_t)pgenS;
+   for(int i = 0;i<kMax;i++){
+     nuray_px[i] = (Double_t)nuray_pxF[i];
+     nuray_py[i] = (Double_t)nuray_pyF[i];
+     nuray_pz[i] = (Double_t)nuray_pzF[i];
+     nuray_E[i] = (Double_t)nuray_EF[i];
+     nuray_wgt[i] = (Double_t)nuray_wgtF[i];
 
+   }
 }
 
 //------------------------------------------------------------------------------------------
@@ -319,6 +353,9 @@ void NtpMuon::Clear()
    muvxF = -999.0;
    muvyF = -999.0;
    muvzF = -999.0;
+   protonxF = -999.0;
+   protonyF = -999.0;
+   protonzF = -999.0;
    mupxF = -999.0;
    mupyF = -999.0;
    mupzF = -999.0;
@@ -343,6 +380,14 @@ void NtpMuon::Clear()
    ptypeS = -999;
    ppmediumS = -999;
    pgenS = -999;
+   for(int i = 0;i<kMax;i++){
+     nuray_pxF[i] = -999.;
+     nuray_pyF[i] = -999.;
+     nuray_pzF[i] = -999.;
+     nuray_EF[i] = -999.;
+     nuray_wgtF[i] = -999.;
+
+   }
 
 
 }

@@ -48,6 +48,9 @@ public:
    void SetMonAbsorberMaterial(G4String materialChoice, G4int mon);
    void SetMonAbsorberThickness(G4double val, G4int mon);
    void SetAbsorberDistFromMon(G4double val, G4int mon);
+  G4LogicalVolume* GetHorn1PlaneLogical(){ return TrackingPlaneH1Logical;}  //prachi
+  G4LogicalVolume* TrackingPlaneH1Logical;//prachi
+
      
 #ifndef FLUGG
    void UpdateGeometry();
@@ -75,6 +78,9 @@ public:
     //
    G4double PHorn1ICRin(G4double z) const ;
     
+  //New cards for beam optimization (Leo, July 13, 2018)
+ 
+  
 private:
    NumiDataInput* NumiData;
    NumiMagneticField* numiMagField;
@@ -102,6 +108,8 @@ private:
    void Horn1InstallSpiderHanger(const G4String &nameStrH, double zLocTweakedDC, 
                                  double zPosMotherVolume, double outerRad, G4PVPlacement *vMother );
    int GetNumberOfInnerHornSubSections(size_t eqn, double z1, double z2, int nMax) const;
+   
+   void ConstructNumiHorn1TrackingPlane(G4VPhysicalVolume* mother);//prachi
 
    void ConstructHorn2(G4ThreeVector pos, G4RotationMatrix rot);
    void ConstructSecMonitors();
@@ -166,8 +174,6 @@ private:
    G4Material* Paraffin;
    G4Material* DefaultMaterial;
 
-
-
   // Logical volumes
   //
   G4LogicalVolume* ROCK_log;
@@ -181,6 +187,8 @@ private:
   G4LogicalVolume* LVCPipeW[20];
   G4LogicalVolume* HadrBox_log;
   G4LogicalVolume* ShldBox_log;
+  
+
 
   // Physical volumes
   //
@@ -259,6 +267,7 @@ private:
     std::vector<double> fEffectiveRadiiForFieldMapH2; 
     
     G4RotationMatrix fRotationMotherNovaTarget;
+  
     public:
     
     inline void SetIgnoreCEQBr(bool t) { fIgnoreCEQBr= t; }
@@ -280,11 +289,7 @@ private:
        { fNovaTargetExtraFlangeThick= p; }
     inline void SetHorn1StripLinesThick(double p) 
        { fHorn1StripLinesThick= p; }
-   
-    
-    
-    
-
+ 
 };
 class LBNEHornRadialEquation  {
 

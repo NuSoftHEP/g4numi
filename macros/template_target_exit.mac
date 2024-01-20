@@ -15,9 +15,9 @@
 
 /NuMI/det/BeamConfig ${beamconfig}
 
-/NuMI/output/outputTarNtuple true
+/NuMI/output/outputh1Ntuple true
 
-/NuMI/output/setTarNtupleFile ${outfile}
+/NuMI/output/seth1NtupleFile ${outfile}
 
 /NuMI/det/update
 

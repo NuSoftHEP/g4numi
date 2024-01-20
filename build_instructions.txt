@@ -1,132 +1,22 @@
-Modernized by Mike Kordosky, Feb 13, 2014
+%Prachi Sharma, December 2023
 
-This document describes how to build a local copy of g4numi and GEANT4.  It should, in general, not be necessary to build GEANT4 since we take it from UPS. The instructions here were written by Chris Marshal at a time when the particular version of G4 that we were using wasn't available in UPS or there was some issue with using it (e.g., 64 bit vs 32 bit, SLC4 vs SLC5) 
+This document lists very simple instruction how to switch and run this branch:
 
+1.  Checkout the g4numi package and witch to the right branch:
 
-0. Start with a clean environment in which you have not sourced any of the MINERvA offline software setup scripts. g4numi is independent of the offline software and depends on a different version of GEANT4.
+% git clone ssh://p-numi-beam-sim@cdcvs.fnal.gov/cvs/projects/numi-beam-sim-g4numi g4numi
+% cd g4numi
+% git checkout main_h1TRackingPlane
 
-1.  Make a fresh working area under /minerva/app/users/<you>/
-
-
-2.  Checkout the g4numi package:
-
-%  cvs -d :ext:p-numi-beam-sim@cdcvs.fnal.gov/cvs/projects/numi-beam-sim co -r minerva g4numi
-
-If you get permission denied errors you will need to contact Robert Hatcher and ask for read/write access. In the meantime you can still checkout g4numi but will not be able to commit any changes to the repository:
-
- % cvs -d :pserver:anonymous@cdcvs.fnal.gov/cvs/projects/numi-beam-sim co -r minerva g4numi
-
-NOTE, we are checking out the MINERvA branch of g4numi from the official repository. One can also checkout the minos and nova branches in a similar way.
-
-Note there is a redmine site for the numi beam simulation:
-
-https://cdcvs.fnal.gov/redmine/projects/numi-beam-sim/wiki
-
-Including some build instuctions:
-
-https://cdcvs.fnal.gov/redmine/projects/numi-beam-sim/wiki/How_to_build_the_code
-
-Most users can go to step 7 listed below. Steps 3-6 deal with building G4 from source. 
-
-
-3. Go to the g4numi area under /minerva/app/users/<you>/
-
-Make a directory to put Geant4 in:
-% mkdir geant4
-
-Copy the geant4 source files from the FNAL afs area into your personal geant4 directory:
-% cp -r /afs/fnal.gov/ups/geant4source/v4_9_2_p03/NULL-g77/geant4.9.2.p03 .
-
-Copy some libraries to the "data" area of your geant4 installation. The "correct" way to do this is probably 
-to configure your g4 installation to get the correct paths to these libraries. The easy way is to just copy 
-them to the place that g4 thinks they should be.
-
-% cd geant4.9.2.p03
-% mkdir data
-% cp -r /afs/fnal.gov/ups/g4photon/v2_0/NULL/PhotonEvaporation PhotonEvaporation2.0
-% cp -r /afs/fnal.gov/ups/g4radiative/v3_2/NULL/RadioactiveDecay3.2 .
-% cp -r /afs/fnal.gov/ups/g4neutron/v3_13/NULL/G4NDL3.13 .
-% cp -r /afs/fnal.gov/ups/g4abla/v3_0/NULL/G4ABLA3.0 .
-% cp -r /afs/fnal.gov/ups/g4emlow/v6_2/NULL/G4EMLOW6.2 .
-
-You are now ready to build geant4.
-
-4. Edit the configuration to compile with a 32-bit architecture. In geatn4.9.2.p03/config/sys, modify the file Linux-g++.gmk:
-
-Add "CXXFLAGS += -m32" to the first block of code, so that it looks like this:
-
-ifeq ($(G4SYSTEM),Linux-g++)
-  CXX       := g++
-  CXXFLAGS  := -W -Wall -ansi -pedantic -Wno-non-virtual-dtor -Wno-long-long
-  CXXFLAGS  += -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -pipe
-  CXXFLAGS  += -m32
-
-At the very end of the file, add -m32 to the $(CXX) lines, so that it looks like this:
-
-  define build-granular-shared-lib
-    @libdir=`(cd $(@D);/bin/pwd)`; \
-     cd $(G4TMPDIR); \
-     $(CXX) -m32 -Wl,-soname,$(@F) -shared -o $$libdir/$(@F) $(INTYLIBS) *.o
-  endef
-  define build-global-shared-lib
-    @libdir=`(cd $(@D);/bin/pwd)`; \
-     cd $(G4TMP)/$(G4SYSTEM); \
-     $(CXX) -m32 -Wl,-soname,$(@F) -shared -o $$libdir/$(@F) $(INTYLIBS) \
-                    $(foreach dir,$(SUBLIBS),$(dir)/*.o);
-  endef
-
-endif
-
-5. Compile geant4.
-
-% cd ..
-% ./Configure -build
-
-You will now be asked a bunch of questions. Almost all of them should be answered with the default (just hit enter),
-but there are a few that you absolutely need to change, so pay attention.  The following is a complete list of the 
-things you need to do that are NOT the default, in the order that you will encounter them.
-
-When asked if you want to copy the include files to a single directory, enter: y
-When prompted for the CLHEP_BASE_DIR, enter: /grid/fermiapp/products/minerva/prd/clhep/v2_0_4_5/Linux-2-6
-When asked if you want to create shared (.so) libraries, enter: y
-When asked if you want to build g3tog4, enter: y
-
-All other questions, just hit enter for the default. After your first build, it will find a config.sh file with your 
-settings saved, so you may just hold down enter until it starts compiling.
-
-6. Go for coffee. The initial compile of geant4 takes about an hour on the minervagpvm machines under normal conditions. 
-
-7. Go back to your g4numi area and source the beamsim script:
+2. Building the code
+ 
+In your g4numi area source the beamsim script:
 
 % source setup_beamsim.sh
 
-8. type "make" to execute the GNUmakefile
+3. type "make" to execute the GNUmakefile
 
-9. If that works, then you should have an executable called "g4numi". Run a test job:
+4. Should get a message 'Done!' after it is done.
 
-g4numi NuBeam_example.mac
-
-The output file is g4numi_testing_8000.root
-
-
-Modifying the code
-
-Now you have a local copy of geant4 installed, and you want to make some flux predictions.
-
-You can make changes to both Geant4 and g4numi.  If you change anything inside G4 (in the geant4 directory you created earlier),
-you have to build geant again.  To do this, just go to the G4 area and do ./Configure -build again.  It will not take nearly as 
-long, since most things will require no change.  If you change something outside of G4, like g4numi.cc or any of the files in 
-g4numi/src, you just need to run the GNUmakefile again.
-
-To change the physics list, just edit g4numi.cc. This is straightforward, and requires changing only one line of code, in addition 
-to making sure you #include the list you are using.
-
-To change the target or horn geometry, edit g4numi/src/NumiDataInput.cc. From this file, you can modify the horn alignment, horn 
-currents, target density, etc.
-
-Running the code
-
-Once you have the configuration you want and it has been copiled using the GNUmakefile, you are ready to run it.  
-
-
+5. You can now read the README_h1trackingplane.md for more information and instructions on how to make changes and submit a grid job for production.
 

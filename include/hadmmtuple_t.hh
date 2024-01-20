@@ -31,8 +31,11 @@ class  hadmmtuple_t
    // x y and z position of muon at EODP
    Float_t muvx;
    Float_t muvy;
-   //Float_t muvz;
+   Float_t muvz;
 
+   Float_t protonx;
+   Float_t protony;
+   Float_t protonz;
    // x y and z momentum of muon at EODP
    Float_t mupx;
    Float_t mupy;
@@ -92,7 +95,7 @@ class  hadmmtuple_t
    //x y and z position of muon at the muon monitor
    Float_t mmxpos[3];
    Float_t mmypos[3];
-   //Float_t mmzpos[3];
+   Float_t mmzpos[3];
 
    //x y and z momentum of muon at the muon monitor
    Float_t mmpx[3];
@@ -115,6 +118,14 @@ class  hadmmtuple_t
    Float_t mmpz_Edep[3];
 
 //////////////////////////////////////////////////////////////////
+//neutrino information....
+  
+    Int_t kSize;
+    Float_t nuray_px[13];
+    Float_t nuray_py[13];
+    Float_t nuray_pz[13];
+    Float_t nuray_E[13];
+    Float_t nuray_wgt[13];
    /*
    //total energy deposited by muon in the cell(s)
    Float_t mu_edep[3];
@@ -138,19 +149,56 @@ class  hadmmtuple_t
 
 
    
-   /*Float_t hmmenergy;
-     Float_t hmmxpos;
-     Float_t hmmypos;
-     Float_t hmmzpos;
-     Float_t hmmpx;
-     Float_t hmmpy;
-     Float_t hmmpz; 
-     Short_t run;
-     Float_t mtgthsig;
-     Float_t mtgtvsig;
-     Float_t mtgthpos;
-     Float_t mtgtvpos;
-   */  
+    //Float_t hmmenergy;
+     Float_t z1xpos;
+     Float_t z1ypos;
+     Float_t z1zpos;
+     Float_t z1px;
+     Float_t z1py;
+     Float_t z1pz;
+     Float_t z2xpos;
+     Float_t z2ypos;
+     Float_t z2zpos;
+     Float_t z2px;
+     Float_t z2py;
+     Float_t z2pz;
+     Float_t z3xpos;
+     Float_t z3ypos;
+     Float_t z3zpos;
+     Float_t z3px;
+     Float_t z3py;
+     Float_t z3pz;
+     Float_t z4xpos;
+     Float_t z4ypos;
+     Float_t z4zpos;
+     Float_t z4px;
+     Float_t z4py;
+     Float_t z4pz;
+     Float_t z5xpos;
+     Float_t z5ypos;
+     Float_t z5zpos;
+     Float_t z5px;
+     Float_t z5py;
+     Float_t z5pz;
+     Float_t z6xpos;
+     Float_t z6ypos;
+     Float_t z6zpos;
+     Float_t z6px;
+     Float_t z6py;
+     Float_t z6pz;
+     Float_t z7xpos;
+     Float_t z7ypos;
+     Float_t z7zpos;
+     Float_t z7px;
+     Float_t z7py;
+     Float_t z7pz;
+
+    //Short_t run;
+    //Float_t mtgthsig;
+    //Float_t mtgtvsig;
+    //Float_t mtgthpos;
+    //Float_t mtgtvpos;
+     
    
 private:
    ClassDef(hadmmtuple_t , 1)

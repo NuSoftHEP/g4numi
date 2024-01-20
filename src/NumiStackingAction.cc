@@ -58,22 +58,30 @@ G4ClassificationOfNewTrack NumiStackingAction::ClassifyNewTrack(const G4Track * 
       particleType != G4MuonPlus::MuonPlusDefinition() &&
       particleType != G4MuonMinus::MuonMinusDefinition() &&
       particleType != G4Gamma::GammaDefinition() &&
-      particleType != G4Electron::ElectronDefinition() &&
+      particleType != G4Electron::ElectronDefinition() && 
       particleType != G4Positron::PositronDefinition() &&
       classification != fKill )
   {
      classification = fKill;
   }
-  
+ 
+ 
+
+/*
   // Discard Gammas, Electrons, ...
+   
   if ( !(NumiData->GetSimDRays()) &&
-       ( particleType==G4Gamma::GammaDefinition() ||
-         particleType==G4Electron::ElectronDefinition() ||
-         particleType==G4Positron::PositronDefinition() ) &&
+      ( particleType==G4Gamma::GammaDefinition() ||  
+         //particleType==G4Electron::ElectronDefinition() ||//prachi commented out, to record Electrons
+         // particleType==G4Positron::PositronDefinition() //prachi commented out, to record Positrons
+         ) && 
+          
        classification != fKill )
   {
      classification = fKill;
   }
+*/
+
 
   //Discard particles with pz<0
   G4ThreeVector momentum=aTrack->GetMomentumDirection();
@@ -131,8 +139,6 @@ G4ClassificationOfNewTrack NumiStackingAction::ClassifyNewTrack(const G4Track * 
        else
        {
 	  trackInfo->SetNImpWt(Nimpweight);
-	  G4double Sumnimpwt2 = NumiImpWeight::CalculateSumImpWeight2(aTrack);
-	  trackInfo->SetSumNImpWt2(Sumnimpwt2);
        }
     }
   }
@@ -140,7 +146,7 @@ G4ClassificationOfNewTrack NumiStackingAction::ClassifyNewTrack(const G4Track * 
   if (NumiData->useMuonBeam && NumiData->GetSimDRays() && NumiData->GetUseZPosCut())
   {
      if( (particleType==G4Gamma::GammaDefinition() ||
-          particleType==G4Electron::ElectronDefinition() ||
+          particleType==G4Electron::ElectronDefinition() || 
           particleType==G4Positron::PositronDefinition()) &&
          aTrack->GetParentID() == 1 &&
          classification != fKill )

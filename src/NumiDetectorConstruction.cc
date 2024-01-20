@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: NumiDetectorConstruction.cc,v 1.13.4.11 2017/11/02 21:49:03 lebrun Exp $
+// $Id: NumiDetectorConstruction.cc,v 1.13.4.11.2.3 2018/07/24 20:26:28 laliaga Exp $
 //----------------------------------------------------------------------
 
 #include "NumiDetectorConstruction.hh"
@@ -57,7 +57,6 @@ NumiDetectorConstruction::NumiDetectorConstruction()
       fNovaTargetYOffset(0.),
       fNovaTargetExtraFlangeThick(0.),
       fHorn1StripLinesThick(0.)
-      
 {
   //Scan the input file     
   NumiData = NumiDataInput::GetNumiDataInput();
@@ -170,6 +169,13 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   // but horn 2 stays i the same place. If you want to make a 'gnumi-like' horn1 you need to go (in horn1 coordinates)
   // from -3*cm to 2.97m  (the -3 cm probably doesnt matter since not many particles will make it through there anyway)
 
+//prachi start
+  ConstructNumiHorn1TrackingPlane(TGAR);//original
+  //ConstructNumiHorn1TrackingPlane(ROCK);//test1
+
+//prachi end
+
+
   G4ThreeVector horn2pos(NumiData->Horn2X0, NumiData->Horn2Y0, NumiData->Horn2Z0);
   G4RotationMatrix horn2rot(NumiData->Horn2Phi, NumiData->Horn2Theta, NumiData->Horn2Psi);
   if (NumiData->jCompare)
@@ -218,6 +224,48 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   return ROCK;
 }
  
+
+//prachi start
+void NumiDetectorConstruction::ConstructNumiHorn1TrackingPlane(G4VPhysicalVolume* mother) {
+    // Set the position and dimensions for the tracking plane
+    double widthTop = 1.0*m;
+    double heightTop = 1.0*m;
+    double trackingPlanesHalfThickness = 0.5*mm;
+    //double z = -1600*CLHEP::cm;  //calculated as the distance 0 gives virtual detector at z=1950, so for getting the virtual detector at 350 cm I had to do like 350-1950=1600; 350cm, 18cm from h1 end
+    // double z = -1568*CLHEP::cm;//382cm, 50cm from h1 end
+    //double z = -1518*CLHEP::cm; //432 cm, 100cm from h1 end
+    //double z = -1468*CLHEP::cm;//482cm , 150cm from h1 end
+    double z = -1418*CLHEP::cm; //532 cm, 200cm from h1 end 
+    
+    // Create a box representing the tracking plane
+    G4Box* topBox = new G4Box("Horn1TrackingPlane", widthTop / 2., heightTop / 2., trackingPlanesHalfThickness);
+
+    // Get the material from the mother volume (I think it is air already)
+    G4Material* PMat = mother->GetLogicalVolume()->GetMaterial();
+
+    // Create the logical volume for the tracking plane
+    TrackingPlaneH1Logical = new G4LogicalVolume(topBox, PMat, "Horn1TrackingPlaneLogical");
+
+    // Set the position of the tracking plane
+     G4ThreeVector posTopLevel(0., 0., z);
+    //G4ThreeVector posTopLevel(NumiData->Horn1X0, NumiData->Horn1Y0, 3400*CLHEP::mm -NumiData->Horn1Z0);
+
+    // Place the tracking plane inside the mother volume
+    G4PVPlacement* vTopLevel = new G4PVPlacement(0, posTopLevel, TrackingPlaneH1Logical, "Horn1TrackingPlane_P", mother->GetLogicalVolume(), false, 1, true);
+
+    if (vTopLevel == NULL) {
+        std::cerr << "Can't place Horn1 tracking plane.. Unexpected.." << std::endl;
+    }
+    else {
+        std::cout << "Horn1 tracking plane placed successfully." << std::endl;
+    }
+}
+
+
+//prachi end
+
+
+
 G4VPhysicalVolume* NumiDetectorConstruction::GetPhysicalVolume(G4String PVname)
 {
   G4PhysicalVolumeStore* PVStore=G4PhysicalVolumeStore::GetInstance();
@@ -388,3 +436,4 @@ void NumiDetectorConstruction::SetBaffleLength(G4double length) {
 void NumiDetectorConstruction::SetForcedOldTarget(G4bool forced) {
     fForcedOldTarget = forced;
 }
+

@@ -9,6 +9,10 @@ namespace NumiParticleCode
 {
   typedef enum ENumiParticleCode
     { 
+      kElectron             = 2,//prachi
+      kPositron             = 3,//prachi
+      kGamma		    = 4,//prachi
+
       kMuonPlus             = 5,
       kMuonMinus            = 6,
       kPion0                = 7,

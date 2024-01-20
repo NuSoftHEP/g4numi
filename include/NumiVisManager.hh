@@ -1,6 +1,6 @@
 //
 // $Id: NumiVisManager.hh,v 1.1.4.2 2014/01/22 22:31:06 kordosky Exp $
-// GEANT4 tag $Name:  $
+// GEANT4 tag $Name: minerva_v6r3_targetoptimization $
 //
 // 
 

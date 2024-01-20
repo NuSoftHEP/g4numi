@@ -23,25 +23,22 @@
 #Tell G4NuMI that you want to run the simulation of water in the target. 
 #This is a "sub-simulation" of the Neutrino beam simulation, default is false
 #
-/NuMI/run/useWaterInTgt ${do_target_water}
+/NuMI/run/useWaterInTgt ${dowater}
 
 #Switch to the alternate horn1
 #
-/NuMI/det/Horn1IsAlternate ${do_horn1_new_geometry}
-
-#Use refined definition of horn1
-/NuMI/det/Horn1IsRefined ${do_horn1_fine_segmentation}
+/NuMI/det/Horn1IsAlternate ${donewhorn1}
 
 #
 #Set the amount (length) of water that fills the target starting from the downstream end.
 #Can't have less than 3 cm of water right now. 
 #default and minimum is 3 cm
 #
-/NuMI/det/LengthOfWaterInTgt ${target_water_cm} cm
+/NuMI/det/LengthOfWaterInTgt ${watercm} cm
 
 # The water layer around the inner conductor. Defaul value: 1 mm.
 #
-/NuMI/det/HornWaterLayerThickness ${horn_water_mm} mm
+/NuMI/det/HornWaterLayerThickness 1 mm
 
 #
 #Set the Run Period, default is -999 which is no run period at all. MUST SET IT.
@@ -66,24 +63,13 @@
 #LE250z200i
 /NuMI/det/BeamConfig ${beamconfig}
 
-#Beam spot size
-#Default is 1.4mm. For LE it should be 1.1mm (make it explicit in (ProcessG4NuMI.py)
-/NuMI/Beam/SigmaX ${beam_spotsize_X} mm
-/NuMI/Beam/SigmaY ${beam_spotsize_Y} mm
-
-#Beam position shift
-/NuMI/Beam/ShiftX ${beam_position_X} mm
-/NuMI/Beam/ShiftY ${beam_position_Y} mm
-
-#Magnetic field in decay pipe
-#/NuMI/det/applyDecayPipeMagneticField false
-
 #
 #Use the Detailed Proton beam, true/false, default is false
 #NOTE: Right now I don't know if the code for this and the parameter values are right.
 #THIS NEEDS TO BE CHECKED!
 #
 #/NuMI/run/useDetailedProtonBeam true
+
 
 #
 #Kill tracking, true/false, default is true
@@ -96,19 +82,14 @@
 #
 #Use importance weighting, default is true
 #
-/NuMI/run/useNImpWeight true
+/NuMI/run/useNImpWeight ${doimpwt}
 
 #
 #Add target position:
 #
-/NuMI/det/set/targetPosition ${target_position_X} ${target_position_Y} ${target_position_Z} cm
+/NuMI/det/set/targetPosition 0 0 ${tgtzpos} cm
 /NuMI/run/setMinervaPlaylist ${playlist}
 #
-
-# see NumiX meeting 08/2014 and minerva docdb 10512
-/NuMI/det/set/horn1Position 0 0 3 cm
-/NuMI/det/set/horn2Position 0 0 1000. cm
-
 #Whether or not to create output ntuple with data_t
 #default is false
 #
@@ -138,12 +119,31 @@
 # /NuMI/det/heInDecayPipe false
 
 
+#############################################
+##Visualization with HepRep
+#
+### create empty scene
+#
+#/vis/open HepRepFile 600
+#/vis/scene/create
+#/vis/scene/add/trajectories
+#/vis/sceneHandler/attach
+## for drawing the tracks
+## (if too many tracks cause core dump => storeTrajectory 0)
+#/tracking/storeTrajectory 1
+#/vis/scene/endOfEventAction accumulate
+##NOTE set /run/beamOn 1
+#
+#############################################
+
+
 #
 #Update the geometry. ALWAYS do this HERE, never before this point. 
 #The geometery is constructed BEFORE
 #the macro is read. Need to reconstruct the geometry after reading in the macro.
 #
 /NuMI/det/update
+
 
 #
 # Allows the beginning seed to be set manually. This allows 

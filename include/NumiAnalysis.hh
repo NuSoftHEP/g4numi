@@ -32,7 +32,7 @@ class draytupleMIB_t;
 class draytupleSPB_t;
 class absbkgtuple_t;
 class zptuple_t;
-class target_exit_t;
+class h1trackingplane_exit_t;
 
 //New for DK2NU:///
 #include "dkmeta.h"
@@ -75,9 +75,9 @@ public:
    void FillZpNtuple(const G4Track& track, Int_t zpnum);
    void WriteZpNtuple();
    
-   void FillTarNtuple();
-   void FillTarNtuple(const G4Track& track);
-   void WriteTarNtuple();
+   void FillH1Ntuple();
+   void FillH1Ntuple(const G4Step& track);
+   void Writeh1trackingplaneNtuple();
 
    NumiTrajectory* GetParentTrajectory(G4int parentID);
    static NumiAnalysis* getInstance();
@@ -101,7 +101,7 @@ private:
    G4double z;
 
    G4double noProtons;
-   char asciiFileName[50], nuNtupleFileName[50], hadmmNtupleFileName[50], tarNtupleFileName[50];
+   char asciiFileName[50], nuNtupleFileName[50], hadmmNtupleFileName[50], h1NtupleFileName[50];
    char zpNtupleFileName[50], bxdrawFileName[50];
    std::map<int, int> code;
    
@@ -111,13 +111,13 @@ private:
    TFile* absbkgNtuple;
    TFile* nuNtuple;
    TFile* zpNtuple;
-   TFile* tarNtuple;
+   TFile* h1trackingNtuple;
    
    TTree* tree;
    TTree* hadmmtree;
    TTree* absbkgtree;
    TTree* zptree;
-   TTree* tartree;
+   TTree* h1trackingtree;
    
    data_t *g4data;
    hadmmtuple_t *g4hmmdata;
@@ -125,7 +125,7 @@ private:
    draytupleSPB_t *g4draydataSPB;
    absbkgtuple_t *g4absbkgdata;
    zptuple_t* g4zpdata; 
-   target_exit_t *g4tardata;
+   h1trackingplane_exit_t *g4h1trackingdata;
    
    G4int fcount;
    G4int fentry;

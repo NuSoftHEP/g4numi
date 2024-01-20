@@ -57,6 +57,7 @@ class NumiPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
    G4int GetTgen()                         { return fTgen; }
    G4int GetParticleType()                 { return fType; }
    G4double GetMuWeight()                  { return fmuweight; }
+  //G4double Gethorncurrent()                  { return fhorncurrent; }
    G4ThreeVector GetMuTParentMomentum()    { return fMuTParentMomentum; }
    G4ThreeVector GetMuParentMomentum()     { return fMuParentMomentum; }
    G4ThreeVector GetMuTParentPosition()    { return fMuTParentPosition; }
@@ -69,9 +70,18 @@ class NumiPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
    G4int GetMuParentProdMedium()           { return fppmedium; }
    G4int GetMuParentGen()                  { return fpgen; }
    G4int GetEvtno()                        { return fevtno; }
-   G4int GetNoOfPrimaries()                { return fNoOfPrimaries; }    
-   
+   G4int GetNoOfPrimaries()                { return fNoOfPrimaries; } 
+   G4double GetNuray_px(int index)          {return fnuray_px[index];}   
+   G4double Getprotonx()                    {return fprotonx; }
+  G4double Getprotony()                {return fprotony; }
+  G4double Getprotonz()                {return fprotonz; }
 
+   G4double GetNuray_py(int index)          {return fnuray_py[index];}               
+   G4double GetNuray_pz(int index)          {return fnuray_pz[index];}   
+   G4double GetNuray_E(int index)           {return fnuray_E[index];}
+   G4double GetNuray_wgt(int index)           {return fnuray_wgt[index];}
+   
+      
  private:
   double                  DoubleRand() {return 2*G4UniformRand()-1.;}
 
@@ -107,6 +117,7 @@ class NumiPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
   // Muon Inputs
    G4double fmuweight;
+  //G4double fhorncurrent;
    G4ThreeVector fMuTParentMomentum;
    G4ThreeVector fMuParentMomentum;
    G4ThreeVector fMuTParentPosition;
@@ -119,9 +130,20 @@ class NumiPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
    G4int fppmedium;
    G4int fpgen;
    G4int fevtno;
-
+	
    G4bool fStart;
    
+   //some neutrino info... Amit Bashyal
+   G4double fnuray_px[13];
+   G4double fnuray_py[13];
+   G4double fnuray_pz[13];
+   G4double fnuray_E[13];
+   G4double fnuray_wgt[13];
+   
+  G4double fprotonx;
+  G4double fprotony;
+  G4double fprotonz;
+
    NtpMuon* fMuon;
    //
    // Geantinos

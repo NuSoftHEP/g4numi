@@ -32,9 +32,13 @@ void NumiDecayPipeMagneticField::GetFieldValue(const double Point[3],double *Bfi
   delete numinav;
   
   //Average values measured by J. Hylen 2003: Z=beam dir, X=beam left, Y=Up
-  Bfield[0] = 0.1*gauss; 
-  Bfield[1] = -0.3*gauss; 
-  Bfield[2] = -0.07*gauss; 
+ Bfield[0] = 0.1*gauss; 
+ Bfield[1] = -0.3*gauss; 
+ Bfield[2] = -0.07*gauss;
+ 
+ // Bfield[0] = 0.0*gauss; 
+ // Bfield[1] = 0.0*gauss; 
+ // Bfield[2] = 0.0*gauss; 
 
   //Max values measured by J. Hylen 2003: Z=beam dir, X=beam left, Y=Up
   //  Bfield[0] = 0.4*gauss; 

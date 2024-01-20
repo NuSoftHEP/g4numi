@@ -11,6 +11,10 @@ G4String NumiParticleCode::AsString(NumiParticleCode_t pCode)
 {
 switch (pCode)
     {
+    case kElectron:             return "e-";     break;//prachi
+    case kPositron:             return "e+";     break;//prachi
+    case kGamma:		return "gamma";  break;//prachi
+ 
     case kMuonPlus:             return "mu+";          break;
     case kMuonMinus:            return "mu-";          break;
     case kPion0:                return "pi0";          break;
@@ -51,6 +55,9 @@ G4int NumiParticleCode::AsInt(NumiParticleCode_t pCode)
 {
   switch (pCode)
     {
+    case kElectron:             return 2;   break;//prachi
+    case kPositron:             return 3;   break;//prachi
+    case kGamma:		return 4;   break;//prachi
     case kMuonPlus:             return 5;   break;
     case kMuonMinus:            return 6;   break;
     case kPion0:                return 7;   break;
@@ -97,6 +104,10 @@ NumiParticleCode::NumiParticleCode_t NumiParticleCode::StringToEnum(G4String pNa
   else if (pName ==  "anti_nu_tau")   return kOther;                    
   else if (pName ==  "eta_prime")     return kOther;                     //?
 
+  else if (pName ==  "e-")       return kElectron;//prachi
+  else if (pName == "e+")        return kPositron;//prachi
+  else if (pName == "gamma")     return kGamma;//prachi
+
   else if (pName ==  "mu+")           return kMuonPlus;                 
   else if (pName ==  "mu-")           return kMuonMinus;                
   else if (pName ==  "pi0")           return kPion0;                    
@@ -137,6 +148,12 @@ NumiParticleCode::NumiParticleCode_t NumiParticleCode::IntToEnum(G4int particleI
 //returns particle enum
   switch (particleInt)
     {
+ 
+    case 2:                return kElectron;                break;//prachi 
+    case 3:                return kPositron;                break;//prachi
+    case 4:                return kGamma;		    break;//prachi
+
+  
     case 5:                return kMuonPlus;                break;
     case 6:                return kMuonMinus;               break;
     case 7:                return kPion0;                   break;

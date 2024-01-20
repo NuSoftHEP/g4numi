@@ -10,11 +10,7 @@ setup_beamsim(){
     export G4WORKDIR="${TOP}"
     export BEAMSIM="${TOP}"
     export G4NUMIVER="v6"
-
-    source /cvmfs/nova.opensciencegrid.org/externals/setup
-    setup library_shim v04.00
-
-    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$G4LIB/plists/Linux-g++:${G4WORKDIR}/tmp/Linux-g++/g4numi:${LIBRARY_SHIM_SL6_LIB_PATH}"
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$G4LIB/plists/Linux-g++:${G4WORKDIR}/tmp/Linux-g++/g4numi"
 
     echo "G4WORKDIR=${G4WORKDIR}"
 
@@ -43,7 +39,8 @@ setup_beamsim(){
     setup ifdhc #v2_2_3
     export IFDH_GRIDFTP_EXTRA="-st 10" #set ifdh cp stall timeout to 10 sec
     export IFDH_CP_MAXRETRIES=2
-
-
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PWD}/libfiles
+    setup jobsub_client
+    export EXPERIMENT=nova
 }
 setup_beamsim

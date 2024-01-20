@@ -33,6 +33,15 @@
 # 10/2016 default 0 0 -143.3 cm
 /NuMI/det/set/targetPosition ${target_position_X} ${target_position_Y} ${target_position_Z} cm
 
+#Fin study for target optimization:
+/NuMI/det/NumberOfFins ${number_of_fins}
+/NuMI/det/DistanceBetweenFins ${distance_between_fins} mm
+/NuMI/det/BudalMonitorMEPosition ${position_bm} mm
+/NuMI/det/WidthMEFin ${width_fin} mm
+/NuMI/det/WingedFin1 ${winged_fin_id1}
+/NuMI/det/WingedFin2 ${winged_fin_id2}
+/NuMI/det/WingedFin3 ${winged_fin_id3}
+/NuMI/det/WingedFin4 ${winged_fin_id4}
 
 #Switch to the alternate horn1
 /NuMI/det/Horn1IsAlternate ${do_horn1_new_geometry}

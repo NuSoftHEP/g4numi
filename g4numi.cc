@@ -20,7 +20,7 @@
 
 #include "QGSP.hh"
 #include "FTFP_BERT.hh"
-//#include "QGSC.hh"
+#include "QGSP_BERT.hh"
 //#include "QBBC.hh"
 //#include "FTFC.hh"
 //#include "FTFP.hh"
@@ -52,6 +52,8 @@ int main(int argc,char** argv)
 
   // Initialize Physics Lists
   FTFP_BERT* physicsList = new FTFP_BERT;
+ // QGSP_BERT* physicsList = new QGSP_BERT;
+
   runManager->SetUserInitialization(physicsList);
 
 #ifdef G4VIS_USE

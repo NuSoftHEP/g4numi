@@ -12,7 +12,7 @@
 class TTree;
 class TBranch;
 //class Rtypes;
-
+const Int_t kMax=13;
 //Local
 class NtpMuon
 {
@@ -37,9 +37,13 @@ public:
    Double_t muvx;
    Double_t muvy;
    Double_t muvz;
+  Double_t protonx;
+  Double_t protony;
+  Double_t protonz;
    Double_t mupx;
    Double_t mupy;
    Double_t mupz;
+  //Float_t horncurrent;
    Double_t muweight;
    Double_t tvx;
    Double_t tvy;
@@ -61,14 +65,26 @@ public:
    Int_t ptype;
    Int_t ppmedium;
    Int_t pgen;
+   Int_t kSize;
+
+   Double_t nuray_px[kMax];
+   Double_t nuray_py[kMax];
+   Double_t nuray_pz[kMax];
+   Double_t nuray_E[kMax];
+   Double_t nuray_wgt[kMax];
+
 
    UShort_t evtnoS;
    Float_t muvxF;
    Float_t muvyF;
    Float_t muvzF;
+  Float_t protonxF;
+  Float_t protonyF;
+  Float_t protonzF;
    Float_t mupxF;
    Float_t mupyF;
    Float_t mupzF;
+  //Float_t horncurrentF;
    Double_t muweightD;
    Float_t tvxF;
    Float_t tvyF;
@@ -90,6 +106,12 @@ public:
    Short_t ptypeS;
    Short_t ppmediumS;
    Short_t pgenS;
+   Short_t kSizeS;
+   Float_t nuray_pxF[kMax];
+   Float_t nuray_pyF[kMax];
+   Float_t nuray_pzF[kMax];
+   Float_t nuray_EF[kMax];
+   Float_t nuray_wgtF[kMax];
  
         
 private:

@@ -32,6 +32,10 @@
 #include "G4FieldManager.hh"
 #include "G4MagneticField.hh"
 
+#include "G4Electron.hh"//prachi
+
+#include "NumiDetectorConstruction.hh"//prachi
+
 NumiSteppingAction::NumiSteppingAction()
    :fPrintAllSteps(false),
     fPrintSplitting(false),
@@ -124,17 +128,42 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
    //This is for hadron production simulation
    //
    //
-   if(NDI->createTarNtuple){
+   //
+   /*
+   if(NDI->createH1TrackingPlane){
       if( (theStep->GetPreStepPoint()->GetPhysicalVolume() != NULL) && (theStep->GetPostStepPoint()->GetPhysicalVolume() != NULL)){
          G4String prevolname = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
          G4String postvolname = theStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();	 
          if (this->EscapingTarget(prevolname, postvolname)) {
             NumiAnalysis* analysis=NumiAnalysis::getInstance();
-            analysis->FillTarNtuple(*theTrack);
+            analysis->FillH1Ntuple(*theTrack);
             theTrack->SetTrackStatus(fStopAndKill);
          }      
       }
    }
+*/
+  if(NDI->createH1TrackingPlane){
+    //---tracking planes
+    TrkPlnH1Logical = ((NumiDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->GetHorn1PlaneLogical();
+
+    if (TrkPlnH1Logical) {
+
+        G4StepPoint *postStep = theStep->GetPostStepPoint();
+        if (postStep->GetPhysicalVolume()) {
+            G4LogicalVolume *postStepVolume = postStep->GetPhysicalVolume()->GetLogicalVolume();
+            if (postStepVolume) {
+                if (postStepVolume == TrkPlnH1Logical) {
+                    CheckInTrackingDetectorH1Plane(theStep);
+                }
+            }
+        }
+    } else {
+        std::cout << "H1 Tracking Plane Logical Volume does not exist" << std::endl; 
+    }
+} else {
+    std::cout << "H1 Tracking Plane output is not enabled" << std::endl; 
+}
+
    //
    //
    //*****************************************************************
@@ -207,7 +236,7 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
             
             std::string preStepPointName  = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
             std::string postStepPointName = theStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
-            if((particleDefinition == G4Electron::ElectronDefinition() || 
+              if((particleDefinition == G4Electron::ElectronDefinition() || 
                 particleDefinition == G4Positron::PositronDefinition() ||
                 particleDefinition == G4Gamma::Gamma()) &&
                preStepPointName.find("MuCell") == std::string::npos &&
@@ -307,7 +336,7 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
      if( particleDefinition != G4MuonPlus::MuonPlusDefinition()
          && particleDefinition != G4MuonMinus::MuonMinusDefinition() 
          && particleDefinition != G4Gamma::GammaDefinition() 
-         && particleDefinition != G4Electron::ElectronDefinition() 
+         && particleDefinition != G4Electron::ElectronDefinition()
          && particleDefinition != G4Positron::PositronDefinition())      
      {
 	//NumiAnalysis* analysis = NumiAnalysis::getInstance();
@@ -413,7 +442,73 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
            }
         }
      }
-     
+     // catch the muons at z position
+     if (NDI->createHadmmNtuple)
+     {
+         if(theStep->GetPreStepPoint()->GetPosition()[2]<52000.
+           && theStep->GetPostStepPoint()->GetPosition()[2]>52000.
+           && (particleDefinition == G4MuonPlus::MuonPlusDefinition()
+               || particleDefinition == G4MuonMinus::MuonMinusDefinition()) )
+        {
+           NumiAnalysis* analysis = NumiAnalysis::getInstance();
+           analysis->FillHadmmNtuple(*theTrack, 4, 0);
+        }
+
+         else if(theStep->GetPreStepPoint()->GetPosition()[2]<271528.8
+           && theStep->GetPostStepPoint()->GetPosition()[2]>271528.8
+           && (particleDefinition == G4MuonPlus::MuonPlusDefinition()
+               || particleDefinition == G4MuonMinus::MuonMinusDefinition()) )
+        {
+           NumiAnalysis* analysis = NumiAnalysis::getInstance();
+           analysis->FillHadmmNtuple(*theTrack, 5, 0);
+        }
+
+         else if(theStep->GetPreStepPoint()->GetPosition()[2]<496819.2
+           && theStep->GetPostStepPoint()->GetPosition()[2]>496819.2
+           && (particleDefinition == G4MuonPlus::MuonPlusDefinition()
+               || particleDefinition == G4MuonMinus::MuonMinusDefinition()) )
+        {
+           NumiAnalysis* analysis = NumiAnalysis::getInstance();
+           analysis->FillHadmmNtuple(*theTrack, 6, 0);
+        }
+        
+        else if(theStep->GetPreStepPoint()->GetPosition()[2]<721000.
+           && theStep->GetPostStepPoint()->GetPosition()[2]>721000.
+           && (particleDefinition == G4MuonPlus::MuonPlusDefinition()
+               || particleDefinition == G4MuonMinus::MuonMinusDefinition()) )
+        {
+           NumiAnalysis* analysis = NumiAnalysis::getInstance();
+           analysis->FillHadmmNtuple(*theTrack, 7, 0);
+        }
+
+        else if(theStep->GetPreStepPoint()->GetPosition()[2]<737906.
+           && theStep->GetPostStepPoint()->GetPosition()[2]>737906.
+           && (particleDefinition == G4MuonPlus::MuonPlusDefinition()
+               || particleDefinition == G4MuonMinus::MuonMinusDefinition()) )
+        {
+           NumiAnalysis* analysis = NumiAnalysis::getInstance();
+           analysis->FillHadmmNtuple(*theTrack, 8, 0);
+        }
+
+         else if(theStep->GetPreStepPoint()->GetPosition()[2]<753000.
+           && theStep->GetPostStepPoint()->GetPosition()[2]>753000.
+           && (particleDefinition == G4MuonPlus::MuonPlusDefinition()
+               || particleDefinition == G4MuonMinus::MuonMinusDefinition()) )
+        {
+           NumiAnalysis* analysis = NumiAnalysis::getInstance();
+           analysis->FillHadmmNtuple(*theTrack, 9, 0);
+        }
+
+         else if(theStep->GetPreStepPoint()->GetPosition()[2]<773400.
+           && theStep->GetPostStepPoint()->GetPosition()[2]>773400.
+           && (particleDefinition == G4MuonPlus::MuonPlusDefinition()
+               || particleDefinition == G4MuonMinus::MuonMinusDefinition()) )
+        {
+           NumiAnalysis* analysis = NumiAnalysis::getInstance();
+           analysis->FillHadmmNtuple(*theTrack, 10, 0);
+        }
+
+     } 
      //
      // Checks to see whether the particle has entered the Hadron
      // or muon monitors, and if so calls the NumiAnalysis class
@@ -498,7 +593,7 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
            NumiAnalysis* analysis = NumiAnalysis::getInstance();
 ///muons
            if(particleDefinition == G4MuonPlus::MuonPlusDefinition()
-              || particleDefinition == G4MuonMinus::MuonMinusDefinition())
+             || particleDefinition == G4MuonMinus::MuonMinusDefinition())
            {
               //
               //The first time through the preStep point has to be MuCellLayer
@@ -657,8 +752,8 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
 
            }
            
-           if(particleDefinition == G4Electron::ElectronDefinition()
-              || particleDefinition == G4Positron::PositronDefinition())
+              if(particleDefinition == G4Electron::ElectronDefinition() ||  
+                 particleDefinition == G4Positron::PositronDefinition())
            {
 
               if(reWeightedDelta)
@@ -899,6 +994,7 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
                  decay_code=14;
            }
 	}
+
 	if (particleDefinition==G4KaonPlus::KaonPlusDefinition())
         {
            for (size_t partno=(*secVec).size()-nSecTotal;partno<(*secVec).size();partno++)
@@ -981,7 +1077,7 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
           G4ParticleDefinition* def = secTrack->GetDefinition();
               // Showering particles (e+/-,gamma) are not interesting for neutrino production,
               // skip them
-          if (def == G4Electron::Electron() || def == G4Positron::Positron() ||
+        if (def == G4Electron::Electron() || def == G4Positron::Positron() ||
               def == G4Gamma::Gamma()) continue;
           G4ThreeVector mom = theStep->GetPreStepPoint()->GetMomentum();
           if (!secTrack->GetUserInformation()) {
@@ -998,6 +1094,45 @@ void NumiSteppingAction::UserSteppingAction(const G4Step * theStep)
   }
 
 }
+
+//prachi
+void NumiSteppingAction::CheckInTrackingDetectorH1Plane(const G4Step *theStep)
+{
+  if ((theStep->GetPreStepPoint() == 0) || (theStep->GetPostStepPoint() == 0)) {
+    return;
+  }
+
+  if (theStep->GetPreStepPoint()->GetPhysicalVolume() == NULL) {
+   // std::cout << "(part 2)PreStepPoint's Physical Volume is null" << std::endl; //ps
+    return;
+  }
+
+  if (theStep->GetPreStepPoint()->GetPhysicalVolume() &&
+      theStep->GetPostStepPoint()->GetPhysicalVolume()) {
+   // std::cout << "(part 2)Both Pre and Post Step Points have Physical Volumes" << std::endl; //ps
+    G4LogicalVolume *preStepVolume =
+      theStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+    G4LogicalVolume *postStepVolume =
+      theStep->GetPostStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+    if (postStepVolume == TrkPlnH1Logical) {
+      //std::cout << "(part 2)PostStepPoint's Logical Volume is the H1 Tracking Plane" << std::endl; // ps
+      //std::cout<<"Printing variable= postStepVolume"<<postStepVolume<<std::endl;
+      if (preStepVolume != TrkPlnH1Logical) {
+        //std::cout << "If PostStepVolume is the H1 Tracking plane and PreStepPoint's Logical Volume is not the H1 Tracking Plane then this is true." << std::endl; // ps
+        NumiAnalysis* analysis = NumiAnalysis::getInstance();
+        // analysis->FillTrackingPlaneH1Data(*theTrack, newtrajectory);
+        //std::cout << "Filling H1 Tracking Plane Ntuples" << std::endl; // ps
+        //analysis->FillTrackingPlaneH1Data(*theStep);
+         analysis->FillH1Ntuple(*theStep);
+      }
+    }
+  }
+}
+
+//end prachi
+
+
+
 void NumiSteppingAction::StudyAbsorption(const G4Step * theStep) {
 //
 //make sure we are dealing with a geantino, or a mu, to include lengthening of step due to curling in 

@@ -6,12 +6,23 @@
 /NuMI/run/useNuBeam true
 
 #Change the central and sigma beam position:
-#/NuMI/Beam/SigmaX 1.3 mm
-#/NuMI/Beam/SigmaY 1.3 mm
+/NuMI/Beam/SigmaX 1.5 mm
+/NuMI/Beam/SigmaY 1.5 mm
 #/NuMI/Beam/ShiftX 0.0 mm
 #/NuMI/Beam/ShiftY 0.0 mm
 
 /NuMI/run/useWaterInTgt false
+
+#Fins:
+/NuMI/det/NumberOfFins 48
+/NuMI/det/DistanceBetweenFins 0.5 mm
+/NuMI/det/BudalMonitorMEPosition 22 mm
+/NuMI/det/WidthMEFin 9 mm
+/NuMI/det/WingedFin1 0
+/NuMI/det/WingedFin2 1
+/NuMI/det/WingedFin3 2
+/NuMI/det/WingedFin4 3
+/NuMI/det/WingedFinRadius 4.0 mm
 
 #Switch to the alternate horn1
 /NuMI/det/Horn1IsAlternate true
@@ -29,6 +40,7 @@
 #-------------------------------------------------------------
 # For ME simulation, don't change 000z. It will not do anything, please
 # change the target position explicitly by using the 'targetPosition' command
+#/NuMI/det/BeamConfig ME000z200i
 /NuMI/det/BeamConfig ME000z200i
 /NuMI/run/useNImpWeight true
 
@@ -55,17 +67,17 @@
 
 /NuMI/output/outputNuNtuple true
 
-/NuMI/output/setNuNtupleFile numi-ntuple-newtarget
-
+/NuMI/output/setNuNtupleFile test_winged
 
 /NuMI/det/update
 
+/NuMI/rndm/setRndmSeed 1
 
-/NuMI/rndm/setRndmSeed 1234567
+#/NuMI/rndm/setRndmSeed 1234567
 
 /NuMI/run/setRunID 8000
 
-/run/beamOn 100
+/run/beamOn 50000
 
 
 

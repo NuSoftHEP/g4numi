@@ -21,6 +21,8 @@ class NumiSteppingAction : public G4UserSteppingAction
   virtual ~NumiSteppingAction();
   
   virtual void UserSteppingAction(const G4Step*);
+  void CheckInTrackingDetectorH1Plane(const G4Step *theStep);//prachi
+
 
 private:
    
@@ -28,6 +30,8 @@ private:
    NumiRunManager *pRunManager;
    G4EventManager *EvtManager;
    NumiEventAction *NumiEvtAct;
+   G4LogicalVolume *TrkPlnH1Logical;//prachi
+
 
    G4bool fPrintAllSteps;
    G4bool fPrintSplitting;

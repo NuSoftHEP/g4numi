@@ -1,7 +1,7 @@
  //----------------------------------------------------------------------
 // NumiAnalysis.cc
 //
-// $Id: NumiAnalysis.cc,v 1.26.4.28 2020/09/13 20:35:59 laliaga Exp $
+// $Id: NumiAnalysis.cc,v 1.26.4.26 2017/11/02 22:08:00 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -37,7 +37,7 @@
 #include "draytupleSPB_t.hh"
 #include "absbkgtuple_t.hh"
 #include "zptuple_t.hh" // for raytracing
-#include "target_exit_t.hh"// for hadron production studies
+#include "h1trackingplane_exit_t.hh"// for hadron production studies
 #include "NumiParticleCode.hh"
 #include "NumiAnalysis.hh"
 #include "NumiTrackInformation.hh"
@@ -47,12 +47,6 @@
 #include "NumiTrajectory.hh"
 #include "NumiRunManager.hh"
 #include "NumiSteppingAction.hh"
-
-//NEW For DK2NU
-#include <string>
-#include <sstream>
-#include <iostream>
-
 #define USEMODGEANT4
 #ifdef USEMODGEANT4 
 
@@ -102,7 +96,7 @@ NumiAnalysis::NumiAnalysis()
 
   g4data = new data_t();
   g4zpdata = new zptuple_t();
-  g4tardata = new target_exit_t();
+  g4h1trackingdata = new h1trackingplane_exit_t();
   
   //New for DK2NU:
   this_meta  = new bsim::DkMeta();
@@ -115,11 +109,10 @@ NumiAnalysis::NumiAnalysis()
      fAlcEdep_called.push_back(false);
      fMuInAlc.push_back(false);
   }
-  
-  code[-13]   = 10;
-  code[13]    = 11;
-  code[111]   = 23;
-  code[211]   = 13;
+  code[11]    = 2; //prachi for electron
+  code[-11]   = 3; //prachi for positron
+  code[22]    = 4; //prachi for gamma
+
   code[-211]  = 14;
   code[130]   = 12;
   code[321]   = 15;
@@ -180,25 +173,26 @@ void NumiAnalysis::book()
     meta->Branch("dkmeta","bsim::DkMeta",&this_meta,32000,99);
 
   }
-
-  if (NumiData->createTarNtuple){
-      sprintf(tarNtupleFileName,"%s_%04d%s.root",(NumiData->tarNtupleName).c_str(),pRunManager->GetCurrentRun()->GetRunID(), (NumiData->geometry).c_str());
-      tarNtuple = new TFile(tarNtupleFileName,"RECREATE","root ntuple");
-    if(tarNtuple){
-      G4cout << "Creating target ntuple: "<<tarNtupleFileName<<G4endl;
-      tarNtuple->cd();
-      tartree = new TTree("tardata","g4numi Neutrino ntuple");
-      //tartree->BranchOld("exit_tar","exit_tar_t",&g4tardata,32000,1);
-      tartree->Branch("target_exit","target_exit_t",&g4tardata,32000,99);
+//prachi start
+  if (NumiData->createH1TrackingPlane){
+      sprintf(h1NtupleFileName,"%s_%04d%s.root",(NumiData->h1trackingNtupleName).c_str(),pRunManager->GetCurrentRun()->GetRunID(), (NumiData->geometry).c_str());
+      h1trackingNtuple = new TFile(h1NtupleFileName,"RECREATE","root ntuple");
+    if(h1trackingNtuple){
+      //G4cout << "Creating target ntuple: "<<h1NtupleFileName<<G4endl;
+      h1trackingNtuple->cd();
+      h1trackingtree = new TTree("H1TrackingPlaneData","g4numi Neutrino ntuple");
+      //h1trackingtree->BranchOld("exit_tar","exit_tar_t",&g4h1trackingdata,32000,1);
+      h1trackingtree->Branch("H1TrackingPlane","h1trackingplane_exit_t",&g4h1trackingdata,32000,99);
     }
     else{
 #ifndef MODERN_G4
-      G4Exception("Something went wrong with tarNtuple");
+      G4Exception("Something went wrong with h1trackingNtuple");
 #else
-      G4Exception("NumiAnalysis","NumiAnalysis",FatalException,"Something went wrong with tarNtuple");
+      G4Exception("NumiAnalysis","NumiAnalysis",FatalException,"Something went wrong with h1trackingNtuple");
 #endif
     }
   }
+//prachi end
 
   if(NumiData->GetSimAbsBkg() && NumiData->GetCreateAbsBkgNtuple())
   {
@@ -222,12 +216,7 @@ void NumiAnalysis::book()
   
 //////////////////////////////////////////////////////////////////
   /*
-  if (NumiData->createHadmmNtuple && NumiData->useMuonInput)
-  {
-     std::string hadmmNtupleFileNameStr;
-     if((NumiData->GetHadmmNtupleName()).empty())
-        hadmmNtupleFileNameStr = GetOFileName(NumiData->GetExtNtupleFileName());
-     else hadmmNtupleFileNameStr = NumiData->GetHadmmNtupleDir() + "/" + NumiData->GetHadmmNtupleName();
+  if (NumiData-> else hadmmNtupleFileNameStr = NumiData->GetHadmmNtupleDir() + "/" + NumiData->GetHadmmNtupleName();
      
      G4cout << "Creating hadron and muon monitors ntuple: "<<hadmmNtupleFileNameStr.c_str()<<G4endl;
    
@@ -475,12 +464,18 @@ void NumiAnalysis::finish() {
   }
 
   if (NumiData->createHadmmNtuple){
+    std::cout<<"hadmm step 1"<<std::endl;
     hadmmNtuple->cd();
+    std::cout<<"hadmm step 2"<<std::endl;
     hadmmtree->Write();
+    std::cout<<"hadmm step 3"<<std::endl;
     hadmmNtuple->Close();
+    std::cout<<"hadmm step 4"<<std::endl;
     delete hadmmNtuple;
-  }
+    std::cout<<"hadmm step 5"<<std::endl;
 
+  }
+ 
   if (NumiData->GetCreateAbsBkgNtuple()){
     absbkgNtuple->cd();
     absbkgtree->Write();
@@ -495,11 +490,11 @@ void NumiAnalysis::finish() {
     delete zpNtuple;
   }
 
-  if (NumiData->createTarNtuple){
-    tarNtuple->cd();
-    tartree->Write();
-    tarNtuple->Close();
-    delete tarNtuple;
+  if (NumiData->createH1TrackingPlane){
+    h1trackingNtuple->cd();
+    h1trackingtree->Write();
+    h1trackingNtuple->Close();
+    delete h1trackingNtuple;
   }
 }
 
@@ -627,6 +622,71 @@ void NumiAnalysis::FillHadmmNtuple(const G4Track& track, Int_t hmm_num, Int_t ce
             */
          }
       }
+      
+     if(hmm_num == 5)
+         {
+           g4hmmdata->z2xpos = track.GetPosition()[0];
+           g4hmmdata->z2ypos = track.GetPosition()[1];
+           g4hmmdata->z2zpos = track.GetPosition()[2];
+           g4hmmdata->z2px = track.GetMomentum()[0];
+           g4hmmdata->z2py = track.GetMomentum()[1];
+           g4hmmdata->z2pz = track.GetMomentum()[2];
+
+      }
+     if(hmm_num == 6)
+         {
+           g4hmmdata->z3xpos = track.GetPosition()[0];
+           g4hmmdata->z3ypos = track.GetPosition()[1];
+           g4hmmdata->z3zpos = track.GetPosition()[2];
+           g4hmmdata->z3px = track.GetMomentum()[0];
+           g4hmmdata->z3py = track.GetMomentum()[1];
+           g4hmmdata->z3pz = track.GetMomentum()[2];
+
+      }
+     if(hmm_num == 7)
+         {
+           g4hmmdata->z4xpos = track.GetPosition()[0];
+           g4hmmdata->z4ypos = track.GetPosition()[1];
+           g4hmmdata->z4zpos = track.GetPosition()[2];
+           g4hmmdata->z4px = track.GetMomentum()[0];
+           g4hmmdata->z4py = track.GetMomentum()[1];
+           g4hmmdata->z4pz = track.GetMomentum()[2];
+
+      }
+
+     if(hmm_num == 8)
+         {
+           g4hmmdata->z5xpos = track.GetPosition()[0];
+           g4hmmdata->z5ypos = track.GetPosition()[1];
+           g4hmmdata->z5zpos = track.GetPosition()[2];
+           g4hmmdata->z5px = track.GetMomentum()[0];
+           g4hmmdata->z5py = track.GetMomentum()[1];
+           g4hmmdata->z5pz = track.GetMomentum()[2];
+
+      }
+
+     if(hmm_num == 9)
+         {
+           g4hmmdata->z6xpos = track.GetPosition()[0];
+           g4hmmdata->z6ypos = track.GetPosition()[1];
+           g4hmmdata->z6zpos = track.GetPosition()[2];
+           g4hmmdata->z6px = track.GetMomentum()[0];
+           g4hmmdata->z6py = track.GetMomentum()[1];
+           g4hmmdata->z6pz = track.GetMomentum()[2];
+
+      }
+     if(hmm_num == 10)
+         {
+           g4hmmdata->z7xpos = track.GetPosition()[0];
+           g4hmmdata->z7ypos = track.GetPosition()[1];
+           g4hmmdata->z7zpos = track.GetPosition()[2];
+           g4hmmdata->z7px = track.GetMomentum()[0];
+           g4hmmdata->z7py = track.GetMomentum()[1];
+           g4hmmdata->z7pz = track.GetMomentum()[2];
+
+      }
+
+      //}
       if(hmm_num != 4)
       {  
          if(fMuInAlc[hmm_num] == true) return;
@@ -635,7 +695,7 @@ void NumiAnalysis::FillHadmmNtuple(const G4Track& track, Int_t hmm_num, Int_t ce
          {
             g4hmmdata->mmxpos[hmm_num] = track.GetPosition()[0];
             g4hmmdata->mmypos[hmm_num] = track.GetPosition()[1];
-            //g4hmmdata->mmzpos[hmm_num] = track.GetPosition()[2];
+            g4hmmdata->mmzpos[hmm_num] = track.GetPosition()[2];
          }
          
          g4hmmdata->mmpx[hmm_num]   = track.GetMomentum()[0];
@@ -804,7 +864,7 @@ void NumiAnalysis::FillHadmmNtuple()
         G4ThreeVector particlePosition = NPGA->GetParticlePosition();
         g4hmmdata->muvx = particlePosition[0];
         g4hmmdata->muvy = particlePosition[1];
-        //g4hmmdata->muvz = particlePosition[2];
+        g4hmmdata->muvz = particlePosition[2];
 
         G4ThreeVector tparentPosition = NPGA->GetMuTParentPosition();
         g4hmmdata->tvx = tparentPosition[0];
@@ -847,7 +907,20 @@ void NumiAnalysis::FillHadmmNtuple()
      g4hmmdata->muweight = NPGA->GetMuWeight(); 
      g4hmmdata->tpptype = NPGA->GetTParentType(); 
      g4hmmdata->nimpwt = NPGA->GetImpWeight();
-     
+
+     g4hmmdata->protonx = NPGA->Getprotonx();
+     g4hmmdata->protony = NPGA->Getprotony();
+     g4hmmdata->protonz = NPGA->Getprotonz();
+
+     for(int i = 0;i<13;++i)
+       {
+        g4hmmdata->nuray_px[i] = NPGA->GetNuray_px(i);
+        g4hmmdata->nuray_py[i] = NPGA->GetNuray_py(i);
+        g4hmmdata->nuray_pz[i] = NPGA->GetNuray_pz(i);
+        g4hmmdata->nuray_E[i] = NPGA->GetNuray_E(i);
+        g4hmmdata->nuray_wgt[i] = NPGA->GetNuray_wgt(i);
+
+      } 
      //g4hmmdata->run = pRunManager->GetCurrentRun()->GetRunID();
      //g4hmmdata->mtgthsig = NumiData->beamSigmaX/cm;
      //g4hmmdata->mtgtvsig = NumiData->beamSigmaY/cm;
@@ -864,6 +937,55 @@ void NumiAnalysis::FillHadmmNtuple()
      //g4hmmdata->hmmpx = -81000;
      //g4hmmdata->hmmpy = -81000;
      //g4hmmdata->hmmpz = -81000;
+     //
+       g4hmmdata->z1xpos = -99999;
+       g4hmmdata->z1ypos = -99999;
+       g4hmmdata->z1zpos = -99999;
+       g4hmmdata->z1px = -99999;
+       g4hmmdata->z1py = -99999;
+       g4hmmdata->z1pz = -99999;
+
+       g4hmmdata->z2xpos = -99999;
+       g4hmmdata->z2ypos = -99999;
+       g4hmmdata->z2zpos = -99999;
+       g4hmmdata->z2px = -99999;
+       g4hmmdata->z2py = -99999;
+       g4hmmdata->z2pz = -99999;
+
+       g4hmmdata->z3xpos = -99999;
+       g4hmmdata->z3ypos = -99999;
+       g4hmmdata->z3zpos = -99999;
+       g4hmmdata->z3px = -99999;
+       g4hmmdata->z3py = -99999;
+       g4hmmdata->z3pz = -99999;
+
+       g4hmmdata->z4xpos = -99999;
+       g4hmmdata->z4ypos = -99999;
+       g4hmmdata->z4zpos = -99999;
+       g4hmmdata->z4px = -99999;
+       g4hmmdata->z4py = -99999;
+       g4hmmdata->z4pz = -99999;
+
+       g4hmmdata->z5xpos = -99999;
+       g4hmmdata->z5ypos = -99999;
+       g4hmmdata->z5zpos = -99999;
+       g4hmmdata->z5px = -99999;
+       g4hmmdata->z5py = -99999;
+       g4hmmdata->z5pz = -99999;
+
+       g4hmmdata->z6xpos = -99999;
+       g4hmmdata->z6ypos = -99999;
+       g4hmmdata->z6zpos = -99999;
+       g4hmmdata->z6px = -99999;
+       g4hmmdata->z6py = -99999;
+       g4hmmdata->z6pz = -99999;
+
+       g4hmmdata->z7xpos = -99999;
+       g4hmmdata->z7ypos = -99999;
+       g4hmmdata->z7zpos = -99999;
+       g4hmmdata->z7px = -99999;
+       g4hmmdata->z7py = -99999;
+       g4hmmdata->z7pz = -99999;
      
      for(Int_t i=0;i<3;++i)
      {
@@ -1268,11 +1390,7 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
   
   G4bool wasInHorn1 = false;
   G4bool wasInHorn2 = false;
-
-  G4String sconf = NumiData->GetBeamConfig();
-  G4bool is_me   = sconf.contains("me") || sconf.contains("ME");
-  //std::cout<<"=> (check) Beam Configuration: "<< (NumiData->GetBeamConfig()) <<" "<< is_me <<std::endl;
-  
+   
   for (G4int ii=0; ii<point_no-1; ++ii){ 
       ParentMomentum = NuParentTrack->GetMomentum(ii);
       ParentPosition = (NuParentTrack->GetPoint(ii)->GetPosition()/m)*m;
@@ -1352,7 +1470,6 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
     // check if the particle passes through the neck of the horn
     // if yes then set the trk_ to +999999
     // need to make this work for arbitrary horn position!!
-    //LE:
     if ((ParentPosition[2]>0.&&ParentPosition[2]<3.*m)&&  // horn 1 position 0-3m
 	(sqrt(ParentPosition[0]*ParentPosition[0]+ParentPosition[1]*ParentPosition[1])<5.*cm)&&
 	(g4data->trkx[2]==-999999. || g4data->trkx[2]==999999.))
@@ -1361,28 +1478,14 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
 	g4data->trky[2] = 999999.;
 	g4data->trkz[2] = 999999.;  
     }
-    //Different Horn2 positions between LE and ME (Leo, Sept 13, 2020)
-    if(!is_me){
-      if ((ParentPosition[2]>10.*m&&ParentPosition[2]<13.*m)&&  //horn 2 position 10-13m
-	  (sqrt(ParentPosition[0]*ParentPosition[0]+ParentPosition[1]*ParentPosition[1])<5.*cm)&&
-	  (g4data->trkx[4]==-999999. || g4data->trkx[4]==999999.))
-	{
-	  g4data->trkx[4] = 999999.;
-	  g4data->trky[4] = 999999.;
-	  g4data->trkz[4] = 999999.;  
-	}
+    if ((ParentPosition[2]>10.*m&&ParentPosition[2]<13.*m)&&  //horn 2 position 10-13m
+	(sqrt(ParentPosition[0]*ParentPosition[0]+ParentPosition[1]*ParentPosition[1])<5.*cm)&&
+	(g4data->trkx[4]==-999999. || g4data->trkx[4]==999999.))
+    {
+	g4data->trkx[4] = 999999.;
+	g4data->trky[4] = 999999.;
+	g4data->trkz[4] = 999999.;  
     }
-    //ME
-    else if(is_me){
-      if ((ParentPosition[2]>19.*m&&ParentPosition[2]<22.*m)&&  //horn 2 position 19-22m
-	  (sqrt(ParentPosition[0]*ParentPosition[0]+ParentPosition[1]*ParentPosition[1])<5.*cm)&&
-	  (g4data->trkx[4]==-999999. || g4data->trkx[4]==999999.))
-	{
-	  g4data->trkx[4] = 999999.;
-	  g4data->trky[4] = 999999.;
-	  g4data->trkz[4] = 999999.;  
-	}
-    } 
   }
   
   ParentMomentum = NuParentTrack->GetMomentum(point_no-1);
@@ -1731,7 +1834,6 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
   this_decay.mupare   = g4data->mupare;
   this_decay.necm     = g4data->Necm;
   this_decay.nimpwt   = g4data->Nimpwt;
-  this_decay.sumnimpwt2 = info->GetSumNImpWt2();
   //////
 
   //5) NuRay:
@@ -1758,9 +1860,6 @@ void NumiAnalysis::FillNeutrinoNtuple(const G4Track& track, const std::vector<G4
     r_det.push_back(NumiData->zdet_near[ii]/cm);
     nuwgh.GetWeight(g4data, r_det,nu_wght,nu_energy);
     G4double mom_nu[3];
-    double rad = sqrt((r_det[0]- g4data->Vx)*(r_det[0]- g4data->Vx) +
-		      (r_det[1]- g4data->Vy)*(r_det[1]- g4data->Vy) +
-		      (r_det[2]- g4data->Vz)*(r_det[2]- g4data->Vz));
     mom_nu[0] = (r_det[0]- g4data->Vx) * nu_energy / rad;
     mom_nu[1] = (r_det[1]- g4data->Vy) * nu_energy / rad;
     mom_nu[2] = (r_det[2]- g4data->Vz) * nu_energy / rad;
@@ -2029,47 +2128,69 @@ void NumiAnalysis::WriteZpNtuple(){//Jasmine added
 }
 
 //------------------------------------------------------------------------------------
-void NumiAnalysis::FillTarNtuple(const G4Track& track)
-{//---Melissa added
-  if(!NumiData->createTarNtuple) return ;
+//prachi start
+void NumiAnalysis::FillH1Ntuple(const G4Step& step)
+{
+  if(!NumiData->createH1TrackingPlane) return ;
 
   G4RunManager* pRunManager = G4RunManager::GetRunManager();
- 
-    G4ParticleDefinition* particleDefinition = track.GetDefinition();
+     
+     G4Track *track=step.GetTrack();
+     
+     NumiTrackInformation* info = (NumiTrackInformation*)(track->GetUserInformation());
+     g4h1trackingdata->impwt = info->GetNImpWt(); 
+     g4h1trackingdata->tvx= track->GetPosition()[0]/cm;
+     g4h1trackingdata->tvy= track->GetPosition()[1]/cm;
+     g4h1trackingdata->tvz= track->GetPosition()[2]/cm;
+     g4h1trackingdata->tpx= track->GetMomentum()[0]/GeV;
+     g4h1trackingdata->tpy= track->GetMomentum()[1]/GeV;
+     g4h1trackingdata->tpz= track->GetMomentum()[2]/GeV;
+        
+     g4h1trackingdata->tof = track->GetGlobalTime();
+   
+    G4ParticleDefinition* particleDefinition = track->GetDefinition(); 
+    g4h1trackingdata->tptype= NumiParticleCode::AsInt(NumiParticleCode::StringToEnum(particleDefinition->GetParticleName()));
 
-    NumiTrackInformation* info = (NumiTrackInformation*)(track.GetUserInformation());
-    g4tardata->impwt = info->GetNImpWt();  // Importance weight
+    g4h1trackingdata->run=pRunManager->GetCurrentRun()->GetRunID();
+    g4h1trackingdata->evtno = pRunManager->GetCurrentEvent()->GetEventID();
+    
+     //calculating the job number:
+     G4String namentp = (NumiData->h1trackingNtupleName);
+     G4int namesize = (NumiData->h1trackingNtupleName).last('_');
+     namentp.remove(0,namesize+1);
+     istringstream buffer(namentp);
+     int valjob;
+     buffer >> valjob;
+     g4h1trackingdata->job = valjob;
 
-    g4tardata->tvx= track.GetPosition()[0]/cm;
-    g4tardata->tvy= track.GetPosition()[1]/cm;
-    g4tardata->tvz= track.GetPosition()[2]/cm;
-    g4tardata->tpx= track.GetMomentum()[0]/GeV;
-    g4tardata->tpy= track.GetMomentum()[1]/GeV;
-    g4tardata->tpz= track.GetMomentum()[2]/GeV;
+  
+    //parent particle production
+     g4h1trackingdata->ppvx = track->GetVertexPosition()[0]/cm;
+     g4h1trackingdata->ppvy = track->GetVertexPosition()[1]/cm;
+     g4h1trackingdata->ppvz = track->GetVertexPosition()[2]/cm;  
 
-    g4tardata->tptype= NumiParticleCode::AsInt(NumiParticleCode::StringToEnum(particleDefinition->GetParticleName()));
+    
 
-    g4tardata->run=pRunManager->GetCurrentRun()->GetRunID();
-    g4tardata->evtno = pRunManager->GetCurrentEvent()->GetEventID();
-    WriteTarNtuple();//store info and initialize
+    Writeh1trackingplaneNtuple();//store info and initialize
 }
 
 //------------------------------------------------------------------------------------
-void NumiAnalysis::WriteTarNtuple(){//Melissa added
+void NumiAnalysis::Writeh1trackingplaneNtuple(){
 
-  tartree->Fill();
-    g4tardata->impwt=-10000;
-    g4tardata->tvx=-10000;
-    g4tardata->tvy=-10000;
-    g4tardata->tvz=-10000;
-    g4tardata->tpx=-10000;
-    g4tardata->tpy=-10000;
-    g4tardata->tpz=-10000;
-    g4tardata->tptype=-10;
-    g4tardata->run=-100;
-    g4tardata->evtno=-100;  
+  h1trackingtree->Fill();
+    g4h1trackingdata->impwt=-10000;
+    g4h1trackingdata->tvx=-10000;
+    g4h1trackingdata->tvy=-10000;
+    g4h1trackingdata->tvz=-10000;
+    g4h1trackingdata->tpx=-10000;
+    g4h1trackingdata->tpy=-10000;
+    g4h1trackingdata->tpz=-10000;
+    g4h1trackingdata->tptype=-10;
+    g4h1trackingdata->run=-100;
+    g4h1trackingdata->evtno=-100;  
 }
 
+//prachi end 
 //----------------------------
 G4int NumiAnalysis::GetNucleus(G4String nucl_name){
   

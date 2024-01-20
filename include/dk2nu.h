@@ -30,7 +30,7 @@
 #include <vector>
 #include <string>
 
-#define DK2NUVER 9   // KEEP THIS UP-TO-DATE!  increment for each change
+#define DK2NUVER 8   // KEEP THIS UP-TO-DATE!  increment for each change
 
 namespace bsim {
   /**
@@ -152,7 +152,6 @@ namespace bsim {
 
    Double_t necm;         ///< % nu energy in center-of-mass frame
    Double_t nimpwt;       ///< % cumulative importance weight prod to decay
-   Double_t sumnimpwt2;
 
   public:
     Decay();
