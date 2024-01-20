@@ -15,7 +15,7 @@ PWD = os.getenv("PWD")
 ##################################################
 # Job Defaults
 ##################################################
-POT                   = 100
+POT                   = 50000
 N_JOBS                = 1
 RUN_NUMBER            = 1
 OUTDIR                = "/pnfs/{EXPERIMENT}/persistent/users/{USER}/flux_h1TrackingPlane/".format(EXPERIMENT = os.getenv("EXPERIMENT"), USER = os.getenv("USER"))
