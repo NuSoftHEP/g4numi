@@ -1,0 +1,81 @@
+#This is an template macro to create ME G4numi files. 
+#v1.1.2.7 of this file contains all of the ME defaults
+#as of 2017/11.
+#The "BeamConfig" option has been depreciated in the ME.
+#It can/should be used to change horn current but not
+# (not target Z position. Use targetPosition for that).
+
+/control/suppressAbortion 2
+/NuMI/run/DebugLevel 0 
+/NuMI/run/useNuBeam true
+/NuMI/run/useNImpWeight true
+/NuMI/det/RunPeriod 0
+
+# see comment above
+/NuMI/det/BeamConfig ${beamconfig}
+
+#Beam spot size
+#ME nominal is 1.4 (B. Messerly 2017.06)
+/NuMI/Beam/SigmaX ${beam_spotsize_X} mm
+/NuMI/Beam/SigmaY ${beam_spotsize_Y} mm
+
+#Beam position shift
+/NuMI/Beam/ShiftX ${beam_position_X} mm
+/NuMI/Beam/ShiftY ${beam_position_Y} mm
+
+#Magnetic field in decay pipe
+#/NuMI/det/applyDecayPipeMagneticField false
+
+
+/NuMI/run/useWaterInTgt ${do_target_water}
+/NuMI/run/useNImpWeight false   #added by prachi 
+
+/NuMI/det/LengthOfWaterInTgt ${target_water_cm} cm
+
+# 10/2016 default 0 0 -143.3 cm
+/NuMI/det/set/targetPosition ${target_position_X} ${target_position_Y} ${target_position_Z} cm
+
+#Fin study for target optimization:
+/NuMI/det/NumberOfFins ${number_of_fins}
+/NuMI/det/DistanceBetweenFins ${distance_between_fins} mm
+/NuMI/det/BudalMonitorMEPosition ${position_bm} mm
+/NuMI/det/WidthMEFin ${width_fin} mm
+/NuMI/det/WingedFin1 ${winged_fin_id1}
+/NuMI/det/WingedFin2 ${winged_fin_id2}
+/NuMI/det/WingedFin3 ${winged_fin_id3}
+/NuMI/det/WingedFin4 ${winged_fin_id4}
+
+#Switch to the alternate horn1
+/NuMI/det/Horn1IsAlternate ${do_horn1_new_geometry}
+
+#Use refined definition of horn1
+/NuMI/det/Horn1IsRefined ${do_horn1_fine_segmentation}
+
+/NuMI/det/HornWaterLayerThickness ${horn_water_mm} mm
+
+/NuMI/det/UseCorrHornCurrent false
+
+# see NumiX meeting 08/2014 and minerva docdb 10512
+#/NuMI/det/set/horn1Position 0 0 3 cm
+/NuMI/det/set/horn1Position ${horn1_position_X} ${horn1_position_Y} ${horn1_position_Z} cm
+/NuMI/det/set/horn2Position ${horn2_position_X} ${horn2_position_Y} 1918.0 cm
+
+
+/NuMI/det/set/deltaOuterThickness 0.9525 cm
+/NuMI/det/set/duratekShift 4.5 m
+/NuMI/det/set/thblockShift 4.5 m
+
+/NuMI/det/set/bafflePosition 0 0 -380 cm
+/NuMI/det/set/baffleInnerRadius 6.5 mm
+
+#set to false by prachi to test if dk2nu file is omitted creating
+/NuMI/output/outputNuNtuple false
+/NuMI/output/setNuNtupleFile ${outfile}
+
+/NuMI/output/outputh1Ntuple true
+/NuMI/output/seth1NtupleFile ${outfile2}
+/NuMI/det/update
+
+/NuMI/rndm/setRndmSeed ${seed}
+/NuMI/run/setRunID ${run}
+/run/beamOn ${pot}
