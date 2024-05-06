@@ -827,7 +827,9 @@ void NumiDetectorConstruction::ConstructHorn1Alternate(G4ThreeVector hornpos, G4
   //
   // Now the outer...
   // 
-   const double rOut = 16.25*in + 7.50*in + 2.5*CLHEP::cm; // 7.5 inches is an overestimate of the max. outer dimension of exhaust piping, downstream. 
+  const double rOut = 350.0; //16.25*in + 7.5*in + 2.5*CLHEP::cm; // 7.5 inches is an overestimate of the max. outer dimension of exhaust piping, downstream. 
+  //const double rOut = 2.5*CLHEP::cm; // 7.5 inches is an overestimate of the max. outer dimension of exhaust piping, downstream. 
+  //G4cout << "rOut is: " << rOut << G4endl;
     // 2.5 in is a guess the thickness of the outer tube. 
    aMotherHorn1AllRads.push_back(rOut);
    aMotherHorn1AllLengths.push_back(zCurrent);

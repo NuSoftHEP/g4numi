@@ -156,7 +156,7 @@ NumiDataInput::NumiDataInput()
   fNEvents = -1;
   solidMuMons = false;
   absorberConfig = "None";
-  fHorn1IsAlternate = false;
+  fHorn1IsAlternate = true;
   fHorn1IsRefined = false;
   simAbsBkg = false;
   createAbsBkgNtuple = false;
@@ -172,7 +172,7 @@ NumiDataInput::NumiDataInput()
 
   useTestBeam = false;   
   useDecayPipeSelect = false;
-  KillTracking = true; // false for ahimmel
+  KillTracking = false; // false for ahimmel
   testTheta = M_PI/6.;
   
    StepLimit = 0.0; 
@@ -180,7 +180,7 @@ NumiDataInput::NumiDataInput()
 
   extNtupleFileName=""; //fluka or mars or muon ntuple with particles coming of the target
   //Set the energy threshold for 'killing' particles
-   KillTrackingThreshold = 0.05*CLHEP::GeV; //for defaut neutrino MC g4numi 
+   KillTrackingThreshold = 0.0*CLHEP::GeV; //for defaut neutrino MC g4numi 
    //KillTrackingThreshold = 0.001*CLHEP::GeV; //for muon beam MC
 
 
@@ -217,7 +217,6 @@ NumiDataInput::NumiDataInput()
   airhrn =false; // airhrn must be changed before compilation
   vacuumworld=false;
   jCompare = false; // make horns have the same B field;
-  g3Chase = false;
   
 if(!vacuumworld && !airhrn){
   hrnmat = 9;   // Al
@@ -601,14 +600,9 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   //==========================================================================
 
   //======================================================================= 
-  // Target Hall shielding (18 blocks, numbered 0-17)
+  // Target Hall shielding (24 blocks, numbered 0-23)
 
-  if(g3Chase){
-    THBlockNblock = 24;
-  }
-  else{
-    THBlockNblock=18;
-  }
+  THBlockNblock = 24;
   // reminder: all length dimensions for the target shielding blocks are in meters.
   //These are the Duratek blocks mentioned in the Numi Technical Design Handbook.
 
@@ -667,8 +661,6 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
                                0.672075 //Block 23 above Horn2
   };
 
-  
-  
   // these Z0 values are set with respect to the ROCK volume, but NumiTargetHall.cc adjusts them to the TGAR volume
 
   G4double THBlockZ0_[]= {19.499};
@@ -881,8 +873,8 @@ for (G4int ii=0;ii<NTgtRingN;ii++){
   for (G4int ii=0;ii<NPHorn2EndN;ii++){
     PHorn2EndZ0.push_back(PHorn2EndZ0_[ii]*in);
     PHorn2EndLength.push_back(PHorn2EndLength_[ii]*in);
-    PHorn2EndRin.push_back(PHorn2EndRin_[ii]*in);
-    PHorn2EndRout.push_back(PHorn2EndRout_[ii]*in);
+    PHorn2EndRin.push_back(0.95*PHorn2EndRin_[ii]*in);
+    PHorn2EndRout.push_back(0.95*PHorn2EndRout_[ii]*in);
     if(airhrn){
       PHorn2EndGeantMat.push_back(15);
     }
@@ -1794,7 +1786,6 @@ void NumiDataInput::SetLengthOfWaterInTgt(G4double val)
 }
 
 
-
 //---------------------------------------------------------------------------------
 void NumiDataInput::ApplyStepLimits(G4LogicalVolume *vol)
 {
@@ -1869,7 +1860,6 @@ void NumiDataInput::SetAbsorberMonDist(G4double val, G4int mon)
 
 }
 
-
 //----------------------------------------------------------------------
 G4Material* NumiDataInput::GetAbsorberMaterial(G4int mon)
 {
@@ -1939,20 +1929,6 @@ void NumiDataInput::SetjCompare(G4bool _jc) {
     for (G4int ii=0;ii<NPHorn2EndN;ii++){
         PHorn2EndZ0.push_back(PHorn2EndZ0_[ii]*in);
     }
-}
-
-//---------------------------------------------------------------------------------
-void NumiDataInput::Setg3Chase(G4bool _gc)
-{
-    g3Chase = _gc;
-    
-    if(g3Chase){
-        THBlockNblock = 24;
-    }
-    else{
-        THBlockNblock=18;
-    }       
-    
 }
 
 //---------------------------------------------------------------------------------
