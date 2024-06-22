@@ -15,7 +15,7 @@ PWD = os.getenv("PWD")
 ##################################################
 # Job Defaults
 ##################################################
-POT                   = 400000
+POT                   = 500000
 N_JOBS                = 1
 RUN_NUMBER            = 1
 OUTDIR                = "/pnfs/{EXPERIMENT}/persistent/users/{USER}/flux/test/".format(EXPERIMENT = os.getenv("EXPERIMENT"),
@@ -39,8 +39,8 @@ DO_HORN1_NEW_GEOMETRY = True
 
 BEAM_POSITION_X       = 0      #m
 BEAM_POSITION_Y       = 0      #m
-BEAM_SPOTSIZE_X       = 1.4    #mm (ME!)
-BEAM_SPOTSIZE_Y       = 1.4    #mm (ME!)
+BEAM_SPOTSIZE_X       = 1.5    #mm (ME!)
+BEAM_SPOTSIZE_Y       = 1.5    #mm (ME!)
 
 TARGET_POSITION_X     = 0.0    #cm
 TARGET_POSITION_Y     = 0.0    #cm
@@ -53,6 +53,18 @@ DO_HORN1_FINE_SEGMENTATION = False
 NO_IMPORTANCE_WEIGHTING    = False
 DO_TARGET_WATER            = False
 TARGET_WATER_CM            = 3 #cm
+
+##################################################
+# Target optimnization work
+##################################################
+NUMBER_OF_FINS            = 48   #default ME
+DISTANCE_BETWEEN_FINS     = 0.5  #mm
+BUDAL_MONITOR_ME_POSITION = 0    #mm
+WIDTH_ME_FIN              = 9.0  #mm
+WINGED_FIN_ID1            = 1
+WINGED_FIN_ID2            = 2
+WINGED_FIN_ID3            = 3
+WINGED_FIN_ID4            = 4
 
 ##################################################
 # beamconfig/playlist/targetZpos lookup
@@ -180,6 +192,21 @@ def get_options():
           help="target vertical position. Default = %defaultcm.")
   target_group.add_option('--target_position_Z', default = TARGET_POSITION_Z,
           help="target longitudinal position. Default = %defaultcm.")
+  target_group.add_option('--number_of_fins', default = NUMBER_OF_FINS,
+          help="number of fins for ME tgt target. Default = 48.")
+  target_group.add_option('--distance_between_fins', default = DISTANCE_BETWEEN_FINS,
+          help="distance between fins for ME tgt target. Default = %defaultmm.")
+  target_group.add_option('--position_budal_monitor', default = BUDAL_MONITOR_ME_POSITION,
+          help="position of the front of the first BM. Default = %defaultmm.")
+  target_group.add_option('--width_fin', default = WIDTH_ME_FIN,
+          help="fin width. Default = %defaultmm.")
+  target_group.add_option('--winged_fin1', default = WINGED_FIN_ID1,
+          help="Set the first fin as winged. Default = WINGED_FIN_ID1.")  target_group.add_option('--winged_fin2', default = WINGED_FIN_ID2,
+          help="Set the second fin as winged. Default = WINGED_FIN_ID2.")
+  target_group.add_option('--winged_fin3', default = WINGED_FIN_ID3,
+          help="Set the third fin as winged. Default = WINGED_FIN_ID3.")
+  target_group.add_option('--winged_fin4', default = WINGED_FIN_ID4,
+          help="Set the forth fin as winged. Default = WINGED_FIN_ID4.")
 
   beam_group   = optparse.OptionGroup(parser, "Beam Options")
 
@@ -277,6 +304,16 @@ def make_macro(options):
        'target_position_Y':          options.target_position_Y,
        'target_position_Z':          options.target_position_Z,
        'target_water_cm':            options.target_water_cm,
+
+       'number_of_fins':            options.number_of_fins,
+       'distance_between_fins':     options.distance_between_fins,
+       'position_bm':               options.position_budal_monitor,
+       'width_fin':                 options.width_fin,
+       'winged_fin_id1':            options.winged_fin1,
+       'winged_fin_id2':            options.winged_fin2,
+       'winged_fin_id3':            options.winged_fin3,
+       'winged_fin_id4':            options.winged_fin4,
+
        'do_target_water':            str(options.do_target_water).lower(),
        'pot':                        options.pot,
        'run':                        options.run_number,

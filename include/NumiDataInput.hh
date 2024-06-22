@@ -152,6 +152,17 @@ public:
   void SetBeamSigmaX(G4double val);
   void SetBeamSigmaY(G4double val);
 
+  //(Leo, Juyly24, 2018): Functions for target optmization studies:
+  void SetTargetSegPitch(G4double val);
+  void SetTargetSegWidth(G4double val);
+  void SetWingedFin1(G4int winged_fin_id1);
+  void SetWingedFin2(G4int winged_fin_id2);
+  void SetWingedFin3(G4int winged_fin_id3);
+  void SetWingedFin4(G4int winged_fin_id4);
+  void SetWingedFinRadius(G4double winged_fin_radius);
+  void SetNumberOfMEFins(G4int n_fins_me);
+  void SetBudalMonitorMEPosition(G4double pos_bm_me);
+
    //--------------------------------------------------------------
    //Specifically for Muon Monitor simulation and Absorber background simulation
    //
@@ -586,6 +597,17 @@ public:
 
    G4double CoolingPlateCutoutWidth;
    G4double CoolingPlateCutoutHeight;
+
+  //Leo (July 24, 2018): new variables to add winged fins
+  // for the target optimization studies:
+   G4int WingedFin1;
+   G4int WingedFin2;
+   G4int WingedFin3;
+   G4int WingedFin4;
+   G4double WingedFinRadius;
+   G4int NumberOfMEFins;
+   G4double BudalMonitorMEPosition;
+
 //
 // To be use to fill the Ntuple, info about the particle 6D phase space exiting the target.
 //

@@ -110,7 +110,8 @@ def main():
       "file://{CACHE}/g4numi_job_localprod.sh".format(
       GRID         = ("--OS=SL7 "
                       "--resource-provides=usage_model=DEDICATED,OPPORTUNISTIC "
-                      "--role=Analysis "),
+                      "--role=Analysis "
+                      "--singularity-image /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-wn-sl7:latest "),
       MEMORY       = "--memory 2000MB ", # was 200MB
       DURATION     = "--expected-lifetime 12h ",  # 500K pots takes ~2h to 7h,
                      # avg ~3h; estimate long for tail

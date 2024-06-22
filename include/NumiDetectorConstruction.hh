@@ -74,6 +74,9 @@ public:
     // the Alternate Horn1 
     //
    G4double PHorn1ICRin(G4double z) const ;
+
+  //New cards for beam optimization (Leo, July 13, 2018)
+  
     
 private:
    NumiDataInput* NumiData;
