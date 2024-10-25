@@ -15,7 +15,7 @@
 #include "G4IonBinaryCascadePhysics.hh"
 #include "G4IonPhysics.hh"
 #include "G4EmExtraPhysics.hh"
-#include "G4EmProcessOptions.hh"
+#include "G4UnitsTable.hh"
 
 #include "G4HadronInelasticQBBC.hh"
 #include "G4HadronPhysicsFTF_BIC.hh"
