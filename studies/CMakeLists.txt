@@ -1,11 +1,12 @@
-include_directories( $ENV{GEANT4_FQ_DIR}/include/Geant4 )
-include_directories( $ENV{CLHEP_INC}                    )
 
-cet_make(LIBRARY_NAME  studies
-         LIBRARIES     ${G4_LIB_LIST}
-         )
-
+cet_make_library(
+    SOURCE        G4MinervaPionIXS.cc
+                  G4MinervaProtonIXS.cc
+                  NumiKelvinFunctions.cc
+    LIBRARY_NAME  studies
+    LIBRARIES     Geant4::G4global
+                  Geant4::G4processes
+)
 
 install_source()
 install_headers()
-
