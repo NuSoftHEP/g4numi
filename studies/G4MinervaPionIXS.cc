@@ -307,8 +307,8 @@
 G4MinervaPionIXS::
 ~G4MinervaPionIXS()
 {
-  std::for_each(thePimData.begin(), thePimData.end(), G4PiData::Delete());
-  std::for_each(thePipData.begin(), thePipData.end(), G4PiData::Delete());
+  for (G4PiData* it : thePimData) delete it;
+  for (G4PiData* it : thePipData) delete it;
 }
 
 
