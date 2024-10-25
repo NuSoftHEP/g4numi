@@ -41,7 +41,7 @@ void NumiDetectorConstruction::ConstructDecayPipe(bool heInDecayPipe, bool apply
  
   G4Tubs* sTUNE = new G4Tubs("TUNE_S",0.,r,l,0,360.*CLHEP::deg);
   G4LogicalVolume* lvTUNE = new G4LogicalVolume(sTUNE,GetMaterial(NumiData->TunnelGEANTmat),"TUNE_log",0,0,0); 
-  lvTUNE->SetVisAttributes(G4VisAttributes::Invisible);
+  lvTUNE->SetVisAttributes(G4VisAttributes::GetInvisible());
   pvTUNE = new G4PVPlacement(0,tunnelPosition,"TUNE",lvTUNE,ROCK,false,0);
 
   // Shielding

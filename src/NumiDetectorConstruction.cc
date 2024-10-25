@@ -157,7 +157,7 @@ G4VPhysicalVolume* NumiDetectorConstruction::Construct()
   G4Box* ROCK_solid = new G4Box("ROCK_solid",NumiData->RockRadius,
                                 NumiData->RockRadius,NumiData->RockHalfLen); 
   ROCK_log = new G4LogicalVolume(ROCK_solid, DoloStone,"ROCK_log",0,0,0); 
-  ROCK_log->SetVisAttributes(G4VisAttributes::Invisible);
+  ROCK_log->SetVisAttributes(G4VisAttributes::GetInvisible());
   ROCK = new G4PVPlacement(0,G4ThreeVector(),ROCK_log,"ROCK",0,false,0);
   
   ConstructTargetHall();

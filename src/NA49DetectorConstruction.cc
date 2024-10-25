@@ -77,7 +77,7 @@ G4VPhysicalVolume* NA49DetectorConstruction::Construct()
   new G4PVPlacement(0,G4ThreeVector(),logicTarget,"Target",logicWorld,false,0);
 
   // colors
-  G4VisAttributes zero = G4VisAttributes::Invisible;
+  G4VisAttributes zero = G4VisAttributes::GetInvisible();
   logicWorld->SetVisAttributes(&zero);
 
   G4VisAttributes regCcolor(G4Colour(0., 0.3, 0.7));
