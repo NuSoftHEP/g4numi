@@ -5,11 +5,13 @@ model of incoming proton beam is used as a source of initial particles.
 The primary output of the this code is an ntuple representing the decays
 of secondaries that give rise to neutrinos.
 
-## building procedure
+## Building and running the software
 
-You can find instructions on building g4numi on the Numi Beam Simulations wiki [here](https://github.com/NuSoftHEP/g4numi/wiki/How-to-build-and-run-the-main-modern-g4-branch)
+You can find instructions on building and running g4numi on the Numi Beam 
+Simulations wiki [here](https://github.com/NuSoftHEP/g4numi/wiki/How-to-build-and-run-the-main-modern-g4-branch). 
+The instructions give cases for use on numix or nova gpvm nodes.
 
-## physics processes
+## Physics processes
 
 There is a [FNAL Geant4
 Effort](https://sharepoint.fnal.gov/project/geant4-pub/SitePages/Home.aspx)
@@ -54,5 +56,3 @@ are filled with junk left over from previous entries; do not use them.
         TString         proc[10];
         TString         ivol[10];
         TString         fvol[10];
-
-## How to run g4numi on NUMI-X nodes: \[\[A newcomer’s guide\]\]
