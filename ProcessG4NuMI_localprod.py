@@ -19,6 +19,7 @@ PWD = os.getenv("PWD")
 POT                   = 400000
 N_JOBS                = 1
 RUN_NUMBER            = 1
+SINGULARITY           = ""
 OUTDIR                = "/pnfs/{EXPERIMENT}/persistent/users/{USER}/flux/test/".format(EXPERIMENT = os.getenv("EXPERIMENT"),
                                                                                        USER = os.getenv("USER"))
 TEMPLATE              = "{0}/macros/template_ME.mac".format(PWD)
@@ -95,6 +96,9 @@ def main():
 
   logfile = options.outdir + "/g4numi_{BEAMCONFIG}_{RUN}_\$PROCESS.log".format(BEAMCONFIG = options.beamconfig,
                                                                                RUN        = options.run_number)
+  singularity = ""
+  if options.sl7:
+    singularity = "--singularity-image /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-wn-sl7:latest "
 
   print("\nOutput logfile(s):"+logfile)
 
@@ -107,9 +111,9 @@ def main():
       "-f {TARFILE} "
       "-f {MACFILE} "
       "-L {LOGFILE} "
+      "{SINGULARITY} "
       "file://{CACHE}/g4numi_job_localprod.sh".format(
-      GRID         = ("--OS=SL7 "
-                      "--resource-provides=usage_model=DEDICATED,OPPORTUNISTIC "
+      GRID         = ("--resource-provides=usage_model=DEDICATED,OPPORTUNISTIC "
                       "--role=Analysis "),
       MEMORY       = "--memory 2000MB ", # was 200MB
       DURATION     = "--expected-lifetime 12h ",  # 500K pots takes ~2h to 7h,
@@ -124,7 +128,8 @@ def main():
       TARFILE      = cache_folder + TARFILE_NAME,
       MACFILE      = cache_folder + "g4numi.mac",
       LOGFILE      = logfile,
-      CACHE        = cache_folder)
+      CACHE        = cache_folder,
+      SINGULARITY  = singularity)
   )
 
   #Ship it
@@ -151,6 +156,11 @@ def get_options():
   grid_group.add_option('--pot',
         default = POT,
         help="Number of protons on target to simulate. Default = %default.")
+  
+  grid_group.add_option('--sl7',
+        default = False,
+        action = "store_true",
+        help="Use SL7 singularity image on the grid. Default = %default.")
 
   grid_group.add_option('--filetag', default = FILETAG)
 
